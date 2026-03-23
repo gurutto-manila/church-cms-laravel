@@ -1,0 +1,317 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Resources\Page as PageResource;
+use App\Http\Requests\PageUpdateRequest;
+use App\Http\Requests\PageAddRequest;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Traits\LogActivity;
+use App\Helpers\SiteHelper;
+use App\Models\PageDetail;
+use App\Traits\Common;
+use App\Models\Page;
+use App\Models\User;
+use Exception;
+use Log;
+
+class PagesController extends Controller
+{
+    use LogActivity;
+    use Common;
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function list()
+    {
+        //
+        $pages = Page::where([
+            ['church_id',Auth::user()->church_id],
+            ['status',1],
+        ])->paginate(5);
+        $pages = PageResource::collection($pages);
+
+        return $pages;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+        return view('/admin/page/index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+        return view('/admin/page/create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(PageAddRequest $request)
+    {
+        //
+        try
+        {
+            $page = new Page;
+
+            $page->church_id        = Auth::user()->church_id;
+            $page->page_name        = $request->page_name;
+            $page->category_id      = $request->category;
+            $page->description      = $request->description;
+            $page->created_by       = Auth::id();
+            $page->status           = 1;
+
+            $file = $request->file('cover_image');
+            if($file)
+            {
+                $folder =   $church_id.'/pages';
+                $path   =   $this->uploadFile($folder,$file);
+                $page->cover_image = $path; 
+            }
+
+            $page->save();
+
+            $message = trans('messages.add_success_msg',['module' => 'Page']);
+
+            $ip= $this->getRequestIP();
+            $this->doActivityLog(
+                $page,
+                Auth::user(),
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                LOGNAME_ADD_PAGE,
+                $message
+            ); 
+
+            $res['success'] = $message;
+            return $res;
+        }
+        catch(Exception $e)
+        {
+            Log::info($e->getMessage());
+            //dd($e->getMessage());
+        }
+    }
+
+    public function storeImage(Request $request)
+    {
+        if($request->hasFile('file')) {
+            //get filename with extension
+            $filenamewithextension = $request->file('file')->getClientOriginalName();
+      
+            //get filename without extension
+            $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+      
+            //get file extension
+            $extension = $request->file('file')->getClientOriginalExtension();
+      
+            //filename to store
+            $filenametostore = $filename.'_'.time().'.'.$extension;
+      
+            //Upload File
+            $file =  $request->file('file'); 
+
+            $pathName = $this->uploadFile('uploads/trix',$file);
+      
+            // you can save image path below in database
+            $path = asset($pathName);
+     
+            echo $path;exit;
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showList($id)
+    {
+        //
+        $page = Page::where('id',$id)->first();
+
+        $array = [];
+
+        $array['id']            = $page->id;
+        $array['page_name']     = $page->page_name;
+        $array['category']      = $page->category_id;
+        $array['description']   = $page->description;
+        $array['cover_image']   = $page->CoverImagePath;
+        $array['like_count']    = $page->pageDetail()->where('like',1)->count();
+        $array['unlike_count']  = $page->pageDetail()->where('dislike',1)->count();
+        $array['follow_count']  = $page->pageDetail()->where('is_following',1)->count();
+        $pagedetail = PageDetail::where([['user_id',Auth::id()],['page_id',$page->id]])->first();
+        if($pagedetail != null)
+        {
+            $array['is_following']  =  $pagedetail->is_following;
+            $array['like']          =  $pagedetail->like;
+            $array['dislike']       =  $pagedetail->dislike;
+        }
+
+        return $array;
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+        $page = Page::where('id',$id)->first();
+        $entity_id      = $page->id;
+        $entity_name    = 'App\Models\Page';
+
+        return view('/admin/page/show' , [ 'page' => $page , 'entity_id' => $entity_id , 'entity_name' => $entity_name ]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function editList($id)
+    {
+        //
+        $page = Page::where('id',$id)->first();
+
+        $array = [];
+
+        $array['page_name']        = $page->page_name;
+        $array['category']         = $page->category_id;
+        $array['description']      = $page->description;
+        $array['cover_image']      = $page->CoverImagePath;
+
+        return $array;
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+        $page = Page::where('id',$id)->first();
+
+        return view('/admin/page/edit', [ 'page' => $page ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(PageUpdateRequest $request, $id)
+    {
+        //
+        try
+        {
+            $page = Page::where('id',$id)->first();
+
+            $page->page_name        = $request->page_name;
+            $page->category_id      = $request->category;
+            $page->description      = $request->description;
+            $page->created_by       = Auth::id();
+
+            $file = $request->file('cover_image');
+            if($file)
+            {
+                $folder =   $church_id.'/pages';
+                $path   =   $this->uploadFile($folder,$file);
+                $page->cover_image = $path; 
+            }
+
+            $page->save();
+
+            $message = trans('messages.update_success_msg',['module' => 'Page']);
+
+            $ip= $this->getRequestIP();
+            $this->doActivityLog(
+                $page,
+                Auth::user(),
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                LOGNAME_EDIT_PAGE,
+                $message
+            ); 
+
+            $res['success'] = $message;
+            return $res;
+        }
+        catch(Exception $e)
+        {
+            Log::info($e->getMessage());
+            //dd($e->getMessage());
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+        try
+        {
+            $page = Page::where('id',$id)->first();
+            if(Gate::allows('page',$page))
+            {
+                $page->delete();
+
+                $message=trans('messages.delete_success_msg',['module' => 'Page']);
+
+
+                $ip= $this->getRequestIP();
+                $this->doActivityLog(
+                    $page,
+                    Auth::user(),
+                    ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                    LOGNAME_DELETE_PAGE,
+                    $message
+                );
+                $res['success'] = $message;
+                return $res;
+            }
+            else
+            {
+                abort(403);
+            }
+        }
+        catch(Exception $e)
+        {
+            Log::info($e->getMessage());
+            //dd($e->getMessage());
+        }
+    }
+}

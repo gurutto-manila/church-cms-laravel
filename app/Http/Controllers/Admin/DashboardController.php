@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Resources\ShowSermonLink as ShowSermonLinkResource;
+use App\Http\Resources\ShowEvent as ShowEventResource;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+use Spatie\Analytics\Period;
+use Illuminate\Http\Request;
+use App\Models\SermonLink;
+use App\Models\Attendance;
+use App\Traits\Dashboard;
+use App\Models\Events;
+use Analytics;
+
+class DashboardController extends Controller
+{
+    use Dashboard;
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        // $analyticsData = Analytics::fetchMostVisitedPages(Period::days(7));
+        // echo "<pre>";
+        // print_r($analyticsData);exit;
+
+        $admin_id  =   Auth::id();
+        $church_id =   Auth::user()->church_id;
+        $query     =   \Request::getQueryString();
+
+        $dashboard = $this->adminDashboard($church_id, $admin_id);
+
+        return view( '/admin/dashboard/dashboard', ['church_id' => $church_id , 'query' => $query , 'dashboard' => $dashboard ] );
+    }
+
+    public function event()
+    {
+        $event = Events::where('church_id',Auth::user()->church_id)->where('start_date','>=',date('Y-m-d H:i:s'))->orderBy('start_date','asc')->take(4)->get(); //for demo changed to 3
+
+        $event = ShowEventResource::collection($event);
+
+        return $event;
+    }
+
+    public function sermon()
+    {
+        $links = SermonLink::with('sermons')->where('church_id',Auth::user()->church_id)->orderBy('id','desc')->take(5)->get();
+        
+        $links = ShowSermonLinkResource::collection($links);
+
+        return $links;
+    }
+
+    public function absent()
+    {
+        $absents = Attendance::where([['church_id',Auth::user()->church_id],['is_present',0]])->paginate(20);
+
+        return view('/admin/dashboard/absent' , ['absents' => $absents]);
+    }
+}

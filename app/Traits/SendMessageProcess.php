@@ -1,0 +1,133 @@
+<?php
+/**
+ * Trait for processing SendMessageProcess
+ */
+namespace App\Traits;
+
+use App\Events\Notification\SingleNotificationEvent;
+use App\Events\SendMessageEvent;
+use App\Events\SinglePushEvent;
+use App\Traits\LogActivity;
+use App\Helpers\SiteHelper;
+use App\Traits\SmsProcess;
+use App\Models\SendMail;
+use App\Traits\Common;
+use App\Models\User;
+use Carbon\Carbon;
+use Exception;
+use Log;
+
+/**
+ *
+ * @class trait
+ * Trait for SendMessageProcess Processes
+ */
+trait SendMessageProcess
+{
+    use SmsProcess;
+
+    public function sendMessage($data , $church_id , $admin_email , $user , $admin)
+    {
+        try
+        {  
+            $sendmail = new SendMail;
+
+            $sendmail->church_id     = $church_id;
+            $sendmail->user_id       = $user->id;
+            $sendmail->mode          = $data->mode;
+            $sendmail->from          = $admin_email;
+            if($data->entity_id != null)
+            {
+                $sendmail->entity_id = $data->entity_id;
+            }
+            if($data->entity_name != null)
+            {
+                $sendmail->entity_name = $data->entity_name;
+            }
+            if($data->mode == 'mail')
+            {
+                $sendmail->to       = $user->email;
+            }
+            else
+            {
+                $sendmail->to        = $user->mobile_no;
+            }
+            $sendmail->subject       = $data->subject;
+            $sendmail->message       = $data->message;
+
+            if($data->attachments != null)
+            {
+               // $file = $data->file('attachments');
+                 $file = $data->attachments;
+                if($file != null)
+                {
+                    $folder = $church_id.'/sendmessage';
+                    $sendmail->attachments  = $this->uploadFile($folder,$file); 
+                }
+            }
+
+            if( $data->executed_at == null )
+            {
+                $sendmail->executed_at  = Carbon::now();
+                $sendmail->fired_at     = Carbon::now();
+                $sendmail->is_executed  = 1;
+                $sendmail->status       = "delivered";
+            }
+            else
+            {
+                $sendmail->executed_at  = date('Y-m-d H:i:s',strtotime($data->executed_at));
+                $sendmail->status       = "queue";
+            }
+
+            $sendmail->save();
+
+            if( $sendmail->is_executed == 1 )
+            {
+                if($sendmail->mode == 'mail')
+                {
+                    event(new SendMessageEvent($sendmail));
+                }
+                elseif($sendmail->mode == 'notification')
+                {
+                    $data=[];
+
+                    $data['school_id']  =  $church_id;
+                    $data['message']    = 'New Message Received';
+                    $data['type']       = 'private message';
+                        
+                    event(new SinglePushEvent($data));
+
+                     $array = [];
+
+                     $array['user']     = $user;
+                     $array['details']  = 'New Message Received';
+
+                     event(new SingleNotificationEvent($array));
+                }
+                elseif($sendmail->mode == 'sms')
+                {
+                    $this->sendPrivateMessage($sendmail->to,$sendmail->message);
+                }
+            }
+              
+            $message= 'Message Sent Successfully';
+
+            $ip= $this->getRequestIP();
+            $this->doActivityLog(
+                $sendmail,
+                $admin,
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                LOGNAME_SEND_MESSAGE,
+                $message
+            );
+
+            $res['success'] = $message;
+            return $res;  
+        }
+        catch(Exception $e)
+        {
+            Log::info($e->getMessage());
+            //dd($e->getMessage());
+        }
+    }
+}

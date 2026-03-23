@@ -1,0 +1,119 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Requests\VideoSaveRequest;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Traits\SendPushNotification;
+use App\Http\Requests\VideoRequest;
+use Illuminate\Http\Request;
+use App\Models\Subscription;
+use App\Traits\LogActivity;
+use App\Events\PushEvent;
+use App\Models\MediaFile;
+use App\Traits\Common;
+use Exception;
+use Log;
+
+class VideoController extends Controller
+{
+    use SendPushNotification;
+    use LogActivity;
+    use Common;
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $video = MediaFile::where('church_id',Auth::user()->church_id)->get();
+        $count = MediaFile::where('church_id',Auth::user()->church_id)->count();
+        $subscription = Subscription::where('church_id',Auth::user()->church_id)->first();
+
+        return view('/admin/mediafiles/video/create',['videos'=>$video , 'count'=>$count , 'subscription'=>$subscription]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storeVideo(Request $request)
+    {
+        try
+        {
+            $filename   = date('d_m_Y_H_i_s').'_video.mp4';
+            $folder     = '/uploads/video/'.Auth::user()->church_id;
+            //$path       = $this->putContentsByFilename($folder,$request->file,$filename);
+            $path = \Storage::disk('s3')->putFileAs($folder, $request->file,$filename);
+            \Session::put('path',$path);
+        }
+        catch(Exception $e)
+        {
+            //dd($e->getMessage());
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(VideoRequest $request)
+    {
+        try
+        {
+            $video                  = new MediaFile;
+
+            $video->church_id       = Auth::user()->church_id;
+            $video->media_type      = 'video';
+            $video->name            = $request->input('name');
+            $video->description     = $request->input('description');
+            $video->type            = $request->video_type;
+            if($request->video_type == 'url')
+            {
+                $video->url             = $request->videourl;
+            }
+            else
+            {
+                $video->url = \Session::get('path');
+            }
+             
+            $video->save();
+
+            \Session::forget('path');
+
+            $data=[];
+
+            $data['church_id']  =   Auth::user()->church_id;
+            $data['message']    =   'New Video Added';
+            $data['type']       =   'video';
+
+            event(new PushEvent($data));
+
+            $message = 'Videos Added Successfully';
+
+            $ip= $this->getRequestIP();
+            $this->doActivityLog(
+                $video,
+                Auth::user(),
+                ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
+                LOGNAME_ADD_VIDEO,
+                $message
+            );  
+
+            $res['success'] = $message;
+            return $res;
+        }
+        catch (Exception $e) 
+        {
+            Log::info($e->getMessage());
+           //dd($e->getMessage());
+        }  
+    }
+}

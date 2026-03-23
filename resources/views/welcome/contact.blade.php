@@ -1,0 +1,1 @@
+<contact url="{{ url('/') }}"></contact>

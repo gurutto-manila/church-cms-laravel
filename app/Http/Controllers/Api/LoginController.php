@@ -1,0 +1,96 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+//use App\Http\Requests\LoginRequest;
+use App\Http\Requests\Api\LoginRequest;
+use Illuminate\Http\Request;
+use App\Models\Userprofile;
+use App\Models\User;
+use App\Token;
+use Exception;
+use Log;
+
+class LoginController extends Controller
+{
+    public $successStatus = 200;
+
+    public $failStatus = 302;
+
+    /**
+     * login api
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function login(LoginRequest $request)
+    {
+        try
+        {
+         //   if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password'),'church_id'=>request('church_id')]) )
+            if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password')]) )
+            {
+                $user = Auth::user();
+                $user->tokens()->delete();
+            
+                $userprofile = Userprofile::where('user_id', $user->id)->first();
+                if ($userprofile->status == 'active')
+                {
+                    $token = $user->createToken("churchcms")->plainTextToken;
+                    //$token = $user->createToken($request->email)->plainTextToken; //changed for new church app
+
+                    $user = User::where([['id',$user->id],['church_id',$user->church_id]])->first();
+                     
+                    $user->platform_token = $request->platform_token;
+
+                    $user->save();
+
+                    return response()->json([
+                        'status'            => 'success',
+                        'token'             =>  $token,
+                        'id'                =>  $user->id,
+                        'church_id'         =>  $user->church_id,
+                        'user_email'        =>  $user->email,
+                        'user_name'         =>  $user->name,
+                        'user_fullname'     =>  $user->FullName,
+                        'membership_type'   =>  $user->userprofile->membership_type, 
+                        'is_reset'          =>  $user->is_reset, 
+                    ], $this->successStatus);
+                }
+            }
+        }
+        catch(Exception $e)
+        {
+            Log::info($e->getMessage());
+            //dd($e->getMessage());
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        try
+        {
+            if (Auth::check()) 
+            {
+                Auth()->user()->tokens()->delete();
+            }
+
+            $user = User::where('id',Auth::id())->first();
+
+            $user->platform_token  = NULL;
+
+            $user->save();
+
+            return response()->json([
+                'success'   =>  true,
+                'message'   =>  'Logged out successfully'
+            ],200);
+        }
+        catch(Exception $e)
+        {
+            Log::info($e->getMessage());
+            //dd($e->getMessage());
+        }
+    }
+}
