@@ -64,10 +64,14 @@
                         class="text-white text-xs flex items-center blue-bg rounded px-2 py-1 ml-2 font-medium">
                         <span class="mx-1">Edit</span>
                     </a>
-                    <a href="{{ url('/admin/events/delete/' . $event->id) }}" title="Delete"
-                        class=" text-white text-xs flex items-center blue-bg rounded px-2 py-1 ml-2 font-medium">
-                        <span class="mx-1">Delete</span>
-                    </a>
+                    <form id="delete-event-form" action="{{ url('/admin/events/delete/' . $event->id) }}" method="POST" style="display:inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" title="Delete" onclick="return confirm('Are you sure you want to delete this event?')"
+                            class="text-white text-xs flex items-center blue-bg rounded px-2 py-1 ml-2 font-medium border-0 cursor-pointer">
+                            <span class="mx-1">Delete</span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

@@ -298,7 +298,7 @@
                     if (willChange) {
                         $.ajax({
                             url: link,
-                            type: "GET",
+                            type: "POST",
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },

@@ -10,6 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -23,7 +25,7 @@ Route::post('/register','Auth\RegisterController@store');
 
 //Impersonate as preacher
 Route::get('/preacher/{id}/impersonate', 'Auth\ImpersonateController@impersonate')->middleware('auth', 'churchadmin');
-Route::get('/preacher/impersonate/stop', 'Auth\ImpersonateController@stopImpersonate');
+Route::get('/preacher/impersonate/stop', 'Auth\ImpersonateController@stopImpersonate')->middleware('auth');
 
 Route::post('/botman', 'Admin\BotmanMasterController@searchIndex');
 Route::get('/botman/google', 'Admin\BotmanMasterController@nativeGoogle');
@@ -132,7 +134,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-members'] ,
     Route::get('/member/edit/{firstname}', ['middleware' => ['permission:update-members'], 'uses' => 'MemberEditController@edit']);
     Route::post('/member/edit/{firstname}', ['middleware' => ['permission:update-members'], 'uses' => 'MemberEditController@update']);
     Route::post('/getnotes', ['middleware' => ['permission:update-members'], 'uses' =>  'NotesController@index']);
-    Route::get('/notes/delete/{id}', ['middleware' => ['permission:update-members'], 'uses' => 'NotesController@delete']);
+    Route::delete('/notes/delete/{id}', ['middleware' => ['permission:update-members'], 'uses' => 'NotesController@delete']);
     Route::get('/notes/edit/{id}', ['middleware' => ['permission:update-members'], 'uses' => 'NotesController@edit']);
 
 });
@@ -151,7 +153,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-events'] , 
 
     Route::get('/events/edit/{id}', ['middleware' => ['permission:update-events'], 'uses' => 'EventsController@edit']);
     Route::post('/getnotes', ['middleware' => ['permission:update-events'], 'uses' =>  'NotesController@index']);
-    Route::get('/notes/delete/{id}', ['middleware' => ['permission:update-events'], 'uses' => 'NotesController@delete']);
+    Route::delete('/notes/delete/{id}', ['middleware' => ['permission:update-events'], 'uses' => 'NotesController@delete']);
     Route::get('/notes/edit/{id}', ['middleware' => ['permission:update-events'], 'uses' => 'NotesController@edit']);
 
     //event_gallery
@@ -194,12 +196,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-groups'] , 
     Route::post('/group/create', ['middleware' => ['permission:create-groups'], 'uses' =>'GroupsController@store']);
 
     Route::get('/group/show/{id}', ['middleware' => ['permission:read-groups'], 'uses' =>'GroupsController@show']);
-    Route::get('/group/delete/{id}', ['middleware' => ['permission:delete-groups'], 'uses' =>'GroupsController@destroy']);
+    Route::delete('/group/delete/{id}', ['middleware' => ['permission:delete-groups'], 'uses' =>'GroupsController@destroy']);
 
     Route::get('/group/showMember', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@index']);
     Route::get('/group/addMember/{group_id}', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@create']);
     Route::post('/group/addMember/{group_id}', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@store']);
-    Route::get('/group/removeMember/{id}', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@destroy']);
+    Route::delete('/group/removeMember/{id}', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@destroy']);
     Route::get('/group/editMember/{id}', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@edit']);
     Route::post('/group/editMember/{id}', ['middleware' => ['permission:update-groups'], 'uses' => 'GroupLinksController@update']);
 
@@ -240,7 +242,7 @@ Route::group(['prefix' => 'preacher', 'middleware' => ['permission:read-sermons'
     Route::post('/links/validateedit/{id}', ['middleware' => ['permission:update-sermons'], 'uses' => 'SermonLinkController@validateedit']);
     Route::get('/links/edit/{id}', ['middleware' => ['permission:update-sermons'], 'uses' => 'SermonLinkController@edit']);
 
-    Route::get('/links/delete/{id}', ['middleware' => ['permission:delete-sermons'], 'uses' => 'SermonLinkController@destroy']);
+    Route::delete('/links/delete/{id}', ['middleware' => ['permission:delete-sermons'], 'uses' => 'SermonLinkController@destroy']);
     Route::get('/download/{id}','SermonLinkController@getDownload');
 
     //changepwd and avatar
@@ -298,7 +300,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['permission:read-preachers']
     Route::get('/preacher/edit/{firstname}', ['middleware' => ['permission:update-preachers'], 'uses' => 'PreacherController@edit']);
     Route::post('/preacher/edit/{firstname}', ['middleware' => ['permission:update-preachers'], 'uses' => 'PreacherController@update']);
     Route::post('/getnotes', ['middleware' => ['permission:update-preachers'], 'uses' =>  'NotesController@index']);
-    Route::get('/notes/delete/{id}', ['middleware' => ['permission:update-preachers'], 'uses' => 'NotesController@delete']);
+    Route::delete('/notes/delete/{id}', ['middleware' => ['permission:update-preachers'], 'uses' => 'NotesController@delete']);
     Route::get('/notes/edit/{id}', ['middleware' => ['permission:update-preachers'], 'uses' => 'NotesController@edit']);
 
 });

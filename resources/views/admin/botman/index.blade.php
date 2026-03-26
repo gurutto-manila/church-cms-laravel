@@ -79,7 +79,12 @@
                 var r = confirm("Are you sure to delete?");
                 if (r == true) {
                     var getid = $(this).data('id');
-                    window.location.href = '{{ url('admin/botman/remove') }}/' + getid;
+                    $.ajax({
+                        url: '{{ url('admin/botman/remove') }}/' + getid,
+                        type: "DELETE",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        success: function() { window.location.reload(); }
+                    });
                 }
             });
         });

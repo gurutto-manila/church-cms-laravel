@@ -37,7 +37,7 @@
       <div class="agent-face w-1/4">
     <div  class="chat message-box">
       <div id="chat_title_chat" class="chat-title">
-        
+
       </div>
       <div class="message-box">
         <textarea id="txt_message" type="text" class="message-input" placeholder="Type message..."></textarea>
@@ -439,7 +439,7 @@
                 var participant_identity = $(this).data('identity');
                 console.log(participant_identity);
                 if (check == 'admit') {
-                    //$(this).text('Admitted');  
+                    //$(this).text('Admitted');
                     $(this).hide();
                     AllowParticipant(room, participant_identity);
                 }
@@ -579,7 +579,14 @@
                     });
                     document.getElementById(room.localParticipant.sid).remove();
                     room.disconnect();
-                    window.location.href = '{{ url('admin/video-conference/status/' . $conference->id) }}';
+                    $.ajax({
+                        url: '{{ url('admin/video-conference/status/' . $conference->id) }}',
+                        type: "POST",
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        complete: function() {
+                            window.location.href = '{{ url('admin/video-conference') }}';
+                        }
+                    });
                 }
             });
 
