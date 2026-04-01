@@ -9,15 +9,27 @@ use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Trait ThrottlesLogins
+ *
+ * Implements login attempt throttling and rate limiting including:
+ * - Checking for excessive login attempts
+ * - Incrementing and resetting attempt counters
+ * - Applying rate limiting based on IP and username
+ * - Triggering lockout after maximum attempts
+ * - Configurable attempt limits and decay times
+ *
+ * @package app\Traits
+ */
 trait ThrottlesLogins
 {
     /**
      * Determine if the user has too many failed login attempts.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return bool
      */
-    protected function hasTooManyLoginAttempts(Request $request)
+    protected function hasTooManyLoginAttempts(Request $request): bool
     {
         return $this->limiter()->tooManyAttempts(
             $this->throttleKey($request), $this->maxAttempts()
@@ -27,10 +39,10 @@ trait ThrottlesLogins
     /**
      * Increment the login attempts for the user.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return void
      */
-    protected function incrementLoginAttempts(Request $request)
+    protected function incrementLoginAttempts(Request $request): void
     {
         $this->limiter()->hit(
             $this->throttleKey($request), $this->decayMinutes()
@@ -58,10 +70,10 @@ trait ThrottlesLogins
     /**
      * Clear the login locks for the given user credentials.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return void
      */
-    protected function clearLoginAttempts(Request $request)
+    protected function clearLoginAttempts(Request $request): void
     {
         $this->limiter()->clear($this->throttleKey($request));
     }
@@ -80,10 +92,10 @@ trait ThrottlesLogins
     /**
      * Get the throttle key for the given request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return string
      */
-    protected function throttleKey(Request $request)
+    protected function throttleKey(Request $request): string
     {
         return Str::lower($request->input($this->username())).'|'.$request->ip();
     }

@@ -19,16 +19,42 @@ use Carbon\Carbon;
 use Exception;
 
 /**
+ * Trait for dashboard data compilation and statistics
  *
- * @class trait
- * Trait for Dashboard Processes
+ * Provides functionality for:
+ * - Generating comprehensive church dashboard statistics
+ * - Caching statistical data for performance
+ * - Computing member and guest counts by various categories
+ * - Aggregating event, gallery, and resource statistics
+ * - Calculating fund and donation statistics
+ * - Analyzing attendance patterns and trends
+ *
+ * @package App\Traits
  */
 trait Dashboard
 {
-
-    public function adminDashboard($church_id,$admin_id)
-    {
-        $ssseconds = 300;
+    /**
+     * Compile comprehensive dashboard statistics for a church.
+     *
+     * Retrieves and caches various statistics including member counts (by gender),
+     * guest counts, event details, gallery statistics, fund information, and
+     * attendance analytics. All results are cached for improved performance.
+     *
+     * @param int $church_id The church ID to compile statistics for
+     * @param int $admin_id The administrator ID viewing the dashboard
+     *
+     * @return array Comprehensive dashboard statistics array containing:
+     *               - Member counts (total, male, female)
+ *               - Guest counts (total, male, female)
+     *               - Long-term and recent members
+     *               - Event, gallery, file, bulletin, and group counts
+     *               - Subscription information
+     *               - Fund listings and total fund amounts
+     *               - Latest event information
+     *               - Absent members
+     *               - Monthly fund aggregation data
+     */
+    public function adminDashboard(int $church_id, int $admin_id): array {
         $array = [];
 
         $array['memberCount'] = Cache::remember('memberCount'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
@@ -52,22 +78,6 @@ trait Dashboard
                 ['status','active']
             ])->count();
         });
-
-        /*$array['baptizedCount'] = Cache::remember('baptizedCount'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
-            return Userprofile::ByChurch($church_id)->ByRole(5)->ByStatus('active')->ByBaptism('yes')->count();
-        });
-
-        $array['maleBaptizedCount'] = Cache::remember('maleBaptizedCount'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
-            return Userprofile::ByChurch($church_id)->ByRole(5)->ByStatus('active')->ByGender('male')->ByBaptism('yes')->count();
-        });
-
-        $array['femaleBaptizedCount'] = Cache::remember('femaleBaptizedCount'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
-            return Userprofile::ByChurch($church_id)->ByRole(5)->ByStatus('active')->ByGender('female')->ByBaptism('yes')->count();
-        });
-
-        $array['nonBaptizedCount'] = Cache::remember('nonBaptizedCount'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
-            return Userprofile::ByChurch($church_id)->ByRole(5)->ByStatus('active')->ByBaptism('no')->count();
-        });*/
 
         $array['guestCount'] = Cache::remember('guestCount'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
             return Userprofile::ByChurch($church_id)->ByRole(5)->ByMembershipType('guest')->ByStatus('active')->count();
@@ -128,7 +138,7 @@ trait Dashboard
         });
 
         $array['latestevent'] = Cache::remember('latestevent'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
-            return Events::where([['church_id',$church_id],['start_date','>=',date('Y-m-d')]])->first(); 
+            return Events::where([['church_id',$church_id],['start_date','>=',date('Y-m-d')]])->first();
         });
 
         $latestevent = $array['latestevent'];
@@ -149,14 +159,14 @@ trait Dashboard
 
         $array['funds']  = Cache::remember('funds'.$church_id, env('CACHE_TIME'), function () use ($church_id)  {
             return Fund::where([['church_id',$church_id],['status','deposited']])->orderBy('authorised_at','DESC')->get()->groupBy([function($fund) {
-                return Carbon::parse($fund->authorised_at)->format('M-y'); 
+                return Carbon::parse($fund->authorised_at)->format('M-y');
             }])->take(6);
         });
-        
+
         $amountarray = [];
         foreach($array['funds'] as $key => $groups)
         {
-            foreach ($groups as $fund) 
+            foreach ($groups as $fund)
             {
                 $amountarray[$key] += $fund->amount;
             }

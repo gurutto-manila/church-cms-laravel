@@ -1,6 +1,14 @@
 <?php
 /**
- * Trait for processing common
+ * Trait EmailQueueProcess
+ *
+ * Manages email queue creation and processing for campaigns including:
+ * - Creating email queues from mailing list subscribers
+ * - Processing campaign emails with content replacement
+ * - Scheduling email delivery with delays and personalization
+ * - Handling unsubscribe links and content variables
+ *
+ * @package App\Traits
  */
 namespace App\Traits;
 
@@ -13,15 +21,18 @@ use App\Models\Campaign;
 use App\Models\Email;
 use Carbon\Carbon;
 use Exception;
-use log;
-/**
- *
- * @class trait
- * Trait for Common Processes
- */
+use Log;
+
 trait EmailQueueProcess
 {
-    public static function createEmailQueue($mailinglistSubscriber,$request)
+    /**
+     * Create email queue for a mailing list subscriber.
+     *
+     * @param MailinglistSubscriber $mailinglistSubscriber
+     * @param object $request
+     * @return array|mixed
+     */
+    public static function createEmailQueue(MailinglistSubscriber $mailinglistSubscriber, object $request)
     {
         $mailqueue=[];
         try
@@ -36,11 +47,17 @@ trait EmailQueueProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
         }
     }
 
-    public static function makeEmailQueue($subscriber_id,$mailinglist_id)
+    /**
+     * Generate email queue entries for a subscriber and mailing list.
+     *
+     * @param int $subscriber_id
+     * @param int $mailinglist_id
+     * @return MailQueue|array
+     */
+    public static function makeEmailQueue(int $subscriber_id, int $mailinglist_id)
     {
         $mailqueue=[];
         try
@@ -55,8 +72,8 @@ trait EmailQueueProcess
             $campaign   =   Campaign::where('mailinglist_id',$mailinglist_id)->first();//reln
             $subscriber =   Subscribers::where('id',$subscriber_id)->first();
             $emails     =   CampaignEmail::where('campaign_id',$campaign->id)->get();//reln
-       
-            if(count($emails)>0) 
+
+            if(count($emails)>0)
             {
                 foreach($emails as $campaignemail)
                 {
@@ -67,17 +84,13 @@ trait EmailQueueProcess
                     $data['reply_to_email'] =   optional($campaignemail->email)->reply_to_email;
                     //Replace
                     $content =  optional($campaignemail->email)->content;
-                    $content =  str_replace(':firstname',$subscriber->firstname,$content);
-                    $content =  str_replace(':lastname',$subscriber->lastname,$content);
-                    //$url = url('/unsubscribe/'.$this->slug);
-                    //"url=automailer.test/unsubscribe/demo-mailing-list?email=abc@aa.com"
-                    $url=url('/unsubscribe/'.$campaign->mailinglist->slug.'?email='.$subscriber->email);
+                    $content = str_replace(':firstname', $subscriber->firstname, $content);
+                    $content = str_replace(':lastname', $subscriber->lastname, $content);
+                    $url = url('/unsubscribe/'.$campaign->mailinglist->slug.'?email='.$subscriber->email);
 
-                    $content=str_replace(':unsubscribelink',$url,$content);
-                    //  $data['content']=optional($campaignemail->email)->content;
-                    $data['content']=$content;
-                    //  $data['scheduled_at']=Carbon::now()->addHours($campaignemail->delay_in_hours);
-                    $data['scheduled_at']=$campaignemail->ScheduleAt();
+                    $content = str_replace(':unsubscribelink', $url, $content);
+                    $data['content'] = $content;
+                    $data['scheduled_at'] = $campaignemail->ScheduleAt();
 
                     $mailqueue = MailQueue::create($data);
                 }
@@ -87,11 +100,17 @@ trait EmailQueueProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
         }
-    } 
+    }
 
-    public static function createEmailQueueforCampaignemail($campaignemail,$request)
+    /**
+     * Create email queue from campaign email.
+     *
+     * @param CampaignEmail $campaignemail
+     * @param object $request
+     * @return array
+     */
+    public static function createEmailQueueforCampaignemail(CampaignEmail $campaignemail, object $request)
     {
         $mailqueue=[];
         try
@@ -102,9 +121,7 @@ trait EmailQueueProcess
             //  $data['scheduled_at']=Carbon::now()->addHours($campaignemail->delay_in_hours);
             $data['scheduled_at']=$campaignemail->ScheduleAt();
             $data['campaign_id']=$campaignemail->campaign_id;
-            //dump($data['campaign_id']);
             $campaign=Campaign::where('id',$campaignemail->campaign_id)->first();
-            //dump($campaign);
             $email=Email::where('id',$campaignemail->email_id)->first();
 
             $data['subject']=$email->subject;
@@ -118,7 +135,7 @@ trait EmailQueueProcess
             if(count($mailinglist)>0)
             {
                 foreach($mailinglist as $subscriber)
-                {  
+                {
                     //Replace
                     $content=$email->content;
                     $content= str_replace(':firstname',$subscriber->subscriber->firstname,$content);
@@ -128,7 +145,7 @@ trait EmailQueueProcess
 
                     $data['content']=$content;
 
-                    $data['subscriber_id']=$subscriber->subscriber->id;           
+                    $data['subscriber_id']=$subscriber->subscriber->id;
                     $data['to_mail']=$subscriber->subscriber->email;
                     $mailqueue = MailQueue::create($data);
                 }
@@ -138,16 +155,15 @@ trait EmailQueueProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
         }
     }
 
     public static function deattchEmailQueueforCampaignemail($campaignemail,$request)
     {
-        try 
+        try
         {
             $mailqueue=[];
-    
+
             $mailqueue = MailQueue::where([['email_id',$campaignemail->email_id],['campaign_id',$campaignemail->campaign_id]])->whereNull('deleted_at')->delete();
 
             return $mailqueue;
@@ -155,16 +171,15 @@ trait EmailQueueProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            // dd($e->getMessage());
         }
     }
 
     public static function deleteEmailQueueforCampaign($campaign,$request)
     {
-        try 
+        try
         {
             $mailqueue=[];
-    
+
             $mailqueue = MailQueue::where('campaign_id',$campaign->id)->whereNull('deleted_at')->delete();
 
             return $mailqueue;
@@ -172,16 +187,15 @@ trait EmailQueueProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            // dd($e->getMessage());
         }
     }
 
     public static function deleteEmailQueueforSubscribers($subscriber,$request)
     {
-        try 
+        try
         {
             $mailqueue=[];
- 
+
             $mailqueue = MailQueue::where('subscriber_id',$subscriber->id)->whereNull('deleted_at')->delete();
 
             return $mailqueue;
@@ -189,16 +203,15 @@ trait EmailQueueProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            // dd($e->getMessage());
         }
     }
 
     public static function  deleteEmailQueueforMailinglistSubscriber($mailingslistSubscriber,$request)
     {
-        try 
+        try
         {
             $mailqueue=[];
-    
+
             $mailqueue = MailQueue::where('mailinglist_id',$mailingslistSubscriber->mailinglist_id)->whereNull('deleted_at')->delete();
 
             return $mailqueue;
@@ -206,10 +219,9 @@ trait EmailQueueProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            // dd($e->getMessage());
         }
     }
-  
+
     public static function createEmailQueueafterConfirm($mailinglist_id,$subscriber_id)
     {
         $mailqueue=[];
@@ -220,7 +232,6 @@ trait EmailQueueProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            // dd($e->getMessage());
             return $mailqueue;
         }
     }

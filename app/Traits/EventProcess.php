@@ -13,12 +13,31 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * Trait EventProcess
+ *
+ * Handles event-related notifications and reminders including:
+ * - Sending event reminder notifications via multiple channels
+ * - Managing birthday reminder notifications
+ * - Sending prayer request reminders
+ * - Notifying users in groups about events
+ *
+ * @package App\Traits
+ */
 trait EventProcess
 {
-    public function sendToReminderEvent($events,$executed_at,$check)
+    /**
+     * Send event reminder notifications through multiple channels.
+     *
+     * @param Events $events
+     * @param string $executed_at
+     * @param string $check
+     * @return void
+     */
+    public function sendToReminderEvent(Events $events, string $executed_at, string $check): void
     {
         try
-        { 
+        {
             $options = ['notification','sms','mail'];
 
             foreach($options as $option)
@@ -43,7 +62,7 @@ trait EventProcess
                         $freq = $events->freq;
                         if($events->freq_term == 'week')
                         {
-                            $executed_at  =  date('Y-m-d', strtotime('+'.$freq. 'week', strtotime($executed_at)));          
+                            $executed_at  =  date('Y-m-d', strtotime('+'.$freq. 'week', strtotime($executed_at)));
                         }
                         elseif($events->freq_term == 'month')
                         {
@@ -55,7 +74,7 @@ trait EventProcess
                         }
                         elseif($events->freq_term == 'day')
                         {
-                            $executed_at  =  date('Y-m-d', strtotime('+'.$freq. 'days', strtotime($executed_at)));  
+                            $executed_at  =  date('Y-m-d', strtotime('+'.$freq. 'days', strtotime($executed_at)));
                         }
                     }
                     else
@@ -65,19 +84,30 @@ trait EventProcess
                 }
                 if($executed_at < $events->end_date )
                 {
-                    event(new ReminderEvent($church_id,$from,$subject,$message,$entity_id,$entity_name,$via,$data,$executed_at));           
-                } 
+                    event(new ReminderEvent($church_id,$from,$subject,$message,$entity_id,$entity_name,$via,$data,$executed_at));
+                }
             }
-            event(new AttendanceEvent($church_id,$entity_id,$entity_name,$title,$category,$date));  
+            event(new AttendanceEvent($church_id,$entity_id,$entity_name,$title,$category,$date));
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+        }
     }
-  
-    public function sendToBirthdayReminder($church_id,$entity_id,$date_of_birth,$marriage_start_date,$data,$mobile_no,$mail)
+
+    /**
+     * Send birthday reminder notifications to users.
+     *
+     * @param int $church_id
+     * @param int $entity_id
+     * @param string|null $date_of_birth
+     * @param string|null $marriage_start_date
+     * @param array $data
+     * @param string $mobile_no
+     * @param string $mail
+     * @return void
+     */
+    public function sendToBirthdayReminder(int $church_id, int $entity_id, ?string $date_of_birth, ?string $marriage_start_date, array $data, string $mobile_no, string $mail): void
     {
         try
         {
@@ -99,16 +129,15 @@ trait EventProcess
                 }
                 $entity_name  =  "App\\Models\\User";
                 $via          =  $option;
-          
+
                 /*$array = array('church_id' => $church_id , 'from' => $from , 'mobile_no' => $mobile_no , 'mail' => $mail , 'subject' =>$subject , 'message' =>$message , 'entity_id' =>$entity_id , 'entity_name' =>$entity_name , 'via' =>$via , 'data' =>$data , 'executed_at' => $executed_at );*/
-                event(new UserReminderEvent($church_id,$from,$mobile_no,$mail,$subject,$message,$entity_id,$entity_name,$via,$data,$executed_at)); 
+                event(new UserReminderEvent($church_id,$from,$mobile_no,$mail,$subject,$message,$entity_id,$entity_name,$via,$data,$executed_at));
             }
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }  
+        }
     }
 
     public function adminBirthdayReminder($church_id,$user_name,$user_email,$entity_id,$marriage_start_date,$date_of_birth,$mobile_no,$mail,$anniversary_date,$birth_date)
@@ -140,15 +169,14 @@ trait EventProcess
                 $entity_name  =  "App\\Models\\User";
                 $via          =  $option;
                 $data         =  array('subject'=> $subject, 'message'=>$message);
-              
+
                 event(new UserReminderEvent($church_id,$from,$mobile_no,$mail,$subject,$message,$entity_id,$entity_name,$via,$data,$executed_at));
-            }  
+            }
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+        }
     }
 
     public function sendToPrayerRequestReminder($church_id,$entity_id,$entity_name,$date,$data,$user_id)
@@ -163,15 +191,14 @@ trait EventProcess
                 $message      =  "Prayer Request Notification Mail";
                 $via          =  $option;
                 $executed_at  =  date('Y-m-d', strtotime($date));
-            
+
                 event(new PrayerReminderEvent($church_id,$from,$subject,$message,$entity_id,$entity_name,$via,$data,$executed_at,$user_id));
             }
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }  
+        }
     }
 
     public function userNotifyGroup($church_id,$entity_id,$mobile_no,$date)
@@ -186,13 +213,12 @@ trait EventProcess
             $via          =  'sms';
             $data         =  array('message'=>$message);
             $executed_at  =  date('Y-m-d', strtotime($date));
-       
+
             event(new UserNotifyGroupEvent($church_id,$from,$mobile_no,$subject,$message,$entity_id,$entity_name,$via,$data,$executed_at));
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+        }
     }
-} 
+}

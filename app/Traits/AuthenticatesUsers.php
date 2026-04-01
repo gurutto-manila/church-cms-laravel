@@ -12,6 +12,17 @@ use App\Models\Church;
 use App\Models\User;
 use Validator;
 
+/**
+ * Trait AuthenticatesUsers
+ *
+ * Provides user authentication and login functionality including:
+ * - Validating user credentials
+ * - Handling login attempts with throttling
+ * - Logging users in and out
+ * - Retrieving the username/email field
+ *
+ * @package App\Traits
+ */
 trait AuthenticatesUsers
 {
     use RedirectsUsers, ThrottlesLogins;
@@ -26,10 +37,10 @@ trait AuthenticatesUsers
     /**
      * Handle a login request to the application.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      *
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function login(Request $request)
     {
@@ -123,7 +134,6 @@ trait AuthenticatesUsers
 
         Validator::extend('checkstatus', function ($attribute, $value, $parameters, $validator) {
             $user = User::where('email', request('email'))->with('userprofile','permissionUser')->first();
-            //dd(env('APP_NAME'));
                 if($user->count())
                 {
                     if($user->usergroup_id==1)

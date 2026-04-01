@@ -12,6 +12,18 @@ use App\Traits\RedirectsUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
+/**
+ * Trait ResetsPasswords
+ *
+ * Provides password reset form display and processing including:
+ * - Displaying password reset forms
+ * - Validating reset tokens
+ * - Processing password resets with new passwords
+ * - Triggering password reset events
+ * - Managing password broker configuration
+ *
+ * @package app\Traits
+ */
 trait ResetsPasswords
 {
     use RedirectsUsers;
@@ -21,11 +33,11 @@ trait ResetsPasswords
      *
      * If no token is present, display the link request form.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  string|null  $token
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function showResetForm(Request $request, $token = null)
+    public function showResetForm(Request $request, ?string $token = null)
     {
         return view('auth.passwords.reset')->with(
             ['token' => $token, 'email' => $request->email]
@@ -35,7 +47,7 @@ trait ResetsPasswords
     /**
      * Reset the given user's password.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     public function reset(Request $request)
@@ -62,9 +74,9 @@ trait ResetsPasswords
     /**
      * Get the password reset validation rules.
      *
-     * @return array
+     * @return array<string, string>
      */
-    protected function rules()
+    protected function rules(): array
     {
         return [
             'token'     => 'required',
@@ -76,9 +88,9 @@ trait ResetsPasswords
     /**
      * Get the password reset validation error messages.
      *
-     * @return array
+     * @return array<string, string>
      */
-    protected function validationErrorMessages()
+    protected function validationErrorMessages(): array
     {
         return [];
     }

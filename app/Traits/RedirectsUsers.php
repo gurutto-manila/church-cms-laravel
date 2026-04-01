@@ -2,6 +2,16 @@
 
 namespace app\Traits;
 
+/**
+ * Trait RedirectsUsers
+ *
+ * Determines post-authentication redirect paths including:
+ * - Resolving redirect paths after login
+ * - Supporting custom redirectTo methods and properties
+ * - Providing default admin dashboard redirect
+ *
+ * @package app\Traits
+ */
 trait RedirectsUsers
 {
     /**

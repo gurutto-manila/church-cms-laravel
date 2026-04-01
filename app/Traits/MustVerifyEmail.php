@@ -4,6 +4,17 @@ namespace App\Traits;
 
 use App\Mail\VerifyEmail;
 
+/**
+ * Trait MustVerifyEmail
+ *
+ * Provides email verification functionality including:
+ * - Checking if user email has been verified
+ * - Marking email addresses as verified
+ * - Sending email verification notifications
+ * - Retrieving email address for verification purposes
+ *
+ * @package App\Traits
+ */
 trait MustVerifyEmail
 {
     /**

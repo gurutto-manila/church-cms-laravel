@@ -6,24 +6,36 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * Trait SendWebNotification
+ *
+ * Handles in-application web notifications including:
+ * - Triggering notification events for users
+ * - Formatting and sending real-time notifications
+ * - Broadcasting notifications through websockets
+ *
+ * @package App\Traits
+ */
 trait SendWebNotification
 
 {
    /**
-    * Store a newly created for user details in storage.
-    * @param array $data
-    * @return array
+    * Add a notification for a user.
+    *
+    * Triggers a notification event that broadcasts to the user in real-time
+    * through websocket connections.
+    *
+    * @param array $data The notification data containing message and other details
+    * @param \App\Models\User $user The user to send the notification to
+    *
+    * @return void
     */
+   public function addNotification(array $data, User $user): void {
+       $array = [];
 
-   public function addNotification($data,$user)
-   {
+       $array['user']     = $user;
+       $array['details']  = $data['message'];
 
-   	                 $array = [];
-
-                     $array['user']     = $user;
-                     $array['details']  = $data['message'];
-
-                     event(new SingleNotificationEvent($array));
-     // Notification::send($user, new NewMessageNotification($message));
-    }
+       event(new SingleNotificationEvent($array));
+   }
 }

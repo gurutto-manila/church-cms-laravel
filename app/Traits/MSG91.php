@@ -6,19 +6,28 @@ use Exception;
 use Log;
 
 /**
- * class MSG91 to send SMS on Mobile Numbers.
- * 
+ * Trait MSG91
+ *
+ * Handles SMS delivery using MSG91 gateway including:
+ * - Sending SMS messages to mobile numbers
+ * - Managing API key and sender ID configuration
+ * - Tracking SMS response and delivery status
+ * - Handling private SMS and notification routing
+ *
+ * @package App\Traits
  */
 trait MSG91
 {
-  /* private $API_KEY = '296511APtvTe5ChJGR5d91ace4';
+    private $RESPONSE_TYPE = 'json';
 
-   //private $mobileNumber = "9042781117";
-   private $SENDER_ID = "Gegogs";
-   private $ROUTE_NO = 4;*/
-   private $RESPONSE_TYPE = 'json';
-
-    public function sendSMS($content, $to)
+    /**
+     * Send SMS message to specified phone number.
+     *
+     * @param string $content
+     * @param string $to
+     * @return string|false
+     */
+    public function sendSMS(string $content, string $to): string|false
     {
         try
         {
@@ -30,7 +39,7 @@ trait MSG91
             $ROUTE_NO = env('REMINDER_ROUTE_NO');
 
             //Your message to send, Adding URL encoding.
-     
+
             $message = urlencode($content);
             //dd($message);
 
@@ -60,37 +69,41 @@ trait MSG91
                 CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_SSL_VERIFYPEER => 0,
             ));
-        
+
             $response = curl_exec($curl);
             //var_dump($response);
             $err = curl_error($curl);
 
-            if ($err) 
+            if ($err)
             {
                 return "cURL Error #:" . $err;
             }
-           
+
             curl_close($curl);
-        
-            //dd($response);
+
             $now=date('Y-m-d');
             $queuelist=Reminder::where('via','=','sms')->where('executed_at','=',$now)->get();
             foreach($queuelist as $queue)
-            {                    
+            {
                 $update['sms_response']=$response;
                 Reminder::where('id',$queue->id)->update($update);
             }
-            //dd($response);         
             return $response;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
         }
     }
 
-    public function sendPrivateSMS($content, $to)
+    /**
+     * Send private SMS message to specified phone number.
+     *
+     * @param string $content
+     * @param string $to
+     * @return string|false
+     */
+    public function sendPrivateSMS(string $content, string $to): string|false
     {
         try
         {
@@ -102,7 +115,7 @@ trait MSG91
             $ROUTE_NO = env('REMINDER_ROUTE_NO');
 
             //Your message to send, Adding URL encoding.
-     
+
             $message = urlencode($content);
             //dd($message);
 
@@ -132,31 +145,29 @@ trait MSG91
                 CURLOPT_SSL_VERIFYHOST => 0,
                 CURLOPT_SSL_VERIFYPEER => 0,
             ));
-        
+
             $response = curl_exec($curl);
             //var_dump($response);
             $err = curl_error($curl);
 
-            if ($err) 
+            if ($err)
             {
                 return "cURL Error #:" . $err;
             }
-           
+
             curl_close($curl);
-            //dd($response);         
             return $response;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
         }
     }
 
      public function getOTP($OTP, $mobileNumber)
-    {  
+    {
         try
-        { 
+        {
             $isError = 0;
             $errorMessage = true;
 
@@ -166,7 +177,7 @@ trait MSG91
 
             //Your message to send, Adding URL encoding.
             $message = urlencode("Welcome to GegoK12. Your OTP is : $OTP");
-     
+
             //Preparing post parameters
             $postData = array(
                 'authkey'  => $API_KEY,
@@ -176,7 +187,7 @@ trait MSG91
                 'route'    => $ROUTE_NO,
                 'response' => $this->RESPONSE_TYPE
             );
-     
+
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
@@ -194,7 +205,7 @@ trait MSG91
             $response = curl_exec($curl);
             $err = curl_error($curl);
 
-            if ($err) 
+            if ($err)
             {
                 return "cURL Error #:" . $err;
             }
@@ -204,7 +215,6 @@ trait MSG91
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            dd($e->getMessage());
         }
     }
 }

@@ -18,18 +18,37 @@ use Exception;
 use Log;
 
 /**
+ * Trait for sending messages and notifications
  *
- * @class trait
- * Trait for SendMessageProcess Processes
+ * Provides functionality for:
+ * - Sending messages via email or SMS
+ * - Creating send mail records
+ * - Triggering notification events
+ * - Broadcasting messages to users
+ * - Managing message attachments
+ *
+ * @package App\Traits
  */
 trait SendMessageProcess
 {
     use SmsProcess;
 
-    public function sendMessage($data , $church_id , $admin_email , $user , $admin)
-    {
-        try
-        {  
+    /**
+     * Send a message to a user via email or SMS.
+     *
+     * Creates and sends a message to a user through specified channel (email or SMS).
+     * Optionally attaches entity references and triggers notification events.
+     *
+     * @param object $data The message data object containing mode, subject, message, entity_id, entity_name, attachments
+     * @param int $church_id The church ID associated with the message
+     * @param string $admin_email The sender's admin email address
+     * @param \App\Models\User $user The recipient user
+     * @param object $admin The admin/sender user object
+     *
+     * @return void
+     */
+    public function sendMessage(object $data, int $church_id, string $admin_email, User $user, object $admin): void {
+        try {
             $sendmail = new SendMail;
 
             $sendmail->church_id     = $church_id;
@@ -62,7 +81,7 @@ trait SendMessageProcess
                 if($file != null)
                 {
                     $folder = $church_id.'/sendmessage';
-                    $sendmail->attachments  = $this->uploadFile($folder,$file); 
+                    $sendmail->attachments  = $this->uploadFile($folder,$file);
                 }
             }
 
@@ -94,7 +113,7 @@ trait SendMessageProcess
                     $data['school_id']  =  $church_id;
                     $data['message']    = 'New Message Received';
                     $data['type']       = 'private message';
-                        
+
                     event(new SinglePushEvent($data));
 
                      $array = [];
@@ -109,7 +128,7 @@ trait SendMessageProcess
                     $this->sendPrivateMessage($sendmail->to,$sendmail->message);
                 }
             }
-              
+
             $message= 'Message Sent Successfully';
 
             $ip= $this->getRequestIP();
@@ -122,12 +141,11 @@ trait SendMessageProcess
             );
 
             $res['success'] = $message;
-            return $res;  
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
         }
     }
 }

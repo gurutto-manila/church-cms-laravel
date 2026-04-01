@@ -10,9 +10,16 @@ use Exception;
 use Log;
 
 /**
+ * Trait for SMS notification and messaging operations
  *
- * @class trait
- * Trait for Common Processes
+ * Provides functionality for:
+ * - Sending SMS notifications for various events
+ * - Sending group notification messages
+ * - Sending password reset codes via SMS
+ * - Sending private messages via SMS
+ * - Template-based message composition
+ *
+ * @package App\Traits
  */
 trait SmsProcess
 {
@@ -24,10 +31,10 @@ trait SmsProcess
         {
        	    $template = Smstemplate::where([['name','Event'],['status','1']])->first();
        	    $content  = $template->content;
-        
+
        	    $content = str_replace(":date",$start_date,$content);
             $content = str_replace(":location",$location,$content);
-         		
+
        		$sms = env('SMS_GATEWAY');
 
        		if($sms)
@@ -38,7 +45,6 @@ trait SmsProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
         }
     }
 
@@ -48,10 +54,10 @@ trait SmsProcess
         {
             $template = Smstemplate::where([['name','permission_credentials'],['status','1']])->first();
             $content  = $template->content;
-        
+
             $content = str_replace(":content",$message,$content);
             $sms = env('SMS_GATEWAY');
-          
+
             if($sms)
             {
                 $this->sendSMS($content, $to);
@@ -60,7 +66,6 @@ trait SmsProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
         }
     }
 
@@ -70,10 +75,10 @@ trait SmsProcess
         {
             $template = Smstemplate::where([['name','reset_password'],['status','1']])->first();
             $content  = $template->content;
-        
+
             $content = str_replace(":token",$message,$content);
             $sms = env('SMS_GATEWAY');
-          
+
             if($sms)
             {
               $this->sendSMS($content, $to);
@@ -82,7 +87,6 @@ trait SmsProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
         }
     }
 
@@ -92,10 +96,10 @@ trait SmsProcess
         {
             $template = Smstemplate::where([['name','send_sms'],['status',1]])->first();
             $content  = $template->content;
-        
+
             $content = str_replace(":content",$message,$content);
             $sms = env('SMS_GATEWAY');
-          
+
             if($sms)
             {
                 $this->sendPrivateSMS($content, $to);
@@ -104,7 +108,6 @@ trait SmsProcess
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
         }
     }
 }

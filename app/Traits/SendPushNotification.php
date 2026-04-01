@@ -7,17 +7,32 @@ use LaravelFCM\Message\PayloadNotificationBuilder;
 use Exception;
 use Log;
 
+/**
+ * Trait SendPushNotification
+ *
+ * Handles Firebase Cloud Messaging (FCM) push notifications including:
+ * - Configuring FCM server and sender IDs
+ * - Building notification payloads and options
+ * - Sending push notifications to user devices
+ * - Tracking notification delivery status
+ *
+ * @package App\Traits
+ */
 trait SendPushNotification
 
 {
    /**
-    * Store a newly created for user details in storage.
-    * @param array $data
-    * @return array
+    * Send a Firebase Cloud Messaging (FCM) push notification.
+    *
+    * Sends a push notification to a user's device(s) using FCM with
+    * customizable title, message, and data payload.
+    *
+    * @param array $array The notification array containing 'type' and 'message'
+    * @param string $usertoken The device token to send the notification to
+    *
+    * @return object The FCM downstreamResponse object with delivery status
     */
-
-   public function sendNotification($array,$usertoken)
-   {
+   public function sendNotification(array $array, string $usertoken): object {
     try {
 
         config(['fcm.http.server_key' => env('FCM_SERVER_KEY')]);
@@ -42,17 +57,17 @@ trait SendPushNotification
         {
           return $downstreamResponse;
         }
-        else 
+        else
         {
           return $downstreamResponse;
         }
-      
-      } 
+
+      }
       catch (Exception $e) {
 
          Log::info($e->getMessage());
-        
+
      }
-      
+
   }
 }

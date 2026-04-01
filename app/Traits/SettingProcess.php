@@ -5,22 +5,38 @@ use App\Models\Setting;
 use Exception;
 use Log;
 
+/**
+ * Trait SettingProcess
+ *
+ * Manages application settings and configuration including:
+ * - Updating setting values by key
+ * - Persisting configuration changes to database
+ * - Retrieving and modifying application settings
+ *
+ * @package App\Traits
+ */
 trait SettingProcess
 {
-    public function updatesettings($key,$value)
-    {
-    	try
-    	{
-	        $setting = Setting::where('key',$key)->first();
-	        $setting->value = $value;
-	        $setting->save();
+    /**
+     * Update an application setting.
+     *
+     * Updates the value of a setting identified by its key and persists
+     * the change to the database.
+     *
+     * @param string $key The setting key/identifier
+     * @param string $value The new setting value
+     *
+     * @return \App\Models\Setting|null The updated setting model, or null on failure
+     */
+    public function updatesettings(string $key, string $value): ?object {
+        try {
+            $setting = Setting::where('key', $key)->first();
+            $setting->value = $value;
+            $setting->save();
 
-	        return $setting;
-	    }
-	    catch(Exception $e)
-	    {
+            return $setting;
+        } catch (Exception $e) {
             Log::info($e->getMessage());
-	    	//dd($e->getMessage());
-	    }
-	}
-}
+            return null;
+        }
+    }

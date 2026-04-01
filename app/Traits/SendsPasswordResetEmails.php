@@ -7,6 +7,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Trait SendsPasswordResetEmails
+ *
+ * Handles password reset email delivery including:
+ * - Displaying password reset request forms
+ * - Validating email addresses
+ * - Sending password reset links via email
+ * - Providing response messages for reset status
+ *
+ * @package app\Traits
+ */
 trait SendsPasswordResetEmails
 {
     /**
@@ -44,9 +55,10 @@ trait SendsPasswordResetEmails
     /**
      * Validate the email for the given request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return void
      */
+    protected function validateEmail(Request $request): void
     protected function validateEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
