@@ -9,7 +9,6 @@ use App\Http\Resources\API\Help as HelpResource;
 use App\Http\Requests\HelpAddRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Helpers\SiteHelper;
 use App\Models\Church;
 use App\Models\Help;
@@ -17,6 +16,14 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * HelpsController
+ *
+ * Delivers help/support content via API.
+ * Returns approved help articles and support information.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class HelpsController extends Controller
 {
     /**
@@ -52,7 +59,7 @@ class HelpsController extends Controller
             $help->description      = $request->description;
             $help->contact_details  = $request->contact_details;
             $help->status           = "pending";
-            
+
             $help->save();
 
              $array = [];
@@ -69,8 +76,8 @@ class HelpsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     /**
@@ -107,7 +114,7 @@ class HelpsController extends Controller
                 $help->status           = "close";
                 $help->expired_at       = Carbon::now();
                 $help->closed_by        = Auth::id();
-                
+
                 $help->save();
 
                 $res['message']='Help Request Closed Successfully';
@@ -121,7 +128,7 @@ class HelpsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

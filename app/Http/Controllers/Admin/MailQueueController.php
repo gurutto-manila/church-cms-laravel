@@ -6,13 +6,23 @@ use App\Http\Resources\MailQueue as MailQueueResource;
 use App\Http\Requests\MailQueueRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Traits\LogActivity;
 use App\Models\MailQueue;
 use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * MailQueueController
+ *
+ * Manages the email queue for asynchronous email delivery.
+ * Handles email queue monitoring, status tracking, and manual queue management.
+ * Tracks email delivery status and handles failed email reprocessing.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for recording queue operations
+ * @uses Common Trait for helper functions
+ */
 class MailQueueController extends Controller
 {
     use LogActivity;
@@ -31,20 +41,20 @@ class MailQueueController extends Controller
     public function list()
     {
         $mailqueue = MailQueue::ByChurch(Auth::user()->church_id)->orderby('id','desc')->get();
-         
+
         $mailqueue= MailQueueResource::collection($mailqueue);
-               
+
         return $mailqueue;
     }
 
-    public function edit( $id ) 
+    public function edit( $id )
     {
         $mailqueue = MailQueue::where('id', $id)->first();
 
         return view('/admin/mailqueue/edit',['mailqueue' => $mailqueue]);
     }
 
-    public function update(MailQueueRequest $request, $id) 
+    public function update(MailQueueRequest $request, $id)
     {
         try {
 
@@ -66,7 +76,7 @@ class MailQueueController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
+        }
         catch( Exception $e )
         {
             Log::info($e->getMessage());
@@ -74,17 +84,17 @@ class MailQueueController extends Controller
         }
     }
 
-    public function show($id) 
+    public function show($id)
     {
         $mailqueue = MailQueue::where('id', $id)->first();
 
         return view('/admin/mailqueue/show',['mailqueue' => $mailqueue]);
     }
 
-    public function destroy($id) 
+    public function destroy($id)
     {
         //
-        try 
+        try
         {
             $mailqueue = MailQueue::where('id', $id)->first();
 
@@ -103,11 +113,11 @@ class MailQueueController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

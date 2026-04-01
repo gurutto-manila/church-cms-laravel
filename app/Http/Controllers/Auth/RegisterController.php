@@ -28,6 +28,17 @@ use App\Models\Church;
 use App\Models\State;
 use App\Models\Country;
 use App\Models\Plan;
+
+/**
+ * RegisterController
+ *
+ * Manages user registration process and church account creation.
+ * Handles multi-step registration with email verification and recaptcha validation.
+ * Creates churchadmin users and manages subscription plans during registration.
+ *
+ * @package App\Http\Controllers\Auth
+ */
+class RegisterController extends Controller
 use App\Models\City;
 use App\Models\User;
 use Carbon\Carbon;
@@ -71,7 +82,7 @@ class RegisterController extends Controller
         $state = StateResource::collection($state);
         $city = City::get();
         $city = CityResource::collection($city)->groupby('state_id');
-        $country =Country::where('status',1)->get();     
+        $country =Country::where('status',1)->get();
         $countrylist =CountryResource::collection($country)->keyBy('short_name');
 
         $array = [];
@@ -79,8 +90,8 @@ class RegisterController extends Controller
         $array['statelist'] = $state;
         $array['citylist']  = $city;
         $array['countrylist']  = $countrylist;
- 
-         
+
+
         return $array;
     }
 
@@ -151,7 +162,7 @@ class RegisterController extends Controller
 
             $user->save();
 
-            $userprofile = new Userprofile; 
+            $userprofile = new Userprofile;
 
             $userprofile->user_id           = $user->id;
             $userprofile->church_id         = $church->id;
@@ -164,7 +175,7 @@ class RegisterController extends Controller
             $userprofile->updated_at        = Carbon::now();
 
             $userprofile->save();
-            
+
             $subscription = new Subscription;
 
             $subscription->church_id     =  $church->id;
@@ -193,7 +204,7 @@ class RegisterController extends Controller
             {
                 Mail::to($user->email)->queue(new EmailVerification($user));
             }
-            
+
             \DB::commit();
 
             return $user;
@@ -202,7 +213,7 @@ class RegisterController extends Controller
         {
             \DB::rollBack();
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -244,7 +255,7 @@ class RegisterController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 

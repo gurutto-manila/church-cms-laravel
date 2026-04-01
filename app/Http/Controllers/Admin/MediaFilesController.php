@@ -12,6 +12,17 @@ use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * MediaFilesController
+ *
+ * Manages media file uploads and document storage.
+ * Handles file upload, categorization by media type, and file management.
+ * Supports document and media file organization.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for file utilities
+ */
 class MediaFilesController extends Controller
 {
     use LogActivity;
@@ -37,7 +48,7 @@ class MediaFilesController extends Controller
 
         $files = MediaFileResource::collection($files);
 
-        return $files;    
+        return $files;
     }
 
     /**
@@ -87,7 +98,7 @@ class MediaFilesController extends Controller
             'media_type'    =>  $file->media_type,
             'type'          =>  $file->type,
             'url'           =>  $url,
-        ];    
+        ];
     }
 
     /**
@@ -120,7 +131,7 @@ class MediaFilesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

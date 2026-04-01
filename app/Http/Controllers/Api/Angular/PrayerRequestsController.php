@@ -31,7 +31,7 @@ class PrayerRequestsController extends Controller
     public function store($slug,Request $request)
     {
     	try{
-    		//dd($request);
+
 	    	$church = Church::where('slug','=',$slug)->first();
 	    	$path = '';
 	    	$user = $this->createGuest($request,$church->id,$path,5);

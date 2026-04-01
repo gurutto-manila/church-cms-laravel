@@ -25,6 +25,18 @@ use App\Models\Quote;
 use Exception;
 use Log;
 
+/**
+ * QuotesController
+ *
+ * Manages inspirational quotes and daily devotionals for the church.
+ * Handles quote creation, scheduling, updates, and Bible verse associations.
+ * Supports quote publishing by date and multi-language (English/Tamil) scripture references.
+ * Integrates with push notifications for daily quote delivery.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class QuotesController extends Controller
 {
     //
@@ -43,7 +55,7 @@ class QuotesController extends Controller
         $today = date('Y-m-d H:i:s');
 
         if($type != '')
-        {   
+        {
             if($type == 'upcoming')
             {
                 $quotes = $quotes->where('publish_on','>',$today);
@@ -109,7 +121,7 @@ class QuotesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -136,7 +148,7 @@ class QuotesController extends Controller
                     $quote->image = $this->uploadFile(Auth::user()->church_id.'/quotes',$image);
                 }
             }
-            elseif ($request->tab == 'text') 
+            elseif ($request->tab == 'text')
             {
                 $quote->text    = $request->text;
             }
@@ -166,7 +178,7 @@ class QuotesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -256,7 +268,7 @@ class QuotesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -286,7 +298,7 @@ class QuotesController extends Controller
                     $quote->image = $quote->image;
                 }
             }
-            elseif ($request->tab == 'text') 
+            elseif ($request->tab == 'text')
             {
                 $quote->text    = $request->text;
             }
@@ -316,7 +328,7 @@ class QuotesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -362,7 +374,7 @@ class QuotesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -382,7 +394,7 @@ class QuotesController extends Controller
             {
                 $quote->delete();
 
-                $message = 'Quote Deleted Successfully'; 
+                $message = 'Quote Deleted Successfully';
 
                 $ip= $this->getRequestIP();
                 $this->doActivityLog(
@@ -403,7 +415,7 @@ class QuotesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -413,10 +425,10 @@ class QuotesController extends Controller
             $tamilVerse = BibleBook::select('book_id','tamil_book','chapter_count')->get();
             $bible = BibleTamilResource::collection($tamilVerse);
         }else{
-            $englishVerse = BibleBook::select('book_id','english_book','chapter_count')->get(); 
+            $englishVerse = BibleBook::select('book_id','english_book','chapter_count')->get();
             $bible = BibleEnglishResource::collection($englishVerse);
         }
-    
+
         return $bible;
     }
 
@@ -427,7 +439,7 @@ class QuotesController extends Controller
         if(!empty($chapterCount)){
             $chapter_count = $chapterCount->chapter_count;
             $verse['chapter_count'] = $chapter_count;
-            for ($i=1; $i <= $chapter_count; $i++) { 
+            for ($i=1; $i <= $chapter_count; $i++) {
                 $chapter_id = $i;
                 if($type=='tamil'){
                     $tamilVerse = BibleVerse::select('id','tamil_verse','book_id','chapter_id','verse_id')->where('chapter_id',$chapter_id)->where('book_id',$book_id)->get();
@@ -440,7 +452,7 @@ class QuotesController extends Controller
                  $verse[$chapter_id] = $bibleVerse;
             }
         }
-         
+
         return $verse;
     }
 }

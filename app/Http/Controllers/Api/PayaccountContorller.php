@@ -6,15 +6,22 @@ use App\Http\Resources\API\PaymentgatewayResource;
 use App\Http\Resources\Payment\PayaccountResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Models\Paymentgateway;
 use App\Models\Payaccount;
 use Exception;
 use Log;
 
+/**
+ * PayaccountContorller
+ *
+ * Manages payment account information and payment methods via API.
+ * Returns available payment gateways and payment account details.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class PayaccountContorller extends Controller
 {
-    
+
     public function getlist()
     {
 
@@ -24,7 +31,7 @@ class PayaccountContorller extends Controller
          $paymentgateways=Paymentgateway::get();
          $paymentgateways=PaymentgatewayResource::collection($paymentgateways);
           return $paymentgateways;
-    
+
     }
 
     public function showdetails($gateway_id)

@@ -23,6 +23,17 @@ use SplFileObject;
 use Exception;
 use Excel;
 
+/**
+ * ReportsController
+ *
+ * Handles generation and retrieval of various church reports and analytics.
+ * Manages member statistics, message history, subscription reports, and data exports.
+ * Provides reporting functionality for church administrators to track metrics and trends.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for activity tracking
+ * @uses Common Trait for utility functions
+ */
 class ReportsController extends Controller
 {
     use LogActivity;
@@ -41,7 +52,7 @@ class ReportsController extends Controller
 
         return view("/admin/reports/messages",['reports'=>$reports , 'subject' => $subject]);
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -55,7 +66,7 @@ class ReportsController extends Controller
         {
             $plan = Plan::where('id',$subscription->plan_id)->get();
         }
-         
+
         return view("/admin/reports/index",['subscriptions'=>$subscription , 'plan'=>$plan]);
     }
 
@@ -70,7 +81,7 @@ class ReportsController extends Controller
         $start  = date("Y-m-d",strtotime($request->from_date));
         $end    = date("Y-m-d",strtotime($request->to_date));
 
-        $subscription = Subscription::where('church_id',Auth::user()->church_id)->Date($start,$end)->get(); 
+        $subscription = Subscription::where('church_id',Auth::user()->church_id)->Date($start,$end)->get();
 
         return view('/admin/reports/filter',['subscriptions'=>$subscription]);
     }
@@ -84,7 +95,7 @@ class ReportsController extends Controller
     public function show($id)
     {
         //
-        $subscription = Subscription::where('id',$id)->first(); 
+        $subscription = Subscription::where('id',$id)->first();
         if(Gate::allows('subscription',$subscription))
         {
             return view("/admin/reports/show",['subscriptions'=>$subscription]);
@@ -92,12 +103,12 @@ class ReportsController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     public function exportBirthday()
     {
-        /*$users = User::with('userprofile')->where('church_id',Auth::user()->church_id)->ByRole(5)->get(); 
+        /*$users = User::with('userprofile')->where('church_id',Auth::user()->church_id)->ByRole(5)->get();
         $response = Response::make($users, 200);
         // using this will allow you to do some checks on it (if pdf/docx/doc/xls/xlsx)
         $response->header('Content-Type', 'application/pdf');
@@ -108,30 +119,29 @@ class ReportsController extends Controller
         Excel::store(new UsersExport, $path);
         $path_send = '<a href="{{ url($path) }}">';
         \Session::put('path', url($path));
-        //dd(\Session::get('path'));
+
         return back();*/
         /*try
         {
-            $users = User::with('userprofile')->where('church_id',Auth::user()->church_id)->ByRole(5)->get(); 
+            $users = User::with('userprofile')->where('church_id',Auth::user()->church_id)->ByRole(5)->get();
 
-            $file= \Storage::url('uploads/export/export'.date('_d-m-Y_H_i_s').'.csv'); dd($file);
-            $file_open = fopen($file, 'w'); dd($file_open);
-            $ex = fputcsv($file_open, $users); 
+            $file= \Storage::url('uploads/export/export'.date('_d-m-Y_H_i_s').'.csv');
+            $file_open = fopen($file, 'w');
+            $ex = fputcsv($file_open, $users);
             $successpath=$file;
         }
         catch(Exception $e)
         {
-            dd($e->getMessage());
         }*/
         $users = User::with('userprofile')->where('church_id',Auth::user()->church_id)->ByRole(5)->get();
         $csv = Writer::createFromFileObject(new \SplTempFileObject());
 
         if(count($users) > 0)
-        {   
+        {
             $csv->insertOne(['firstname','lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email']);
-      
+
             foreach($users as $user)
-            { 
+            {
                 $csv->insertOne([
                     $user->userprofile->firstname,
                     $user->userprofile->lastname,
@@ -171,15 +181,15 @@ class ReportsController extends Controller
 
     public function exportAnniversary()
     {
-        $userprofiles = Userprofile::with('user')->where([['church_id',Auth::user()->church_id],['marriage_status','married']])->ByRole(5)->get();  
+        $userprofiles = Userprofile::with('user')->where([['church_id',Auth::user()->church_id],['marriage_status','married']])->ByRole(5)->get();
         $csv = Writer::createFromFileObject(new \SplTempFileObject());
 
         if(count($userprofiles) > 0)
-        {   
+        {
             $csv->insertOne(['firstname','lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email','marriage_status','marriage_start_date']);
-      
+
             foreach($userprofiles as $userprofile)
-            { 
+            {
                 $csv->insertOne([
                     $userprofile->firstname,
                     $userprofile->lastname,
@@ -221,15 +231,15 @@ class ReportsController extends Controller
 
     public function exportActiveMembers()
     {
-        $userprofiles = Userprofile::with('user')->where([['church_id',Auth::user()->church_id],['membership_type','member']])->ByRole(5)->get();  
+        $userprofiles = Userprofile::with('user')->where([['church_id',Auth::user()->church_id],['membership_type','member']])->ByRole(5)->get();
         $csv = Writer::createFromFileObject(new \SplTempFileObject());
 
         if(count($userprofiles) > 0)
-        {   
+        {
             $csv->insertOne(['ref_name','name','firstname','lastname','birth_firstname','birth_lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email','membership_type','membership_start_date','family','marriage_status','marriage_start_date','relation','notes','avatar','status','payment_status','payment_done_on','subscription_end_date','amount','plan_name','plan_cycle(in days)']);
-      
+
             foreach($userprofiles as $userprofile)
-            { 
+            {
                 $payment_date = $userprofile->user->subscription['0']['payment_details']['addedon']=="" ? null:date('d-m-Y',strtotime($userprofile->user->subscription['0']['payment_details']['addedon']));
                 $ref_user = User::where('id',$userprofile->user->ref_id)->first();
                 $csv->insertOne([
@@ -238,7 +248,7 @@ class ReportsController extends Controller
                     $userprofile->firstname,
                     $userprofile->lastname,
                     $userprofile->birth_firstname,
-                    $userprofile->birth_lastname, 
+                    $userprofile->birth_lastname,
                     $userprofile->gender,
                     date('d-m-Y',strtotime($userprofile->date_of_birth)),
                     $userprofile->profession,
@@ -290,15 +300,15 @@ class ReportsController extends Controller
 
     public function exportGuestMembers()
     {
-        $userprofiles = Userprofile::with('user')->where([['church_id',Auth::user()->church_id],['membership_type','guest']])->ByRole(5)->get();  
+        $userprofiles = Userprofile::with('user')->where([['church_id',Auth::user()->church_id],['membership_type','guest']])->ByRole(5)->get();
         $csv = Writer::createFromFileObject(new \SplTempFileObject());
 
         if(count($userprofiles) > 0)
-        {   
+        {
             $csv->insertOne(['ref_name','name','firstname','lastname','birth_firstname','birth_lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email','membership_type','membership_start_date','family','marriage_status','marriage_start_date','relation','notes','avatar','status']);
-      
+
             foreach($userprofiles as $userprofile)
-            { 
+            {
                 $ref_user = User::where('id',$userprofile->user->ref_id)->first();
                 $csv->insertOne([
                     $ref_user->FullName,
@@ -306,7 +316,7 @@ class ReportsController extends Controller
                     $userprofile->firstname,
                     $userprofile->lastname,
                     $userprofile->birth_firstname,
-                    $userprofile->birth_lastname, 
+                    $userprofile->birth_lastname,
                     $userprofile->gender,
                     date('d-m-Y',strtotime($userprofile->date_of_birth)),
                     $userprofile->profession,
@@ -352,15 +362,15 @@ class ReportsController extends Controller
 
     public function exportSuspendedMembers()
     {
-        $userprofiles = Userprofile::with('user')->where([['church_id',Auth::user()->church_id],['status','inactive']])->ByRole(5)->get();  
+        $userprofiles = Userprofile::with('user')->where([['church_id',Auth::user()->church_id],['status','inactive']])->ByRole(5)->get();
         $csv = Writer::createFromFileObject(new \SplTempFileObject());
 
         if(count($userprofiles) > 0)
-        {   
+        {
             $csv->insertOne(['ref_name','name','firstname','lastname','birth_firstname','birth_lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email','membership_type','membership_start_date','family','marriage_status','marriage_start_date','relation','notes','avatar','status']);
-      
+
             foreach($userprofiles as $userprofile)
-            { 
+            {
                 $ref_user = User::where('id',$userprofile->user->ref_id)->first();
                 $csv->insertOne([
                     $ref_user->FullName,
@@ -368,7 +378,7 @@ class ReportsController extends Controller
                     $userprofile->firstname,
                     $userprofile->lastname,
                     $userprofile->birth_firstname,
-                    $userprofile->birth_lastname, 
+                    $userprofile->birth_lastname,
                     $userprofile->gender,
                     date('d-m-Y',strtotime($userprofile->date_of_birth)),
                     $userprofile->profession,

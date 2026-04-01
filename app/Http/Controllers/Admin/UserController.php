@@ -23,6 +23,20 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * UserController
+ *
+ * Manages user and member account operations.
+ * Handles user creation, updates, deletion, password resets, and member group management.
+ * Supports user verification, group linking, and member process workflows.
+ * Integrates with UserRepository for data access patterns.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses ResetPasswordProcess Trait for password reset functionality
+ * @uses MemberProcess Trait for member management workflows
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class UserController extends Controller
 {
     use ResetPasswordProcess;
@@ -68,7 +82,7 @@ class UserController extends Controller
 
     public function index()
     {
-        //dd($this->user->getUser('gibson.chet')->first());
+
         $count    = User::ByRole(5)->ByChurch(Auth::user()->church_id)->ByStatus('active')->ByMembershipType('member')->count();
         $alphabet = request('alphabet')?request('alphabet'):'';
         $query    = \Request::getQueryString();
@@ -94,11 +108,11 @@ class UserController extends Controller
         {
             //$user = User::where('name',$name)->first();
             $user = $this->user->getUser($name)->first();
-            //dd($user);
+
             $userprofile = Userprofile::where('user_id',$user->id)->first();
 
             $userprofile->status = $request->status;
-        
+
             $userprofile->save();
 
             $message = 'Member Status Updated Successfully';
@@ -110,7 +124,7 @@ class UserController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_MEMBER_STATUS,
                 $message
-            ); 
+            );
 
             return $message;
            // \Session::put('successmessage','Member Status Updated Successfully');
@@ -119,7 +133,6 @@ class UserController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            dd($e->getMessage());
         }
     }
 
@@ -142,18 +155,18 @@ class UserController extends Controller
                     LOGNAME_RESET_PASSWORD,
                     $message
                 );
-                return redirect()->back(); 
+                return redirect()->back();
             }
             else
             {
                 abort(403);
-            } 
+            }
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }  
+
+        }
     }
 
     public function emailVerification($id)
@@ -168,8 +181,8 @@ class UserController extends Controller
                     event(new VerificationMailEvent($user));
                     \Session::put('successmessage','Verification code sent Successfully');
                 }
-            
-                $message=('Email Verification code'); 
+
+                $message=('Email Verification code');
 
                 $ip= $this->getRequestIP();
                 $this->doActivityLog(
@@ -180,18 +193,18 @@ class UserController extends Controller
                     $message
                 );
 
-                \Session::put('failmessage','You cannot send message'); 
+                \Session::put('failmessage','You cannot send message');
                 return redirect()->back();
             }
             else
             {
                 abort(403);
-            } 
+            }
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -229,14 +242,14 @@ class UserController extends Controller
         {
             $user = User::where('name',$name)->first();
             $userprofile = Userprofile::where('id',$user->id)->first();
-            
+
             $userprofile->membership_end_date = array(
-                'address'   =>  $request->address, 
-                'country'   =>  $request->country_id, 
-                'state'     =>  $request->state_id, 
-                'city'      =>  $request->city_id, 
-                'pincode'   =>  $request->pincode, 
-                'comments'  =>  $request->comments, 
+                'address'   =>  $request->address,
+                'country'   =>  $request->country_id,
+                'state'     =>  $request->state_id,
+                'city'      =>  $request->city_id,
+                'pincode'   =>  $request->pincode,
+                'comments'  =>  $request->comments,
                 'date'      =>  Carbon::now()->format('Y-m-d H:i:s')
             );
             $userprofile->status = "exit";
@@ -263,7 +276,7 @@ class UserController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EXIT_MEMBER,
                 $message
-            ); 
+            );
 
             //\Session::put('successmessage','Member Exited Successfully');
             //return redirect()->back();
@@ -275,8 +288,8 @@ class UserController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     /**
@@ -305,14 +318,14 @@ class UserController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_DELETE_MEMBER,
                 $message
-            ); 
+            );
             \Session::put('successmessage',$message);
             return redirect('/admin/members');
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

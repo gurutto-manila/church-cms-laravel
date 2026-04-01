@@ -6,6 +6,15 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 
+/**
+ * ActivityLogController
+ *
+ * Displays system-wide activity logs for siteadmin users.
+ * Shows paginated audit trail of all user system interactions.
+ * Provides comprehensive view of activities across the entire system.
+ *
+ * @package App\Http\Controllers\Siteadmin
+ */
 class ActivityLogController extends Controller
 {
     /**
@@ -16,10 +25,10 @@ class ActivityLogController extends Controller
     public function index()
     {
         $activitylog = ActivityLog::orderby('id','desc')->with('user')->paginate(10);
-       
+
         return view('site_admin.activity_log.show',[
                         'activitylog'=>$activitylog,
-                      
+
             ]);
     }
 

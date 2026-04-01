@@ -29,6 +29,21 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * EventsController
+ *
+ * Manages church events and activities with comprehensive event tracking.
+ * Handles event creation, updates, attendance tracking, reminders, and push notifications.
+ * Supports recurring events, event galleries, and subscription-based features.
+ * Integrates with calendar system, attendance tracking, and member notifications.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses SendPushNotification Trait for mobile push notifications
+ * @uses ReminderProcess Trait for event reminder scheduling
+ * @uses EventProcess Trait for event business logic
+ * @uses LogActivity Trait for audit trail
+ * @uses Common Trait for file and utility helpers
+ */
 class EventsController extends Controller
 {
     use SendPushNotification;
@@ -44,12 +59,12 @@ class EventsController extends Controller
         $subscription = Subscription::where('church_id',Auth::user()->church_id)->first();
 
         $events = $events->map(function( $event, $key) {
-            $eventData = [ 
+            $eventData = [
                 'id'        =>  $event->id,
-                'title'     =>  $event->title, 
+                'title'     =>  $event->title,
                 'start'     =>  date('Y-m-d', strtotime($event->start_date)).'T'.date('H:i:s', strtotime($event->start_date)),
                 'end'       =>  date('Y-m-d', strtotime($event->end_date)).'T'.date('H:i:s', strtotime($event->end_date)),
-                'allDay'    =>  $event->allDay 
+                'allDay'    =>  $event->allDay
             ];
             return $eventData;
         });
@@ -80,7 +95,7 @@ class EventsController extends Controller
             $events->organised_by   = $request->organised_by;
             $events->start_date     = date('Y-m-d H:i:s',strtotime($request->start_date));
             $events->end_date       = date('Y-m-d H:i:s',strtotime($request->end_date));
-         
+
             $events->save();
 
             $executed_at  =  date('Y-m-d', strtotime('-2 days', strtotime($events->start_date)));
@@ -105,9 +120,9 @@ class EventsController extends Controller
             $array['details']='New Event created';
 
             event(new PushNotificationEvent($array));
-       
+
             $message=('Events Added Successfully');
-           
+
             $ip= $this->getRequestIP();
             $this->doActivityLog(
                 $events,
@@ -115,15 +130,15 @@ class EventsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_EVENT,
                 $message
-            ); 
+            );
             $res['success']=$message;
-            return $res;  
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }        
+
+        }
     }
 
     /**
@@ -134,7 +149,7 @@ class EventsController extends Controller
         $event = Events::where('id',$id)->get();
         $event = EditEventResource::collection($event);
 
-        return $event;  
+        return $event;
     }
 
     public function validateedit(EventUpdateRequest $request)
@@ -148,7 +163,7 @@ class EventsController extends Controller
      * @return $this|\Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
-    {   
+    {
         try
         {
             $events = Events::where('id',$id)->first();
@@ -157,7 +172,7 @@ class EventsController extends Controller
             {
                 $file = $request->file('image');
                 $path = $this->uploadFile('uploads/admin/event/image',$file);
-                $events->image = $path;  
+                $events->image = $path;
             }
             else
             {
@@ -174,8 +189,8 @@ class EventsController extends Controller
             $events->organised_by= $request->organised_by;
             $events->start_date  = date('Y-m-d H:i:s',strtotime($request->start_date));
             $events->end_date    = date('Y-m-d H:i:s',strtotime($request->end_date));
-               
-            $events->save();    
+
+            $events->save();
 
 
             $data=[];
@@ -184,7 +199,7 @@ class EventsController extends Controller
             $data['message']='Event updated';
             $data['type']='event';
 
-            event(new PushEvent($data));   
+            event(new PushEvent($data));
 
             $message=('Events Updated Successfully');
             $ip= $this->getRequestIP();
@@ -202,7 +217,7 @@ class EventsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -226,7 +241,7 @@ class EventsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -239,7 +254,7 @@ class EventsController extends Controller
             $event->delete();
 
             $message=('Events Deleted Successfully');
-       
+
             $ip= $this->getRequestIP();
             $this->doActivityLog(
                 $event,
@@ -254,7 +269,7 @@ class EventsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -338,7 +353,7 @@ class EventsController extends Controller
     }
 
     public function showimage($event_id)
-    {  
+    {
         $event = EventGallery::where([['event_id',$event_id],['church_id',Auth::user()->church_id]])->get();
         $event = ShowEventGalleryResource::collection($event);
 
@@ -374,7 +389,7 @@ class EventsController extends Controller
         {
             abort(403);
         }
-    } 
+    }
 
     public function showAttendees($id,$status)
     {
@@ -393,10 +408,10 @@ class EventsController extends Controller
             ['category',$event->category],
             ['date',date('Y-m-d H:i:s',strtotime($event->start_date))],
             ['is_present',$is_present]
-        ])->get(); 
+        ])->get();
 
         $attendance = AttendanceResource::collection($attendance);
 
         return $attendance;
-    } 
+    }
 }

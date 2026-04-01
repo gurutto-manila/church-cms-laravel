@@ -12,6 +12,16 @@ use Twilio\Jwt\Grants\VideoGrant;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\VideoConferenceRequest;
 use App\Http\Controllers\Controller;
+
+/**
+ * VideoConferencesController
+ *
+ * Manages video conference rooms and meetings for member usage.
+ * Integrates with Twilio for video conference functionality.
+ * Handles video conference creation, updates, and participant management.
+ *
+ * @package App\Http\Controllers\Member
+ */
 class VideoConferencesController extends Controller
 {
 
@@ -72,7 +82,7 @@ class VideoConferencesController extends Controller
                 return redirect('member/video-conference')->with('error', 'No records found.');
             }
         }
-        
+
         $roomName = $conference->slug;
         $identity = Auth::user()->name;
 

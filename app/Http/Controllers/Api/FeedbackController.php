@@ -17,6 +17,15 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * FeedbackController
+ *
+ * Collects user feedback and support requests via API.
+ * Handles feedback submission, tracking, and message threading.
+ *
+ * @package App\Http\Controllers\Api
+ * @uses Common Trait for helper functions
+ */
 class FeedbackController extends Controller
 {
     use Common;
@@ -32,7 +41,7 @@ class FeedbackController extends Controller
         $feedback = Feedback::where('user_id',$user->id)->get();
 
         $feedback = FeedbackResource::collection($feedback);
-        
+
         return $feedback;
     }
 
@@ -56,7 +65,7 @@ class FeedbackController extends Controller
         {
             $user = User::where('id',Auth::id())->first();
             $admin = User::where('church_id',$user->church_id)->ByRole(3)->first();
-            
+
             $feedback = new Feedback;
 
             $feedback->church_id = Auth::user()->church_id;
@@ -78,10 +87,10 @@ class FeedbackController extends Controller
                 if(count($files) > 0)
                 {
                     $path = [];
-                    foreach($files as $file) 
+                    foreach($files as $file)
                     {
                         $path[$i] = $this->uploadFile(Auth::user()->church_id.'/feedbacks/'.$feedback->id,$file);
-                        $i++;     
+                        $i++;
                     }
                     $feedbackMessage->file = $path;
                 }
@@ -111,7 +120,7 @@ class FeedbackController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

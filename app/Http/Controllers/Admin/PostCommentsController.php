@@ -8,7 +8,6 @@ use App\Http\Requests\PostCommentAddRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Traits\LogActivity;
 use App\Helpers\SiteHelper;
 use App\Models\PostComment;
@@ -18,6 +17,18 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * PostCommentsController
+ *
+ * Manages comments on user-generated posts.
+ * Handles comment creation, updates, deletion, and moderation.
+ * Supports nested comment replies and comment-level interactions.
+ * Integrates with post interaction tracking and audit logging.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PostCommentsController extends Controller
 {
     use LogActivity;
@@ -42,8 +53,8 @@ class PostCommentsController extends Controller
             $post_reply->entity_name= 'App\Models\Post';
             $post_reply->comments   = $request->comments;
             $file = $request->attachment;
-            
-            if($file != null) 
+
+            if($file != null)
             {
                 $path = $this->uploadFile(Auth::user()->school_id.'/posts/'.$post_id.'/comments',$file);
             }
@@ -81,7 +92,7 @@ class PostCommentsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_COMMENT,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -89,7 +100,7 @@ class PostCommentsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -105,7 +116,7 @@ class PostCommentsController extends Controller
         $post_reply = PostComment::where('id',$comment_id)->first();
 
         $array = [];
-            
+
         $array['id']                = $post_reply->id;
         $array['comments']          = $post_reply->comments;
         $array['attachment_file']   = $post_reply->attachment_file == null ? '':$post_reply->AttachmentPath;
@@ -128,8 +139,8 @@ class PostCommentsController extends Controller
 
             $post_reply->comments = $request->edit_comments;
             $file = $request->attachment_file;
-            
-            if($file != null) 
+
+            if($file != null)
             {
                 $path = $this->uploadFile(Auth::user()->school_id.'/posts/'.$post_id.'/comments',$file);
             }
@@ -171,7 +182,7 @@ class PostCommentsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_COMMENT,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -179,7 +190,7 @@ class PostCommentsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -223,7 +234,7 @@ class PostCommentsController extends Controller
 
                     event(new SingleNotificationEvent($data));
                 }*/
-                
+
                 $ip= $this->getRequestIP();
                 $this->doActivityLog(
                     $post_reply,
@@ -243,7 +254,7 @@ class PostCommentsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

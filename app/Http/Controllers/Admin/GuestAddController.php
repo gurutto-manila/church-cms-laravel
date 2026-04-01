@@ -18,10 +18,22 @@ use Carbon\Carbon;
 use Exception;
 use Cache;
 
+/**
+ * GuestAddController
+ *
+ * Handles guest/visitor registration in the church system.
+ * Manages creation of new guest accounts with verification and subscription checks.
+ * Validates guest data and integrates with user registration process.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses RegisterUser Trait for user registration logic
+ * @uses LogActivity Trait for activity tracking
+ * @uses Common Trait for utility functions
+ */
 class GuestAddController extends Controller
 {
     //
-    use RegisterUser; 
+    use RegisterUser;
     use LogActivity;
     use Common;
 
@@ -55,7 +67,7 @@ class GuestAddController extends Controller
         $array['occupationlist']    =   SiteHelper::getOccupationList();
         $array['maritalstatuslist'] =   SiteHelper::getMaritalStatusList();
         $array['relationlist']      =   SiteHelper::getRelationList();
-        
+
         return response()->json($array);
     }
 
@@ -87,14 +99,14 @@ class GuestAddController extends Controller
             if($file)
             {
                 $folder = $church_id.'/guest/avatar';
-                $path   = $this->uploadFile($folder,$file); 
+                $path   = $this->uploadFile($folder,$file);
             }
             else
             {
                 $path = '';
             }
             $user = $this->createGuest($request , $church_id , $path , 5);
-            
+
             //Forgot cache Dashboard
             $guest_count = 'guestCount'.$church_id;
             $maleGuestCount = 'maleGuestCount'.$church_id;
@@ -119,14 +131,14 @@ class GuestAddController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_GUEST,
                 $message
-            ); 
+            );
 
             return redirect()->back()->with('successmessage',$message);
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

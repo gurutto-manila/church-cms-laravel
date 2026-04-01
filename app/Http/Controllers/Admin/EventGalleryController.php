@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -22,6 +21,17 @@ class EventGalleryController extends Controller
 
     use Common;
      use LogActivity;
+/**
+ * EventGalleryController
+ *
+ * Manages photo galleries associated with specific events.
+ * Handles event-specific gallery creation, photo uploads, and deletion.
+ * Supports file storage management and gallery organization.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses Common Trait for file utilities
+ * @uses LogActivity Trait for audit logging
+ */
     /**
      * Display a listing of the resource.
      *
@@ -52,12 +62,12 @@ class EventGalleryController extends Controller
      */
     public function store(EventGalleryRequest $request,$event_id)//EventGallery
     {
-      try 
+      try
       {
         if(count($request->data)!=null)
         {
-          for ($i=0;$i<count($request->data);$i++) 
-          { 
+          for ($i=0;$i<count($request->data);$i++)
+          {
             $image_parts    = explode(";base64,",$request->data[$i]['path']);
             $image_type_aux = explode("image/",$image_parts[0]);
             $image_type     = $image_type_aux[1];
@@ -65,11 +75,11 @@ class EventGalleryController extends Controller
             $church_id      = Auth::user()->church_id;
             $location        = Auth::user()->church_id.'/photos/events';
             //$location_path   = public_path().'/'.$location;
-                
+
             $file            =  uniqid() .'.png';
 
             $db_path=$location.$file;
-            /*if( ! File::isDirectory($location_path)) 
+            /*if( ! File::isDirectory($location_path))
             {
               File::makeDirectory($location_path,0777, true);
             }
@@ -85,11 +95,11 @@ class EventGalleryController extends Controller
               'created_by' => Auth::id(),
               'updated_by' => Auth::id(),
             ];
-            $photo = EventGallery::create($create); 
+            $photo = EventGallery::create($create);
           }
 
           $message=('Events photos added Successfully');
-           
+
           $ip= $this->getRequestIP();
           $this->doActivityLog(
             $photo,
@@ -97,7 +107,7 @@ class EventGalleryController extends Controller
             ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
             LOGNAME_EVENT_PHOTO,
             $message
-          ); 
+          );
 
           $res['message']="Uploaded Successfully";
           return $res;
@@ -107,12 +117,12 @@ class EventGalleryController extends Controller
           $res['count']="Select Atleast One";
           return $res;
         }
-      }  
-      catch (Exception $e) 
+      }
+      catch (Exception $e)
       {
             Log::info($e->getMessage());
-        //dd($e->getMessage());
-      }       
+
+      }
     }
     /**
      * Display the specified resource.
@@ -121,12 +131,12 @@ class EventGalleryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($event_id)
-    {      
+    {
         $event = EventGallery::where([['event_id',$event_id],['church_id',Auth::user()->church_id]])->get();
 
         return $event;
     }
-     
+
     /**
      * Remove the specified resource from storage.
      *
@@ -159,7 +169,7 @@ class EventGalleryController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

@@ -3,8 +3,16 @@
 namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * HomeController
+ *
+ * Displays the member dashboard and home page.
+ * Only accessible to authenticated members with 'auth' middleware.
+ * Provides home interface and navigation for member area.
+ *
+ * @package App\Http\Controllers\Member
+ */
 class HomeController extends Controller
 {
     /**

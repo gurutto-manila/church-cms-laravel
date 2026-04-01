@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use App\Events\SermonLinkEvent;
 use App\Models\Subscription;
-use Illuminate\Http\Request;
 use App\Mail\SermonLinkMail;
 use App\Traits\LogActivity;
 use App\Models\SermonLink;
@@ -18,6 +17,17 @@ use App\Models\Sermon;
 use App\Traits\Common;
 use Exception;
 use Response;
+
+/**
+ * SermonLinkController
+ *
+ * Manages external links and resources associated with sermons by preachers.
+ * Handles CRUD operations for sermon links with authorization checks.
+ * Triggers events and sends notifications on sermon link activities.
+ *
+ * @package App\Http\Controllers\Preacher
+ */
+class SermonLinkController extends Controller
 use Log;
 
 class SermonLinkController extends Controller
@@ -75,7 +85,7 @@ class SermonLinkController extends Controller
                 $path = $this->uploadFile('/uploads/sermons/documents'.'/'.Auth::user()->church_id,$file);
                 $sermon->url=$path;
             }
-        
+
             $sermon->save();
             if(env('MAIL_STATUS') == 'on')
             {
@@ -93,13 +103,13 @@ class SermonLinkController extends Controller
             );
 
             $res['success']=$message;
-            return $res; 
+            return $res;
         }
         catch (Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     public function getDownload(Request $request,$id)
@@ -111,7 +121,7 @@ class SermonLinkController extends Controller
         {
             $path=public_path('/'.$sermon->url);
             $file=pathinfo($path);
-  
+
             $extension = $file['extension'];
 
             $headers = [
@@ -130,7 +140,7 @@ class SermonLinkController extends Controller
     {
         $sermon=SermonLink::where('id',$id)->get();
         $sermon = EditSermonLinkResource::collection($sermon);
-        
+
         return $sermon;
     }
 
@@ -138,7 +148,7 @@ class SermonLinkController extends Controller
     {
         //
     }
-  
+
     public function update(SermonLinkUpdateRequest $request, $id)
     {
         try
@@ -158,7 +168,7 @@ class SermonLinkController extends Controller
             {
                 $links->url=$request->url;
             }
-            $links->save();       
+            $links->save();
 
             $message = "Series Updated Successfully";
             $ip= $this->getRequestIP();
@@ -176,13 +186,13 @@ class SermonLinkController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
     public function destroy($id)
     {
-        try 
+        try
         {
             $sermon = SermonLink::findOrFail($id);
             $sermon->delete();
@@ -198,11 +208,11 @@ class SermonLinkController extends Controller
             );
 
             return redirect()->back()->with(['successmessage' => 'Sermonlink deleted']);
-        } 
-        catch (Exception $e) 
+        }
+        catch (Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

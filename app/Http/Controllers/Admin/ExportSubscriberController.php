@@ -15,6 +15,17 @@ use Exception;
 use Excel;
 use DB;
 
+/**
+ * ExportSubscriberController
+ *
+ * Handles subscriber data export functionality.
+ * Provides CSV export of mailing list subscribers for data management.
+ * Supports bulk export of subscriber information and list backup.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class ExportSubscriberController extends Controller
 {
     use LogActivity;
@@ -35,7 +46,7 @@ class ExportSubscriberController extends Controller
         if(count($subscribers) > 0)
         {
             $csv->insertOne(['firstname','lastname','email','aff','source',]);
-          
+
             foreach($subscribers as $subscriber)
             {
                 $csv->insertOne([
@@ -63,6 +74,6 @@ class ExportSubscriberController extends Controller
             LOGNAME_EXPORT_SUBSCRIBER,
             $message
         );
-        //\Session::put('successmessage','Member Exported Successfully'); 
+        //\Session::put('successmessage','Member Exported Successfully');
     }
 }

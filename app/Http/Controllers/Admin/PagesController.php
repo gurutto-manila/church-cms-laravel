@@ -18,6 +18,18 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * PagesController
+ *
+ * Manages static and dynamic content pages for the church website.
+ * Handles page CRUD operations, page categorization, content publishing, and page detail tracking.
+ * Supports page attachments for media content and interaction tracking via PageDetail model.
+ * Implements role-based access control for page management.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for file and path utilities
+ */
 class PagesController extends Controller
 {
     use LogActivity;
@@ -87,7 +99,7 @@ class PagesController extends Controller
             {
                 $folder =   $church_id.'/pages';
                 $path   =   $this->uploadFile($folder,$file);
-                $page->cover_image = $path; 
+                $page->cover_image = $path;
             }
 
             $page->save();
@@ -101,7 +113,7 @@ class PagesController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_PAGE,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -109,7 +121,7 @@ class PagesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -118,24 +130,24 @@ class PagesController extends Controller
         if($request->hasFile('file')) {
             //get filename with extension
             $filenamewithextension = $request->file('file')->getClientOriginalName();
-      
+
             //get filename without extension
             $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
-      
+
             //get file extension
             $extension = $request->file('file')->getClientOriginalExtension();
-      
+
             //filename to store
             $filenametostore = $filename.'_'.time().'.'.$extension;
-      
+
             //Upload File
-            $file =  $request->file('file'); 
+            $file =  $request->file('file');
 
             $pathName = $this->uploadFile('uploads/trix',$file);
-      
+
             // you can save image path below in database
             $path = asset($pathName);
-     
+
             echo $path;exit;
         }
     }
@@ -247,7 +259,7 @@ class PagesController extends Controller
             {
                 $folder =   $church_id.'/pages';
                 $path   =   $this->uploadFile($folder,$file);
-                $page->cover_image = $path; 
+                $page->cover_image = $path;
             }
 
             $page->save();
@@ -261,7 +273,7 @@ class PagesController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_PAGE,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -269,7 +281,7 @@ class PagesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -311,7 +323,7 @@ class PagesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

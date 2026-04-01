@@ -21,6 +21,19 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * SendMessageController
+ *
+ * Handles sending messages and SMS communications to church members.
+ * Supports bulk message sending with SMS and email integration.
+ * Manages message scheduling and multi-recipient notification delivery.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses SendMessageProcess Trait for message processing
+ * @uses LogActivity Trait for audit logging
+ * @uses SmsProcess Trait for SMS functionality
+ * @uses Common Trait for helper functions
+ */
 class SendMessageController extends Controller
 {
     use SendMessageProcess;
@@ -39,7 +52,7 @@ class SendMessageController extends Controller
         $messages = SendMail::where([['church_id',Auth::user()->church_id],['entity_id',null],['entity_name',null]])->orderBy('executed_at','desc');
 
         if($request->mode!= '')
-        { 
+        {
             $messages = $messages->where('mode',$request->mode);
         }
 
@@ -71,7 +84,7 @@ class SendMessageController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     /**
@@ -84,17 +97,17 @@ class SendMessageController extends Controller
     {
         //
         try
-        {    
+        {
             $user = User::where('name',$name)->first();
             $this->sendMessage($request , Auth::user()->church_id , Auth::user()->email , $user , Auth::user());
 
             $res['success'] = 'Message Sent Successfully';
-            return $res;  
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -116,14 +129,14 @@ class SendMessageController extends Controller
             $datas=(object)$data;
            // dd($datas);
             event (new SendMessageAllEvent ($datas , Auth::user()->church_id , Auth::user()->email , Auth::user() ) );
-                  
+
             $res['message'] = 'Message Sent Successfully';
             return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

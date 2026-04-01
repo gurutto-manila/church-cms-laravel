@@ -3,8 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * ApkController
+ *
+ * Manages APK file download and mobile app distribution.
+ * Provides version information and download endpoints for mobile application.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class ApkController extends Controller
 {
     /**
@@ -21,7 +28,7 @@ class ApkController extends Controller
                 "versioncode"=> 7,
                 "appname"=> "ChurchCMS"
                 ];
-        
+
         return $array;
 
     }

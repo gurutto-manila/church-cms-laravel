@@ -28,14 +28,14 @@ class FundController extends Controller
             $fund->church_id        = $request->church_id;
 
             $array =[];
-            
+
             $fund->membership       = 'guest';
 
             $array['first_name']    = $request->first_name;
             $array['last_name']     = $request->last_name;
             $array['address']       = $request->address;
             $array['mobile_number'] = $request->mobile_number;
-                
+
             $fund->data             = $array;
             $fund->amount           = $request->amount;
             $fund->payaccount_id    = $request->payaccount_id;
@@ -52,7 +52,7 @@ class FundController extends Controller
              $array['details']  = 'New Fund Request Received';
 
              event(new SingleNotificationEvent($array));
-          
+
             $ip= $this->getRequestIP();
             $this->doActivityLog(
                 $fund,
@@ -60,20 +60,19 @@ class FundController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_FUND,
                 $message
-            ); 
-            
+            );
+
             $res['success']=$message;
 
              return response()->json([
                 'status'    =>  true,
                 'message'   =>  $message,
-            ], 200); 
-            //return $res;  
+            ], 200);
+            //return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            dd($e->getMessage());
-        }           
+        }
     }
 }

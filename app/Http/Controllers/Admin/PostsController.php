@@ -17,6 +17,21 @@ use App\Models\Post;
 use Exception;
 use Log;
 
+/**
+ * PostsController
+ *
+ * Manages user-generated posts and content within the church community.
+ * Handles posting, viewing, filtering by entity type, and post interactions (likes/comments).
+ * Integrates with activity logging for audit trail, post comments, and tags.
+ * Supports polymorphic content association (posts can be attached to various entity types).
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for recording action audit logs
+ * @uses Common Trait for file path utilities
+ * @see PostComment Model for nested comment functionality
+ * @see PostDetail Model for post interaction tracking
+ * @see PostTag Model for content tagging
+ */
 class PostsController extends Controller
 {
     use LogActivity;
@@ -34,11 +49,11 @@ class PostsController extends Controller
         if(count(\Request::getQueryString())>0)
         {
             if($request->entity_id != '')
-            { 
+            {
                 $posts = $posts->where('entity_id',$request->entity_id);
             }
             if($request->entity_name != '')
-            { 
+            {
                 $posts = $posts->where('entity_name',$request->entity_name);
             }
         }
@@ -85,7 +100,7 @@ class PostsController extends Controller
         {
             $visibility = $post->StandardLink->StandardSection;
         }
-        
+
         $array = [];
 
         $array['id']                = $post->id;
@@ -113,12 +128,12 @@ class PostsController extends Controller
      public function imageList($id)
     {
         //
-        $post = Post::where('id',$id)->first();      
-        
+        $post = Post::where('id',$id)->first();
+
         $array = [];
 
         $array['attachments']       = $post->ImagePath;
-       
+
 
         return $array;
     }
@@ -157,16 +172,16 @@ class PostsController extends Controller
                     $post->save();
 
                     $postdetails = PostDetail::where('post_id',$id)->get();
-                    foreach ($postdetails as $postdetail) 
+                    foreach ($postdetails as $postdetail)
                     {
                         $postdetail->delete();
                     }
-                    
+
                     $comments = PostComment::where([['entity_name','App\Models\Post'],['entity_id',$id]])->get();
-                    foreach ($comments as $comment) 
+                    foreach ($comments as $comment)
                     {
                         $replycomments = PostComment::where([['entity_name','App\Models\PostComment'],['entity_id',$comment->id]])->get();
-                        foreach ($replycomments as $replycomment) 
+                        foreach ($replycomments as $replycomment)
                         {
                             $replycomment->delete();
                         }
@@ -174,7 +189,7 @@ class PostsController extends Controller
                     }
 
                     $posttags = PostTag::where('post_id',$id)->get();
-                    foreach ($posttags as $posttag) 
+                    foreach ($posttags as $posttag)
                     {
                         $posttag->delete();
                     }
@@ -207,7 +222,7 @@ class PostsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

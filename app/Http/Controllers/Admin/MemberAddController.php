@@ -19,10 +19,23 @@ use Exception;
 use Log;
 use Cache;
 
+/**
+ * MemberAddController
+ *
+ * Handles member/congregation registration in the church system.
+ * Manages creation of new member accounts with verification and subscription checks.
+ * Validates member data and integrates with user registration process.
+ * Supports family relationships and member categorization.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses RegisterUser Trait for user registration logic
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class MemberAddController extends Controller
 {
     //
-    use RegisterUser; 
+    use RegisterUser;
     use LogActivity;
     use Common;
 
@@ -59,7 +72,7 @@ class MemberAddController extends Controller
         $array['occupationlist']    =   SiteHelper::getOccupationList();
         $array['maritalstatuslist'] =   SiteHelper::getMaritalStatusList();
         $array['relationlist']      =   SiteHelper::getRelationList();
-        
+
         return response()->json($array);
     }
 
@@ -91,7 +104,7 @@ class MemberAddController extends Controller
             if($file)
             {
                 $folder = $church_id.'/member/avatar';
-                $path   = $this->uploadFile($folder,$file); 
+                $path   = $this->uploadFile($folder,$file);
             }
             else
             {
@@ -99,10 +112,9 @@ class MemberAddController extends Controller
             }
 
             $request->request->set('membership_type', "member");
-            //dd($request->all());
 
             $user = $this->CreateUser($request , $church_id , $path , 5);
-            
+
             //Forgot cache Dashboard
             $member = 'memberCount'.$church_id;
             $male_member = 'maleMemberCount'.$church_id;
@@ -127,14 +139,14 @@ class MemberAddController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_MEMBER,
                 $message
-            ); 
+            );
 
             return redirect()->back()->with('successmessage','Member Added Successfully');
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

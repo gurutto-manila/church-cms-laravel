@@ -16,6 +16,18 @@ use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * MailinglistController
+ *
+ * Manages email mailing lists for church communication.
+ * Handles mailing list creation, subscriber management, and list-to-campaign associations.
+ * Supports linking mailing lists to events and managing subscriber relationships.
+ * Integrates with campaigns and newsletter distribution.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class MailinglistController extends Controller
 {
 
@@ -24,25 +36,25 @@ class MailinglistController extends Controller
 
     public function index()
     {
-        return view('/admin/mailinglist/index');  
+        return view('/admin/mailinglist/index');
     }
 
     public function list()
-    {       
+    {
         $mailinglists = MailingList::where('church_id',Auth::user()->church_id)->get();
-              
-        return MailinglistResource::collection($mailinglists);     
+
+        return MailinglistResource::collection($mailinglists);
     }
 
     public function create()
-    { 
-        return view('/admin/mailinglist/create'); 
+    {
+        return view('/admin/mailinglist/create');
     }
 
     public function store(MailingListRequest $request)
     {
         try
-        {   
+        {
             $mailinglist = new MailingList;
 
             $mailinglist->church_id    = Auth::user()->church_id;
@@ -62,15 +74,15 @@ class MailinglistController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_MAILINGLIST,
                 $message
-            ); 
-           
+            );
+
             $res['success'] = $message;
             return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -88,16 +100,16 @@ class MailinglistController extends Controller
     }
 
     public function edit($id)
-    { 
+    {
         $mailinglist = MailingList::where('id',$id)->first();
 
-        return view('/admin/mailinglist/edit',['mailinglist' => $mailinglist]); 
+        return view('/admin/mailinglist/edit',['mailinglist' => $mailinglist]);
     }
 
     public function update(Request $request,$id)//mailinglistUpdate
     {
         try
-        {	
+        {
         	$mailinglist = MailingList::where('id',$id)->first();
 
             $mailinglist->name          = $request->name;
@@ -116,7 +128,7 @@ class MailinglistController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_MAILINGLIST,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -124,7 +136,7 @@ class MailinglistController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -135,7 +147,7 @@ class MailinglistController extends Controller
         $maillistsubscriber=MailinglistSubscriber::where('mailing_list_id',$id)->pluck('subscribers_id')->toArray();
 
         $subscribers=Subscribers::whereIn('id',$maillistsubscriber)->paginate(5);
-        
+
         if($_SERVER['HTTP_REFERER'] != null)
         {
             $prev_url = $_SERVER['HTTP_REFERER'];
@@ -151,7 +163,7 @@ class MailinglistController extends Controller
     public function view($id)
     {
         $mailinglist = MailingList::where('id','!=',$id)->get();
-         
+
         $mailinglist= MailinglistResource::collection($mailinglist);
 
         return $mailinglist;
@@ -171,7 +183,7 @@ class MailinglistController extends Controller
             $mailinglist = MailingList::where('id',$id)->first();
 
             $mailinglist->delete();
-                
+
             $message = 'Mailinglist Deleted Successfully';
 
             $ip= $this->getRequestIP();
@@ -189,13 +201,13 @@ class MailinglistController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
-    public function detachsubscriber($subscriber_id,$mailinglist_id) 
+    public function detachsubscriber($subscriber_id,$mailinglist_id)
     {
-        try 
+        try
         {
             $maillistsubscriber = MailinglistSubscriber::where('subscribers_id',$subscriber_id)->where('mailing_list_id',$mailinglist_id)->first();
 
@@ -214,11 +226,11 @@ class MailinglistController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch( Exception $e ) 
+        }
+        catch( Exception $e )
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

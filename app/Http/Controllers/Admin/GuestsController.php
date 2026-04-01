@@ -22,6 +22,19 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * GuestsController
+ *
+ * Manages guest/visitor listing and search within the admin panel.
+ * Displays all guests with filtering, searching, and pagination functionality.
+ * Integrates with member processes and password reset capabilities.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses ResetPasswordProcess Trait for password reset functionality
+ * @uses MemberProcess Trait for member processing
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class GuestsController extends Controller
 {
     use ResetPasswordProcess;
@@ -94,7 +107,7 @@ class GuestsController extends Controller
             $userprofile = Userprofile::where('id',$user->id)->first();
 
             $userprofile->status = $request->status;
-        
+
             $userprofile->save();
 
             $message = 'Guest Status Updated Successfully';
@@ -106,14 +119,14 @@ class GuestsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_MEMBER_STATUS,
                 $message
-            ); 
+            );
             \Session::put('successmessage','Guest Status Updated Successfully');
             return redirect()->back();
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage()); 
+
         }
     }
 
@@ -136,18 +149,18 @@ class GuestsController extends Controller
                     LOGNAME_RESET_PASSWORD,
                     $message
                 );
-                return redirect()->back(); 
+                return redirect()->back();
             }
             else
             {
                 abort(403);
-            } 
+            }
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }  
+
+        }
     }
 
     public function emailVerification($id)
@@ -162,8 +175,8 @@ class GuestsController extends Controller
                     event(new VerificationMailEvent($user));
                     \Session::put('successmessage','Verification code sent Successfully');
                 }
-            
-                $message=('Email Verification code'); 
+
+                $message=('Email Verification code');
 
                 $ip= $this->getRequestIP();
                 $this->doActivityLog(
@@ -174,18 +187,18 @@ class GuestsController extends Controller
                     $message
                 );
 
-                \Session::put('failmessage','You cannot send message'); 
+                \Session::put('failmessage','You cannot send message');
                 return redirect()->back();
             }
             else
             {
                 abort(403);
-            } 
+            }
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -223,14 +236,14 @@ class GuestsController extends Controller
         {
             $user = User::where('name',$name)->first();
             $userprofile = Userprofile::where('id',$user->id)->first();
-            
+
             $userprofile->membership_end_date = array(
-                'address'   =>  $request->address, 
-                'country'   =>  $request->country_id, 
-                'state'     =>  $request->state_id, 
-                'city'      =>  $request->city_id, 
-                'pincode'   =>  $request->pincode, 
-                'comments'  =>  $request->comments, 
+                'address'   =>  $request->address,
+                'country'   =>  $request->country_id,
+                'state'     =>  $request->state_id,
+                'city'      =>  $request->city_id,
+                'pincode'   =>  $request->pincode,
+                'comments'  =>  $request->comments,
                 'date'      =>  Carbon::now()->format('Y-m-d H:i:s')
             );
             $userprofile->status = "exit";
@@ -257,7 +270,7 @@ class GuestsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EXIT_MEMBER,
                 $message
-            ); 
+            );
 
             //\Session::put('successmessage','Member Exited Successfully');
             //return redirect()->back();
@@ -269,8 +282,8 @@ class GuestsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     /**
@@ -299,14 +312,14 @@ class GuestsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_DELETE_MEMBER,
                 $message
-            ); 
+            );
             \Session::put('successmessage',$message);
             return redirect('/admin/guests');
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

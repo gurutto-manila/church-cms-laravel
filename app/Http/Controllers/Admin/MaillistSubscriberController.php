@@ -13,12 +13,23 @@ use App\Traits\Common;
 use Exception;
 use Log;
 
-class MaillistSubscriberController extends Controller 
+/**
+ * MaillistSubscriberController
+ *
+ * Manages subscriber associations with mailing lists.
+ * Handles attaching and detaching subscribers from specific mailing lists.
+ * Supports bulk subscriber list management and mailing list subscriptions.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
+class MaillistSubscriberController extends Controller
 {
     use LogActivity;
     use Common;
 
-    public function create($id) 
+    public function create($id)
     {
         if($_SERVER['HTTP_REFERER'] != null)
         {
@@ -28,7 +39,7 @@ class MaillistSubscriberController extends Controller
         {
             $prev_url = url('/admin/subscriber/show/'.$id);
         }
-        
+
         return view('/admin/subscriber/attachmaillist',['subscriber_id' => $id , 'prev_url' => $prev_url]);
     }
 
@@ -56,11 +67,11 @@ class MaillistSubscriberController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

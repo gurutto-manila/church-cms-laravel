@@ -19,12 +19,24 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * GroupLinksController
+ *
+ * Manages group member associations and permissions.
+ * Handles linking users to groups with role-based permissions.
+ * Supports group-based access control and member management.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses EventProcess Trait for event processing
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class GroupLinksController extends Controller
 {
     use EventProcess;
     use LogActivity;
     use Common;
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -50,7 +62,7 @@ class GroupLinksController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     /**
@@ -69,7 +81,7 @@ class GroupLinksController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     /**
@@ -97,7 +109,7 @@ class GroupLinksController extends Controller
                 $grouplink->save();
 
                 $user = User::where([['church_id',$grouplink->church_id],['id',$grouplink->user_id]])->first();
-                
+
                 $user->attachPermissions($request->permissions);
                 if( count($request->permissions) > 0 )
                 {
@@ -125,12 +137,12 @@ class GroupLinksController extends Controller
                     );
 
                 $res['success']="Member Added Successfully";
-                return $res; 
+                return $res;
             }
             catch(Exception $e)
             {
                 Log::info($e->getMessage());
-               //dd($e->getMessage());
+
             }
         }
         else
@@ -159,7 +171,7 @@ class GroupLinksController extends Controller
         else
         {
             abort(403);
-        }  
+        }
     }
 
     /**
@@ -181,7 +193,7 @@ class GroupLinksController extends Controller
             {
                 $permissionUser->delete();
             }
-           
+
             $user->attachPermissions($request->permissions);
 
             $message=('Member Permissions Updated Successfully');
@@ -194,13 +206,13 @@ class GroupLinksController extends Controller
                     LOGNAME_UPDATE_MEMBER_PERMISSION,
                     $message
                     );
-            
+
             return redirect()->back()->with(['successmessage' => 'Member Permissions Updated Successfully']);
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -234,18 +246,18 @@ class GroupLinksController extends Controller
                         LOGNAME_REMOVE_GROUP_MEMBER,
                         $message
                     );
-                
+
                 return redirect()->back()->with(['successmessage' => 'Member removed from Group Successfully']);
             }
             else
             {
                 abort(403);
-            }  
+            }
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

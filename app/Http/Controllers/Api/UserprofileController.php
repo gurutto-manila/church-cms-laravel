@@ -31,7 +31,7 @@ class UserprofileController extends Controller
         $country = Country::where('status','1')->get();
         $country = CountryResource::collection($country);
 
-        return $country; 
+        return $country;
     }
 
     /**
@@ -82,7 +82,7 @@ class UserprofileController extends Controller
 
         return response()->json([
                         'status'            => 'success',
-                        'data'              => $marriage_status, 
+                        'data'              => $marriage_status,
                     ], 200);
 
 
@@ -100,22 +100,22 @@ class UserprofileController extends Controller
         //
         try
         {
-            //dd($request->all());
+
             //$user = User::where('id',Auth::user()->id)->get();
             $userprofile = Userprofile::where([['user_id',$id],['church_id',Auth::user()->church_id]])->first();
-            
+
             if($request->hasFile('avatar'))
             {
               $file = $request->file('avatar');
-              $path = \Storage::putFile('uploads/admin/member/avatar',$file); 
+              $path = \Storage::putFile('uploads/admin/member/avatar',$file);
               $userprofile->avatar = $path;
-              //dd($path);  
+
             }
             else
             {
                 $userprofile->avatar = $userprofile->avatar;
             }
-            
+
             $userprofile->firstname             = $request->firstname;
             $userprofile->lastname              = $request->lastname;
             $userprofile->birth_firstname       = $request->birth_firstname;
@@ -136,12 +136,12 @@ class UserprofileController extends Controller
             $userprofile->marriage_status       = $request->marriage_status;
             $userprofile->marriage_start_date   = $request->marriage_start_date;
             $userprofile->notes                 = $request->notes;
-            
+
             $userprofile->save();
 
              return response()->json([
                         'status'            => 'success',
-                        'message'           => 'User Details Updated Successfully', 
+                        'message'           => 'User Details Updated Successfully',
                     ], 200);
 
         }
@@ -149,7 +149,6 @@ class UserprofileController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            dd($e->getMessage());
-        } 
+        }
     }
 }

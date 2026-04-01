@@ -21,31 +21,43 @@ use SplFileObject;
 use Exception;
 use Log;
 
-class SubscribersController extends Controller 
+/**
+ * SubscribersController
+ *
+ * Manages newsletter subscribers and email distribution lists.
+ * Handles subscriber addition, updates, deletion, and bulk import/export operations.
+ * Supports CSV file uploads for bulk subscriber management and mailing list associations.
+ * Integrates with email queue and campaign management systems.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for file utilities
+ */
+class SubscribersController extends Controller
 {
     use LogActivity;
     use Common;
 
-    public function index() 
+    public function index()
     {
         return view('/admin/subscriber/index');
     }
 
-    public function list() 
+    public function list()
     {
         $subscribers = Subscribers::where('church_id', Auth::user()->church_id)->get();
 
         return SubscribersResource::collection($subscribers);
     }
 
-    public function create() 
+    public function create()
     {
         return view('/admin/subscriber/create');
     }
 
     public function store(SubscriberAddRequest $request)
     {
-        try 
+        try
         {
             $subscriber = new Subscribers;
 
@@ -72,24 +84,24 @@ class SubscribersController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
-    public function edit($id) 
+    public function edit($id)
     {
         $subscriber = Subscribers::where('id', $id)->first();
 
         return view('/admin/subscriber/edit', ['subscriber' => $subscriber]);
     }
 
-    public function update(SubscriberUpdateRequest $request, $id) 
+    public function update(SubscriberUpdateRequest $request, $id)
     {
-        try 
+        try
         {
             $subscriber = Subscribers::where( 'id', $id )->first();
 
@@ -115,22 +127,22 @@ class SubscribersController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
-    public function show($id) 
+    public function show($id)
     {
         $subscriber = Subscribers::where( [['id', $id], ['church_id', Auth::user()->church_id]] )->first();
 
         $mailinglistSubscriber=MailinglistSubscriber::where('subscribers_id',$id)->pluck('mailing_list_id')->toArray();
 
         $maillists=MailingList::whereIn('id',$mailinglistSubscriber)->get();
-        
+
         if($_SERVER['HTTP_REFERER'] != null)
         {
             $prev_url = $_SERVER['HTTP_REFERER'];
@@ -143,7 +155,7 @@ class SubscribersController extends Controller
         return view('/admin/subscriber/show',['subscriber' => $subscriber , 'maillists' => $maillists , 'prev_url' => $prev_url]);
     }
 
-    public function showDetails($id) 
+    public function showDetails($id)
     {
         $subscriber = Subscribers::where('id', $id)->first();
 
@@ -156,7 +168,7 @@ class SubscribersController extends Controller
         $array['aff']               =  $subscriber->aff;
         $array['source']            =  $subscriber->source;
         $array['is_active']         =  $subscriber->is_active;
-        $array['attach_to_list']    =  $subscriber->mailinglist[0]['name'];              
+        $array['attach_to_list']    =  $subscriber->mailinglist[0]['name'];
 
         return $array;
     }
@@ -167,10 +179,10 @@ class SubscribersController extends Controller
     * @param  int  $id
     * @return \Illuminate\Http\Response
     */
-    public function destroy($id) 
+    public function destroy($id)
     {
         //
-        try 
+        try
         {
             $subscriber = Subscribers::where( 'id', $id )->first();
 
@@ -189,11 +201,11 @@ class SubscribersController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -204,7 +216,7 @@ class SubscribersController extends Controller
     }
 
     public function downloadFormat(Request $request)
-    {      
+    {
         try
         {
             $csv = Writer::createFromFileObject(new \SplTempFileObject());
@@ -221,7 +233,7 @@ class SubscribersController extends Controller
             ]);
 
             $csv->output('Subscriber Format'.date('_d-m-Y_H:i').'.csv');
-       
+
             $message = 'Downloaded Sample Format File Successfully';
 
             $ip= $this->getRequestIP();
@@ -236,7 +248,7 @@ class SubscribersController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -264,14 +276,14 @@ class SubscribersController extends Controller
             else
             {
                 return back()->with('failmessage','No Subscribers Imported');
-            } 
+            }
             $request->session()->forget('insertedcount');
             //\Session::forget('subscriberCount');
         }
         catch(Exception $e)
-        { 
+        {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

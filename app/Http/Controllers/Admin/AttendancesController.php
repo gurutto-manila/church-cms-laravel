@@ -18,6 +18,17 @@ use Exception;
 use Excel;
 use Log;
 
+/**
+ * AttendancesController
+ *
+ * Handles event attendance tracking and member check-ins.
+ * Manages attendance records, summary reports, and bulk attendance imports.
+ * Supports CSV export and attendance management for church events.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for attendance logging
+ * @uses Common Trait for utility functions
+ */
 class AttendancesController extends Controller
 {
     use LogActivity;
@@ -86,7 +97,7 @@ class AttendancesController extends Controller
                     LOGNAME_IMPORT_EVENT_SUMMARY,
                     $message
                 );
-                   
+
                 return back()->with('successmessage',$insertedcount.' Records Imported Successfully');
             }
             else
@@ -95,9 +106,9 @@ class AttendancesController extends Controller
             }
         }
         catch(Exception $e)
-        {            
+        {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -135,7 +146,7 @@ class AttendancesController extends Controller
 
     public function saveAttendance(ImportMemberRequest $request,$event_id)
     {
-        //dd($event_id);
+
         //
         try
         {
@@ -153,7 +164,7 @@ class AttendancesController extends Controller
                     LOGNAME_IMPORT_EVENT_SUMMARY,
                     $message
                 );
-                \Session::forget('insertedcount');   
+                \Session::forget('insertedcount');
                 return back()->with('successmessage',$insertedcount.' Records Imported Successfully');
             }
             else
@@ -162,9 +173,8 @@ class AttendancesController extends Controller
             }
         }
         catch(Exception $e)
-        {            
+        {
             Log::info($e->getMessage());
-            dd($e->getMessage());
         }
     }
 }

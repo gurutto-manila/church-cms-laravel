@@ -21,6 +21,16 @@ use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 class BotmanMasterController extends Controller
 {
+/**
+ * BotmanMasterController
+ *
+ * Manages chatbot configuration and AI conversational features.
+ * Integrates with BotMan framework for building conversational chatbot flows.
+ * Handles chatbot setup, message routing, tag management, and natural language processing.
+ * Supports Google Cloud Language API and Google Cloud Storage integration.
+ *
+ * @package App\Http\Controllers\Admin
+ */
     /**
      * Display a listing of the resource.
      *
@@ -92,7 +102,7 @@ class BotmanMasterController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(BotmanMaster $botmanMaster)
-    {   
+    {
 
     }
 
@@ -183,7 +193,7 @@ class BotmanMasterController extends Controller
     }
 
     public function remove(Request $request, $id) {
-        
+
         BotmanMaster::where('id',$id)->delete();
         BotmanTag::where('master_id',$id)->delete();
 
@@ -249,7 +259,7 @@ class BotmanMasterController extends Controller
                 $bot->reply($replies);
                 $this->saveMsg($userId,$messages,$replies);
                 $bot->reply($urlRegister);
-             } 
+             }
         });
 
         $botman->hears('new_account', function(BotMan $bot)  use ($messages) {
@@ -265,9 +275,9 @@ class BotmanMasterController extends Controller
          if(!empty($getFirst)){
             $default = strtolower($getFirst);
             $request->message = $default;
-            $bots = BotmanTag::where('name', $default)->whereIn('master_id',$active)->get();   
+            $bots = BotmanTag::where('name', $default)->whereIn('master_id',$active)->get();
          }else{
-            $bots = BotmanTag::whereIn('master_id',$active)->get(); 
+            $bots = BotmanTag::whereIn('master_id',$active)->get();
          }
 
 
@@ -278,7 +288,7 @@ class BotmanMasterController extends Controller
                     $bot->typesAndWaits(1);
                     $reply = BotmanMaster::find($value['master_id']);
                     if(!empty($reply)){
-                        $replies = $reply['answers'];    
+                        $replies = $reply['answers'];
                     }else{
                         $replies = 'Sorry, I did not understand these commands.';
                     }
@@ -294,8 +304,8 @@ class BotmanMasterController extends Controller
             $replies = 'Sorry, I did not understand these commands.';
             $bot->reply($replies);
             $this->saveMsg($userId,$messages,$replies);
-        }); 
-        
+        });
+
         // Start listening
         $botman->listen();
     }
@@ -314,7 +324,7 @@ class BotmanMasterController extends Controller
     public function nativeGoogle(Request $request){
 
         putenv('GOOGLE_APPLICATION_CREDENTIALS='.public_path().'/ChurchApp-e2ee8d452932.json');
-        
+
         $message = $request->message;
         $entitiesArray = array();
         $byTag = array();
@@ -341,7 +351,7 @@ class BotmanMasterController extends Controller
             $errorMessage = $exception->getMessage();
             $status = false;
         }
-        
+
         $result =  array('status' => $status, 'entities'=> $entitiesArray, 'tags' => $byTag, 'error' => $errorMessage);
 
         return json_encode($result);

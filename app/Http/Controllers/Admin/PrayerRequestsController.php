@@ -24,12 +24,25 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * PrayerRequestsController
+ *
+ * Manages community prayer requests and updates.
+ * Handles prayer request submission, status tracking, prayer responses, and notification events.
+ * Supports audio/multimedia attachments for prayer requests.
+ * Integrates with push notifications and prayer event system for community engagement.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses EventProcess Trait for event-related processing
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PrayerRequestsController extends Controller
 {
     use EventProcess;
     use LogActivity;
     use Common;
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -56,7 +69,7 @@ class PrayerRequestsController extends Controller
 
         $prayers = PrayerRequestResource::collection($prayers);
 
-        return $prayers;    
+        return $prayers;
     }
 
     /**
@@ -114,7 +127,7 @@ class PrayerRequestsController extends Controller
             if($request->file != '')
             {
                 $filename= date('Y-m-dHis').'.'.$request->encoding;
-                $path = $this->putContentsByFilename($folder,$request->file,$filename);   
+                $path = $this->putContentsByFilename($folder,$request->file,$filename);
             }
             elseif($request->audio != '')
             {
@@ -149,7 +162,7 @@ class PrayerRequestsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -176,7 +189,7 @@ class PrayerRequestsController extends Controller
     public function showResponse($id)
     {
         //
-        $responses = PrayerResponse::where([['church_id',Auth::user()->church_id],['prayer_id',$id]])->get(); 
+        $responses = PrayerResponse::where([['church_id',Auth::user()->church_id],['prayer_id',$id]])->get();
         $count = count($responses);
         $responses = PrayerResponseResource::collection($responses);
 
@@ -204,7 +217,7 @@ class PrayerRequestsController extends Controller
             return $array;
         }
         else
-        { 
+        {
             abort(403);
         }
     }
@@ -225,7 +238,7 @@ class PrayerRequestsController extends Controller
             return view('/admin/prayerrequest/edit',['prayer'=>$prayer]);
         }
         else
-        { 
+        {
             abort(403);
         }
     }
@@ -303,7 +316,7 @@ class PrayerRequestsController extends Controller
 
                 $array['church_id']         = Auth::user()->church_id;
                 $array['user_id']           = $prayer->user_id;
-                $array['details']           = 'New Prayer Request created';  
+                $array['details']           = 'New Prayer Request created';
 
                 event(new PrayerNotificationEvent($array));
             }
@@ -340,7 +353,7 @@ class PrayerRequestsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

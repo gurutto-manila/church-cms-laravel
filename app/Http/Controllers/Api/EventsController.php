@@ -9,6 +9,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Events;
 use Carbon\Carbon;
 
+/**
+ * EventsController
+ *
+ * Provides event listings and detailed event information via API.
+ * Returns upcoming and past events with filtering by date range.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class EventsController extends Controller
 {
 
@@ -34,7 +42,7 @@ class EventsController extends Controller
     {
         $event = Events::where([['church_id',Auth::user()->church_id],['id',$id]])->get();
         $event= ShowEventResource::collection($event);
-        
+
         return $event;
     }
 }

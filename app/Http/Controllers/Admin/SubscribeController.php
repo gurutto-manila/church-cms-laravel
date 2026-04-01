@@ -17,18 +17,29 @@ use App\Events\SubscriberConfirmEvent;
 use App\Traits\EmailQueueProcess;
 use Log;
 
+/**
+ * SubscribeController
+ *
+ * Handles newsletter subscriber subscription management.
+ * Allows users to subscribe to specific mailing lists.
+ * Manages subscriber confirmation and email queue processing.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses SubscriberProcess Trait for subscriber management
+ * @uses EmailQueueProcess Trait for email queuing
+ */
 class SubscribeController extends Controller
 {
   use SubscriberProcess,EmailQueueProcess;
 
-  
+
     public function create($mailinglist_slug)
     {
-    		 
-    		 
+
+
     	try{
     	    $mailinglist = MailingList::where('slug','=',$mailinglist_slug)->first();
-         
+
             if(count($mailinglist)>0)
             {
                 return view('admin.subscriber.create_subscriber',[
@@ -40,35 +51,35 @@ class SubscribeController extends Controller
             {
                 return view('errors.403');
             }
-       
-        
+
+
           }
      catch(Exception $e)
      {
             Log::info($e->getMessage());
-		    //dd($e->getMessage());
+
      }
-               
-              
+
+
     }
 
 
     public function store(SubscriberRequest $request)//Subscriber
     {
 
-            \DB::beginTransaction();  
+            \DB::beginTransaction();
      try
         {
-             
+
             $slug=\Request::segment('3');
-            //dump($slug);
+
             $church_id=Auth::user()->church_id;
-            //dd($church_id);
+
             $this->createSubscriberAttachToMailingList($slug,$request,$church_id);
-        //dd($request);
+
             \DB::commit();
             \Session::put('successmessage', 'Subscribed Successfully');
-       
+
         }
 
         catch(Exception $e)
@@ -76,8 +87,8 @@ class SubscribeController extends Controller
             \DB::rollBack();
              \Session::put('failmessage', 'Try after sometime');
            Log::info($e->getMessage());
-           //dd($e->getMessage());
-        } 
+
+        }
     return Redirect::back();
     }
 
@@ -97,12 +108,12 @@ class SubscribeController extends Controller
                               $subscriber->save();
                               $data=array();
 
-                              
+
                                event(new SubscriberConfirmEvent($MailinglistSubscriber->mailinglist_id,$MailinglistSubscriber->subscriber_id));
 
-                            
+
                       }
-                     
+
                           return view('admin.subscriber.confirm');
 
                   }
@@ -112,6 +123,6 @@ class SubscribeController extends Controller
             }
     }
 
-  
+
 
 }

@@ -3,15 +3,23 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\ChurchDetail;
 use App\Models\Church;
 use App\Traits\Common;
 
+/**
+ * ChurchDetailsController
+ *
+ * Delivers church metadata and organizational information via API.
+ * Returns detailed church information including contact, location, and logo.
+ *
+ * @package App\Http\Controllers\Api
+ * @uses Common Trait for file path utilities
+ */
 class ChurchDetailsController extends Controller
 {
     use Common;
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -40,7 +48,7 @@ class ChurchDetailsController extends Controller
         $churchdetail['facebook']       = $plucked['facebook'] == '-' ? '':$plucked['facebook'];
         $churchdetail['twitter']        = $plucked['twitter'] == '-' ? '':$plucked['twitter'];
         $churchdetail['instagram']      = $plucked['instagram'] == '-' ? '':$plucked['instagram'];
-        
-        return $churchdetail;  
+
+        return $churchdetail;
     }
 }

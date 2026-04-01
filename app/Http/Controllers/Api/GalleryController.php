@@ -10,6 +10,15 @@ use App\Models\Photos;
 use App\Traits\Common;
 use App\Http\Resources\API\ShowPhotos as ShowPhotosResource;
 
+/**
+ * GalleryController
+ *
+ * Delivers gallery and photo content via API.
+ * Returns gallery listings with associated photos.
+ *
+ * @package App\Http\Controllers\Api
+ * @uses Common Trait for helper functions
+ */
 class GalleryController extends Controller
 {
 	    use Common;
@@ -32,7 +41,7 @@ class GalleryController extends Controller
     {
         $gallery = Gallery::where('church_id',$church_id)->latest()->paginate(10);
         $gallery = ShowGalleryResource::collection($gallery);
-        
+
         return $gallery;
     }
 }

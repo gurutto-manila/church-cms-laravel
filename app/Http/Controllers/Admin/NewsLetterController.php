@@ -16,6 +16,18 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * NewsLetterController
+ *
+ * Manages church newsletter creation and distribution.
+ * Handles newsletter content creation, sending to all or specific subscribers,
+ * and integration with email queue system for asynchronous delivery.
+ * Fires newsletter subscription events for tracking engagement.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for recording newsletter actions
+ * @uses Common Trait for helper functions
+ */
 class NewsLetterController extends Controller
 {
     use LogActivity;
@@ -47,14 +59,14 @@ class NewsLetterController extends Controller
             {
                 $newsletters = NewsLetter::where([['church_id',Auth::user()->church_id],['status',1]])->get();
             }
-       
+
             if($request->to == 0)
             {
                 $newsletters = NewsLetter::where([['church_id',Auth::user()->church_id],['status',0]])->get();
             }
-       
-            foreach ($newsletters as $newsletter) 
-            { 
+
+            foreach ($newsletters as $newsletter)
+            {
                 Mail::to($newsletter->email)->queue(new NewsletterMail($request->subject,$request->message));
 
                 $ip= $this->getRequestIP();
@@ -64,16 +76,16 @@ class NewsLetterController extends Controller
                     ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                     LOGNAME_SEND_NEWSLETTER,
                     'NewsLetter Sent Successfully'
-                ); 
+                );
             }
- 
+
             $res['success'] = 'NewsLetter Sent Successfully';
             return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -115,14 +127,14 @@ class NewsLetterController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_CHANGE_NEWSLETTER_STATUS,
                 'NewsLetter Status Updated Successfully'
-            ); 
+            );
 
             return redirect()->back();
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -137,14 +149,14 @@ class NewsLetterController extends Controller
         try
         {
             event (new SubscribeNewsLetterEvent ($request , Auth::user()->church_id , Auth::user() ) );
-                  
+
             $res['message'] = 'NewsLetter Status Updated Successfully';
             return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

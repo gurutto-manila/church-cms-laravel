@@ -12,6 +12,17 @@ use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * AudioController
+ *
+ * Manages audio file uploads and sermon audio content management.
+ * Handles audio file uploads, storage, and retrieval for sermon recordings.
+ * Integrates with media file management and activity logging.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for activity tracking
+ * @uses Common Trait for utility functions
+ */
 class AudioController extends Controller
 {
     //
@@ -47,7 +58,7 @@ class AudioController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -64,7 +75,7 @@ class AudioController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -78,7 +89,7 @@ class AudioController extends Controller
     public function store(AudioRequest $request)
     {
         //
-        //dd($request->all());
+
         try
         {
             $audio = new MediaFile;
@@ -126,7 +137,6 @@ class AudioController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            dd($e->getMessage());
         }
     }
 }

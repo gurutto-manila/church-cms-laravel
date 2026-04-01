@@ -30,7 +30,7 @@ class PrayerRequestsController extends Controller
     public function index()
     {
         //
-        //dd(date('Y-m-d H:i:s'));
+
         $prayer = PrayerRequest::where([['church_id',Auth::user()->church_id],['status','approve'],['publish_at','<=',date('Y-m-d H:i:s')]])->where('user_id','!=',Auth::id())->get();
         $prayer = PrayerRequestResource::collection($prayer);
 
@@ -93,7 +93,7 @@ class PrayerRequestsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         } 
     }
 

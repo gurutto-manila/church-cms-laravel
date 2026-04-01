@@ -13,6 +13,17 @@ use App\Models\Email;
 use Exception;
 use Log;
 
+/**
+ * EmailController
+ *
+ * Manages email templates for church communications.
+ * Handles email template creation, updates, and deletion.
+ * Provides email templates for various notifications and communications.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class EmailController extends Controller
 {
     use LogActivity;
@@ -20,27 +31,27 @@ class EmailController extends Controller
 
     public function index()
     {
-        return view('/admin/email/index');  
+        return view('/admin/email/index');
     }
 
     public function list()
-    {       
+    {
         $list = Email::where('church_id',Auth::user()->church_id)->get();
-              
+
         $emaillist = EmailResource::collection($list);
-        
-        return $emaillist;        
+
+        return $emaillist;
     }
 
     public function create()
-    { 
-        return view('/admin/email/create'); 
+    {
+        return view('/admin/email/create');
     }
 
     public function store(EmailRequest $request)
     {
         try
-        {   
+        {
             $email = new Email;
 
             $email->church_id       = Auth::user()->church_id;
@@ -61,7 +72,7 @@ class EmailController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_EMAIL,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -69,21 +80,21 @@ class EmailController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
     public function edit($id)
-    { 
+    {
         $email = Email::where('id',$id)->first();
 
-        return view('/admin/email/edit',['email' => $email]); 
+        return view('/admin/email/edit',['email' => $email]);
     }
 
     public function update(EmailRequest $request,$id)
     {
         try
-        {	
+        {
         	$email = Email::where('id',$id)->first();
 
             $email->subject         = $request->subject;
@@ -103,7 +114,7 @@ class EmailController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_EMAIL,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -111,14 +122,14 @@ class EmailController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
     public function show($id)
     {
         $email = Email::where([['id',$id],['church_id',Auth::user()->church_id]])->first();
-        
+
         if($_SERVER['HTTP_REFERER'] != null)
         {
             $prev_url = $_SERVER['HTTP_REFERER'];
@@ -152,7 +163,7 @@ class EmailController extends Controller
             $email = Email::where('id',$id)->first();
 
             $email->delete();
-                
+
             $message = 'Email Deleted Successfully';
 
             $ip= $this->getRequestIP();
@@ -170,7 +181,7 @@ class EmailController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

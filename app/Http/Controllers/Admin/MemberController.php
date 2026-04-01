@@ -19,10 +19,21 @@ use App\Models\SendMail;
 use App\Models\Group;
 use App\Models\User;
 
+/**
+ * MemberController
+ *
+ * Manages church member operations including profile viewing, family relationship navigation,
+ * and member hierarchy management. Handles family tree visualization and member details.
+ * Supports family relationship tracking through self-referential User hierarchy (parent/child/partner).
+ *
+ * @package App\Http\Controllers\Admin
+ * @see User Model for family relationship functionality
+ * @see Userprofile Model for extended member information
+ */
 class MemberController extends Controller
 {
     //
-    
+
     /**
      * Display the specified resource.
      *
@@ -52,7 +63,7 @@ class MemberController extends Controller
             $array['members'][1]['avatar']      = $user->refer->userprofile->AvatarPath;
 
             $i = 2;
-            foreach ($user->refer->members as $member) 
+            foreach ($user->refer->members as $member)
             {
                 if($member->name != $name)
                 {
@@ -67,7 +78,7 @@ class MemberController extends Controller
         else
         {
             $i = 1;
-            foreach ($user->members as $member) 
+            foreach ($user->members as $member)
             {
                 if($member->name != $name)
                 {
@@ -88,8 +99,8 @@ class MemberController extends Controller
         $users = User::where('name', $name)->first();
         $user=$this->mytree($name);
         /* $referuser=$user[0]->refer;
-        if($referuser==null){ 
-            $user=$this->mytree($name); 
+        if($referuser==null){
+            $user=$this->mytree($name);
         }
         else
         {
@@ -121,7 +132,7 @@ class MemberController extends Controller
             {
                 $relation = ucfirst($user->userprofile->relation);
             }
-            $userData = [ 
+            $userData = [
                 'id'        =>  $user->id,
                 'name'      =>  $user->FullName."\n"."(".$relation.")" ,
                 'image_url' =>  $user->userprofile->AvatarPath ,
@@ -163,7 +174,7 @@ class MemberController extends Controller
             {
                 $relations = ucfirst($user->userprofile->relation);
             }
-            $userData = [ 
+            $userData = [
                 'id'        =>  $user->id,
                 'name'      =>  $user->FullName."\n"."(".$relations.")" ,
                 'image_url' =>  $user->userprofile->AvatarPath ,
@@ -270,7 +281,7 @@ class MemberController extends Controller
                 }
             }
 
-            $userData = [ 
+            $userData = [
                 'id'        =>  $user->id,
                 'name'      =>  $user->FullName."\n"."(".$relations.")",
                 'image_url' =>  $user->userprofile->AvatarPath ,
@@ -338,13 +349,13 @@ class MemberController extends Controller
         {
             $activitylog = ActivityLog::where('subject_id',$user->userprofile->id)->paginate(5);
             $activitylog = ActivityLogResource::collection($activitylog);
-         
+
             return $activitylog;
         }
         else
         {
             abort(403);
-        } 
+        }
     }
 
     public function showGroups($name)
@@ -354,7 +365,7 @@ class MemberController extends Controller
         if(Gate::allows('member',$user))
         {
             $grouplinks = GroupLink::where('user_id',$user->id)->get();
-         
+
             $group = GroupResource::collection($grouplinks);
 
             return $group;
@@ -362,7 +373,7 @@ class MemberController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     public function showMessages($name)
@@ -372,7 +383,7 @@ class MemberController extends Controller
         if(Gate::allows('member',$user))
         {
             $messages = SendMail::where('user_id',$user->id)->orderBy('executed_at','DESC')->paginate(5);
-         
+
             $messages = SendMailResource::collection($messages);
 
             return $messages;
@@ -380,12 +391,12 @@ class MemberController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     public function show($name)
     {
-        // 
+        //
         $user = User::with('userprofile')->where('name', $name)->first();
 
         if(Gate::allows('member',$user))
@@ -413,6 +424,6 @@ class MemberController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 }

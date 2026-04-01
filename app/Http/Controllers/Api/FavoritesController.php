@@ -13,6 +13,16 @@ use App\Models\Sermon;
 use Exception;
 use Log;
 
+/**
+ * FavoritesController
+ *
+ * Manages user favorite items (sermons, posts, events) via API.
+ * Handles adding and removing items from user favorites.
+ *
+ * @package App\Http\Controllers\Api
+ * @uses FavoriteProcess Trait for favorite management
+ * @uses Common Trait for helper functions
+ */
 class FavoritesController extends Controller
 {
     use FavoriteProcess;
@@ -22,7 +32,7 @@ class FavoritesController extends Controller
     {
         try
         {
-            $church_id      = Auth::user()->church_id;        
+            $church_id      = Auth::user()->church_id;
             $user_id        = Auth::id();
             $sermon = Sermon::where([['church_id',$church_id],['id',$request->entity_id]])->first();
             if($church_id==$sermon->church_id)
@@ -31,7 +41,7 @@ class FavoritesController extends Controller
                 $entity_id =$sermon->id;
                 $existing_favorite = Favorite::where([['church_id',$church_id],['user_id',$user_id]])->exists();
 
-                if (!($existing_favorite)) 
+                if (!($existing_favorite))
                 {
                     $favorite = $this->favoriteProcess($church_id,$user_id,$entity_id,$entity_name);
                 }
@@ -50,7 +60,7 @@ class FavoritesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

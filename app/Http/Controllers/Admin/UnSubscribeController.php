@@ -11,6 +11,15 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Log;
 
+/**
+ * UnSubscribeController
+ *
+ * Handles unsubscribing from mailing lists.
+ * Allows users to remove themselves from specific mailing lists.
+ * Manages subscriber removal and list associations.
+ *
+ * @package App\Http\Controllers\Admin
+ */
 class UnSubscribeController extends Controller
 {
     public function create(Request $request, $mailinglist_slug)

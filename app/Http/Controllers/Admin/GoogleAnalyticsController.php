@@ -5,6 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * GoogleAnalyticsController
+ *
+ * Handles integration with Google Analytics for website traffic and visitor tracking.
+ * Provides analytics dashboard and visitor metrics within the admin interface.
+ * Gracefully handles missing analytics package with fallback empty data.
+ *
+ * @package App\Http\Controllers\Admin
+ */
 class GoogleAnalyticsController extends Controller
 {
     /**

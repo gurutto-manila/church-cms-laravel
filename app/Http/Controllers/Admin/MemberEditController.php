@@ -19,6 +19,18 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * MemberEditController
+ *
+ * Handles member profile editing and updates.
+ * Manages member profile updates including contact and demographic information.
+ * Supports country/state/city selection for member location data.
+ * Integrates with permission checks for edit access control.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class MemberEditController extends Controller
 {
     //
@@ -70,7 +82,7 @@ class MemberEditController extends Controller
         $array['occupationlist']    	=   SiteHelper::getOccupationList();
         $array['maritalstatuslist'] 	=   SiteHelper::getMaritalStatusList();
         $array['relationlist']      	=   SiteHelper::getRelationList();
-        
+
         return response()->json($array);
     }
 
@@ -92,7 +104,7 @@ class MemberEditController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     /**
@@ -109,19 +121,19 @@ class MemberEditController extends Controller
         {
             $user = User::where('name',$name)->first();
             $userprofile = Userprofile::where('user_id',$user->id)->first();
-            
+
             if(request('avatar'))
             {
               $file = $request->file('avatar');
               $folder=Auth::user()->church_id.'/member/avatar';
-              $path = $this->uploadFile($folder,$file); 
-              $userprofile->avatar = $path;  
+              $path = $this->uploadFile($folder,$file);
+              $userprofile->avatar = $path;
             }
             else
             {
                 $userprofile->avatar = $userprofile->avatar;
             }
-            
+
             $userprofile->firstname             = $request->firstname;
             $userprofile->lastname              = $request->lastname;
             $userprofile->birth_firstname       = $request->birth_firstname;
@@ -151,7 +163,7 @@ class MemberEditController extends Controller
             $userprofile->relation              = $request->relation;
             $userprofile->aadhar_number         = $request->aadhar_number;
             $userprofile->notes                 = $request->notes;
-            
+
             $userprofile->save();
 
             $message=('Member Details Updated Successfully');
@@ -163,14 +175,14 @@ class MemberEditController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_MEMBER,
                 $message
-                ); 
+                );
             \Session::put('successmessage','Member Details Updated Successfully');
             return redirect()->back();
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

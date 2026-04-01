@@ -7,6 +7,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MediaFile;
 
+/**
+ * MediaFilesController
+ *
+ * Delivers media files and documents via API.
+ * Returns church media file listings with pagination.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class MediaFilesController extends Controller
 {
     public function showvideo()

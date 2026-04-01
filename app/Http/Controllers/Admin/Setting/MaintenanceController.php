@@ -8,6 +8,15 @@ use Illuminate\Http\Request;
 use Exception;
 use Log;
 
+/**
+ * MaintenanceController
+ *
+ * Manages church system maintenance settings and mode.
+ * Handles enabling/disabling maintenance mode for the application.
+ * Uses SettingProcess trait for settings configuration.
+ *
+ * @package App\Http\Controllers\Admin\Setting
+ */
 class MaintenanceController extends Controller
 {
     use SettingProcess;
@@ -31,9 +40,9 @@ class MaintenanceController extends Controller
      */
     public function store(Request $request)
     {
-        // 
+        //
         try
-        {       
+        {
             if($request->maintenance==1)
             {
                 $maintenance=$request->maintenance;
@@ -46,17 +55,17 @@ class MaintenanceController extends Controller
             {
                 $login_status=$request->login_status;
             }
-            
-            $this->updatesettings('maintenance',$maintenance);  
+
+            $this->updatesettings('maintenance',$maintenance);
             $this->updatesettings('register',$register);
             $this->updatesettings('login_status',$login_status);
-                  
+
             return redirect()->back();
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

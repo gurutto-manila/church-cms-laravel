@@ -15,17 +15,28 @@ use App\Models\Email;
 use Exception;
 use Log;
 
-class CampaignController extends Controller 
+/**
+ * CampaignController
+ *
+ * Manages email marketing campaigns for churches.
+ * Handles campaign creation, configuration, association with mailing lists, and email sending.
+ * Integrates with email templates and campaign email tracking via CampaignEmail model.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
+class CampaignController extends Controller
 {
     use LogActivity;
     use Common;
 
-    public function index() 
+    public function index()
     {
         return view('/admin/campaign/index');
     }
 
-    public function list() 
+    public function list()
     {
         $campaigns = Campaign::where('church_id', Auth::user()->church_id)->get();
 
@@ -34,14 +45,14 @@ class CampaignController extends Controller
         return $campaigns;
     }
 
-    public function create() 
+    public function create()
     {
         return view('/admin/campaign/create');
     }
 
-    public function store(CampaignRequest $request) 
+    public function store(CampaignRequest $request)
     {
-        try 
+        try
         {
             $campaign = new Campaign;
 
@@ -72,15 +83,15 @@ class CampaignController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
-    public function editList($id) 
+    public function editList($id)
     {
         $campaign = Campaign::where('id',$id)->get();
         $campaign = CampaignResource::collection($campaign);
@@ -88,16 +99,16 @@ class CampaignController extends Controller
         return $campaign;
     }
 
-    public function edit($id) 
+    public function edit($id)
     {
         $campaign = Campaign::where('id', $id)->first();
 
         return view('/admin/campaign/edit', ['campaign' => $campaign]);
     }
 
-    public function update(CampaignRequest $request, $id) 
+    public function update(CampaignRequest $request, $id)
     {
-        try 
+        try
         {
             $campaign = Campaign::where('id', $id)->first();
 
@@ -126,20 +137,20 @@ class CampaignController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
-    public function show($id) 
+    public function show($id)
     {
         $campaign = Campaign::where([['id', $id],['church_id', Auth::user()->church_id]])->first();
 
         $campaignemails = CampaignEmail::where('campaign_id',$id)->get();
-        
+
         if($_SERVER['HTTP_REFERER'] != null)
         {
             $prev_url = $_SERVER['HTTP_REFERER'];
@@ -148,7 +159,7 @@ class CampaignController extends Controller
         {
             $prev_url = url('/admin/campaigns');
         }
-        
+
         return view('/admin/campaign/show',['campaign' => $campaign , 'campaignemails' => $campaignemails , 'prev_url' => $prev_url]);
     }
 
@@ -158,15 +169,15 @@ class CampaignController extends Controller
     * @param  int  $id
     * @return \Illuminate\Http\Response
     */
-    public function destroy($id) 
+    public function destroy($id)
     {
         //
-        try 
+        try
         {
             $campaign = Campaign::where('id', $id)->first();
 
             $campaignemails = CampaignEmail::where('campaign_id',$id)->get();
-            foreach ($campaignemails as $campaignemail) 
+            foreach ($campaignemails as $campaignemail)
             {
                 $campaignemail->delete();
             }
@@ -187,11 +198,11 @@ class CampaignController extends Controller
             //return redirect('/admin/campaign')->with(['successmessage' => $message]);
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

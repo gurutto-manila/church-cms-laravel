@@ -15,6 +15,18 @@ use App\Models\Plan;
 use Exception;
 use Log;
 
+/**
+ * PaymentController
+ *
+ * Manages payment processing and subscription validation.
+ * Handles payment verification, subscription status checks, and payment processor integration.
+ * Supports multiple payment gateways and subscription plan management.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses PaymentProcess Trait for payment processing workflows
+ * @uses LogActivity Trait for payment audit logging
+ * @uses Common Trait for helper functions
+ */
 class PaymentController extends Controller
 {
     use PaymentProcess;
@@ -60,7 +72,7 @@ class PaymentController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     /**
@@ -74,7 +86,7 @@ class PaymentController extends Controller
         try
         {
             $user_id    = Auth::id();
-            $church_id  = Auth::user()->church_id; 
+            $church_id  = Auth::user()->church_id;
             $payment    = Subscription::where([['user_id',$user_id],['church_id',$church_id]])->first();
 
             $this->CreatePayment($request , $user_id , $church_id , $payment);
@@ -88,14 +100,14 @@ class PaymentController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_PAYMENT,
                 $message
-            ); 
+            );
 
             return view('/admin/payment/response');
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 

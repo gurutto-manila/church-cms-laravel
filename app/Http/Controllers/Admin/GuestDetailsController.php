@@ -19,10 +19,19 @@ use App\Models\SendMail;
 use App\Models\Group;
 use App\Models\User;
 
+/**
+ * GuestDetailsController
+ *
+ * Displays detailed information about guest/visitor accounts.
+ * Shows guest profile, activity logs, groups, and communication history.
+ * Provides comprehensive guest account overview for administrators.
+ *
+ * @package App\Http\Controllers\Admin
+ */
 class GuestDetailsController extends Controller
 {
     //
-    
+
     /**
      * Display the specified resource.
      *
@@ -46,13 +55,13 @@ class GuestDetailsController extends Controller
         {
             $activitylog = ActivityLog::where('subject_id',$user->userprofile->id)->paginate(5);
             $activitylog = ActivityLogResource::collection($activitylog);
-         
+
             return $activitylog;
         }
         else
         {
             abort(403);
-        } 
+        }
     }
 
     public function showMessages($name)
@@ -62,7 +71,7 @@ class GuestDetailsController extends Controller
         if(Gate::allows('member',$user))
         {
             $messages = SendMail::where('user_id',$user->id)->orderBy('executed_at','DESC')->paginate(5);
-         
+
             $messages = SendMailResource::collection($messages);
 
             return $messages;
@@ -70,12 +79,12 @@ class GuestDetailsController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     public function show($name)
     {
-        // 
+        //
        $user = User::with('userprofile')->where('name', $name)->first();
 
         if(Gate::allows('member',$user))
@@ -104,6 +113,6 @@ class GuestDetailsController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 }

@@ -70,7 +70,7 @@ class ContactController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }  
     }
 }

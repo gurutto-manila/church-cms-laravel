@@ -32,12 +32,12 @@ class FeedbackController extends Controller
 
         return response()->json([
                         'status'            => 'success',
-                        'data'              => $categoryList, 
+                        'data'              => $categoryList,
                     ], 200);
 
         //return $categoryList;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -50,7 +50,7 @@ class FeedbackController extends Controller
         $feedback = Feedback::where('user_id',$user->id)->get();
 
         $feedback = FeedbackResource::collection($feedback);
-        
+
         return $feedback;
     }
 
@@ -68,7 +68,7 @@ class FeedbackController extends Controller
 
         $admin = User::where('church_id',$request->church_id)->ByRole(3)->first();
         $user = User::where([['church_id',$request->church_id],['mobile_no',$request->mobile_no]])->first();
-            
+
             $feedback = new Feedback;
 
             $feedback->church_id = $request->church_id;
@@ -77,7 +77,7 @@ class FeedbackController extends Controller
             }
             else{
             $feedback->mobile_no=$request->mobile_no;
-            }    
+            }
             $feedback->admin_id = $admin->id;
 
             if($feedback->save())
@@ -95,10 +95,10 @@ class FeedbackController extends Controller
                 if(count($files) > 0)
                 {
                     $path = [];
-                    foreach($files as $file) 
+                    foreach($files as $file)
                     {
                         $path[$i] = $this->uploadFile($request->church_id.'/feedbacks/'.$feedback->id,$file);
-                        $i++;     
+                        $i++;
                     }
                     $feedbackMessage->file = $path;
                 }*/
@@ -107,30 +107,29 @@ class FeedbackController extends Controller
                 {
                     $success=true;
                     $res = 'Feedback Sent Successfully';
-                   
+
                 }
                 else
                 {
                     $success=false;
                     $res = 'Failed To Send Feedback';
-                    
+
                 }
             }
             else
             {
                 $success=false;
                 $res = 'Failed To Send Feedback';
-               
+
             }
             return response()->json([
                         'success'=>$success,
-                        'message'=> $res, 
+                        'message'=> $res,
                     ], 200);
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            dd($e->getMessage());
         }
     }
 }

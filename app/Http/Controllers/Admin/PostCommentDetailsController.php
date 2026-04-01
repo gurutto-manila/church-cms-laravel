@@ -18,6 +18,17 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * PostCommentDetailsController
+ *
+ * Manages post comment interactions like/dislike functionality.
+ * Handles user engagement with forum post comments.
+ * Tracks comment reactions for community engagement metrics.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PostCommentDetailsController extends Controller
 {
     //
@@ -109,7 +120,7 @@ class PostCommentDetailsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_LIKE_COMMENT,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -117,7 +128,7 @@ class PostCommentDetailsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -206,7 +217,7 @@ class PostCommentDetailsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_UNLIKE_COMMENT,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -214,7 +225,7 @@ class PostCommentDetailsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

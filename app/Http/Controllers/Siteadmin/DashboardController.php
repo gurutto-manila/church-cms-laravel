@@ -3,8 +3,16 @@
 namespace App\Http\Controllers\Siteadmin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * DashboardController
+ *
+ * Displays siteadmin dashboard and system statistics.
+ * Provides overview of system-wide metrics and management interface.
+ * Main entry point for siteadmin area of the application.
+ *
+ * @package App\Http\Controllers\Siteadmin
+ */
 class DashboardController extends Controller
 {
     /**
@@ -14,7 +22,7 @@ class DashboardController extends Controller
      */
     public function __construct()
     {
-        
+
     }
 
     /**

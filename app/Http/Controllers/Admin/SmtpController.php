@@ -13,31 +13,43 @@ use App\Models\Smtp;
 use Exception;
 use Log;
 
-class SmtpController extends Controller 
+/**
+ * SmtpController
+ *
+ * Manages SMTP email server configurations.
+ * Handles SMTP setup, configuration updates, and provider credential management.
+ * Stores email server connection details (host, port, credentials) for outgoing mail.
+ * Supports multiple SMTP configurations per church.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
+class SmtpController extends Controller
 {
     use LogActivity;
     use Common;
 
-    public function index() 
+    public function index()
     {
         return view('/admin/smtp/index');
     }
 
-    public function list() 
+    public function list()
     {
         $smtplist = Smtp::where('church_id', Auth::user()->church_id)->get();
 
         return SmtpsResource::collection($smtplist);
     }
 
-    public function create() 
+    public function create()
     {
         return view('/admin/smtp/create');
     }
 
     public function store(SmtpRequest $request)
     {
-        try 
+        try
         {
             $smtp = new Smtp;
 
@@ -71,22 +83,22 @@ class SmtpController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
-    public function show($id) 
+    public function show($id)
     {
         $smtp = Smtp::where( [['id', $id], ['church_id', Auth::user()->church_id]] )->first();
 
         return view('/admin/smtp/show',['smtp' => $smtp]);
     }
 
-    public function editList($id) 
+    public function editList($id)
     {
         $smtp = Smtp::where('id', $id)->first();
 
@@ -103,7 +115,7 @@ class SmtpController extends Controller
         return $array;
     }
 
-    public function edit($id) 
+    public function edit($id)
     {
         $smtp = Smtp::where('id', $id)->first();
 
@@ -112,7 +124,7 @@ class SmtpController extends Controller
 
     public function update(SmtpRequest $request, $id)
     {
-        try 
+        try
         {
             $smtp = Smtp::where('id', $id)->first();
 
@@ -145,11 +157,11 @@ class SmtpController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -159,10 +171,10 @@ class SmtpController extends Controller
     * @param  int  $id
     * @return \Illuminate\Http\Response
     */
-    public function destroy($id) 
+    public function destroy($id)
     {
         //
-        try 
+        try
         {
             $smtp = Smtp::where( 'id', $id )->first();
 
@@ -181,11 +193,11 @@ class SmtpController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

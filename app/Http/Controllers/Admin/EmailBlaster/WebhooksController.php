@@ -7,7 +7,6 @@ use App\Http\Resources\Mailinglist as MailinglistResource;
 use App\Http\Requests\EmailBlaster\WebhookRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Traits\LogActivity;
 use App\Models\MailingList;
 use App\Models\Webhook;
@@ -15,6 +14,15 @@ use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * WebhooksController
+ *
+ * Manages email blaster webhooks and external integration endpoints.
+ * Handles webhook CRUD operations for email campaign integrations.
+ * Processes external webhook events and configurations.
+ *
+ * @package App\Http\Controllers\Admin\EmailBlaster
+ */
 class WebhooksController extends Controller
 {
     use LogActivity;
@@ -110,7 +118,7 @@ class WebhooksController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -124,7 +132,7 @@ class WebhooksController extends Controller
     {
         //
         $webhook = Webhook::where('id',$id)->first();
-        
+
         if($_SERVER['HTTP_REFERER'] != null)
         {
             $prev_url = $_SERVER['HTTP_REFERER'];
@@ -215,7 +223,7 @@ class WebhooksController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -228,7 +236,7 @@ class WebhooksController extends Controller
     public function destroy($id)
     {
         //
-        try 
+        try
         {
             $webhook = Webhook::where('id', $id)->first();
 
@@ -247,11 +255,11 @@ class WebhooksController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

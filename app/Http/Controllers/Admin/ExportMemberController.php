@@ -15,6 +15,18 @@ use Exception;
 use Excel;
 use DB;
 
+/**
+ * ExportMemberController
+ *
+ * Handles member data export functionality.
+ * Provides CSV export of member records with filtering options by roles and groups.
+ * Supports bulk export of member information for data management and backup.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses MemberProcess Trait for member filtering and processing
+ * @uses LogActivity Trait for activity tracking
+ * @uses Common Trait for utility functions
+ */
 class ExportMemberController extends Controller
 {
     use MemberProcess;
@@ -46,7 +58,7 @@ class ExportMemberController extends Controller
             if($request->usergroup_id == 5)
             {
                 $csv->insertOne(['ref_name','firstname','lastname','birth_firstname','birth_lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email','membership_type','membership_start_date','family','marriage_status','marriage_start_date','relation','notes','status',]);
-          
+
                 foreach($users as $user)
                 {
                     $ref_name = User::where('id',$user->ref_id)->first();
@@ -81,10 +93,10 @@ class ExportMemberController extends Controller
                 $message=('Member Details Exported Successfully');
                 $log = LOGNAME_EXPORT_MEMBER;
             }
-            elseif ($request->usergroup_id == 4) 
+            elseif ($request->usergroup_id == 4)
             {
                 $csv->insertOne(['firstname','lastname','birth_firstname','birth_lastname','aadhar_number','date_of_birth','mobile_no','email','gender','profession','sub_occupation','address','country','state','city','pincode','notes','status']);
-          
+
                 foreach($users as $user)
                 {
                     $ref_name = User::where('id',$user->ref_id)->first();
@@ -128,7 +140,7 @@ class ExportMemberController extends Controller
             $log,
             $message
         );
-        //\Session::put('successmessage','Member Exported Successfully'); 
+        //\Session::put('successmessage','Member Exported Successfully');
     }
 
     /**
@@ -144,7 +156,7 @@ class ExportMemberController extends Controller
         if(count($users) > 0)
         {
             $csv->insertOne(['firstname','lastname','gender','date_of_birth','occupation','sub_occupation','address','city','state','country','pincode','mobile_no','email','notes','status']);
-          
+
             foreach($users as $user)
             {
                 $csv->insertOne([
@@ -182,6 +194,6 @@ class ExportMemberController extends Controller
             LOGNAME_EXPORT_GUEST,
             $message
         );
-        //\Session::put('successmessage','Member Exported Successfully'); 
+        //\Session::put('successmessage','Member Exported Successfully');
     }
 }

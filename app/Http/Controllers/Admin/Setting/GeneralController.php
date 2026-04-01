@@ -10,6 +10,15 @@ use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * GeneralController
+ *
+ * Manages general church settings and configuration.
+ * Handles display and update of church general settings.
+ * Uses SettingProcess trait for centralized settings management.
+ *
+ * @package App\Http\Controllers\Admin\Setting
+ */
 class GeneralController extends Controller
 {
     use SettingProcess;
@@ -64,7 +73,7 @@ class GeneralController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

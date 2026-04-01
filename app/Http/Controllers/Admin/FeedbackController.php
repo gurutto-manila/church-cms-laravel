@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Events\SinglePushEvent;
 use App\Models\FeedbackMessage;
-use Illuminate\Http\Request;
 use App\Traits\LogActivity;
 use App\Models\Feedback;
 use App\Traits\Common;
@@ -14,6 +13,18 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * FeedbackController
+ *
+ * Manages user feedback and support tickets.
+ * Handles feedback submission, tracking, and response management.
+ * Supports feedback message threads and issue resolution workflow.
+ * Integrates with push notifications for feedback updates.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for recording feedback activities
+ * @uses Common Trait for helper functions
+ */
 class FeedbackController extends Controller
 {
     use LogActivity;
@@ -80,7 +91,7 @@ class FeedbackController extends Controller
             $data['user_id']    =   $feedback->user_id;
             $data['message']    =   'New Response For Your Feedback';
             $data['type']       =   'feedback';
-            
+
             event(new SinglePushEvent($data));
 
             $res['success'] = $message;
@@ -89,7 +100,7 @@ class FeedbackController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

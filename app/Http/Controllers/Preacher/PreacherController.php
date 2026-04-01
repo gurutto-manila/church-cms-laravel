@@ -16,6 +16,15 @@ use Exception;
 use Hash;
 use Log;
 
+/**
+ * PreacherController
+ *
+ * Manages preacher account information and profile settings.
+ * Handles password changes and user profile updates for preachers.
+ * Uses LogActivity and Common traits for auditing and utilities.
+ *
+ * @package App\Http\Controllers\Preacher
+ */
 class PreacherController extends Controller
 {
     use LogActivity;
@@ -27,7 +36,7 @@ class PreacherController extends Controller
     }
 
     public function changeavatar(Request $request)
-    {   
+    {
         return view('preacher/changeavatar');
     }
 
@@ -44,12 +53,12 @@ class PreacherController extends Controller
 
         return $array;
     }
- 
+
     /**
      * Updates the avatar image for specified user.
-     * 
-     * @param \Illuminate\Http\Request $request 
-     * 
+     *
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function updatechangeavatar(Request $request)
@@ -62,10 +71,10 @@ class PreacherController extends Controller
             if($path!='')
             {
                 $userprofile->avatar = $path ;
-                $userprofile->save();   
+                $userprofile->save();
                 \Session::put('successmessage',__('admin_userprofile.update_avatar'));
                 $res['message']=__('admin_userprofile.update_avatar');
-                $res['avatar']=$this->getFilePath($path);     
+                $res['avatar']=$this->getFilePath($path);
             }
             else
             {
@@ -74,7 +83,7 @@ class PreacherController extends Controller
                 \Session::put('failmessage',__('admin_userprofile.failed_avatar'));
                 $res['message']=__('admin_userprofile.failed_avatar');
             }
-            
+
             $ip= $this->getRequestIP();
                 $this->doActivityLog(
                 $userprofile,
@@ -82,21 +91,21 @@ class PreacherController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_CHANGE_AVATAR,
                 'Changed Avatar'
-            );  
-            return $res; 
+            );
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
-      
+
     /**
      * Updates the password of the specified user.
-     * 
-     * @param \Illuminate\Http\Request $request 
-     * 
+     *
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function updateChangePassword(ChangePasswordRequest $request)
@@ -106,7 +115,7 @@ class PreacherController extends Controller
         $hashedPassword = $user->password;
 
         if($hashedPassword!='')
-        { 
+        {
             $user->password = Hash::make($request->newpassword);
             $user->save();
 
@@ -116,18 +125,18 @@ class PreacherController extends Controller
                 Auth::user(),
                 ['ip' => $ip,'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_CHANGE_PASSWORD,
-                'Changed Profile Password.'                        
+                'Changed Profile Password.'
             );
 
-            $successmessage = $request->session()->flash('successmessage',__('admin_userprofile.password_update'));         
-        } 
-           
+            $successmessage = $request->session()->flash('successmessage',__('admin_userprofile.password_update'));
+        }
+
         $res['message']=__('admin_userprofile.password_update');
         return $res;
     }
 
     public function edit()
-    {  
+    {
         $user = User::where('id',Auth::id())->first();
 
         return view('/preacher/editprofile',['user' => $user]);
@@ -145,18 +154,18 @@ class PreacherController extends Controller
         $array['description']       = $userprofile->description == null ? null:$userprofile->description;
         $array['facebook_id']       = $userprofile->facebook_id == null ? null:$userprofile->facebook_id;
 
-        return $array;      
+        return $array;
     }
-    
+
     public function update(Request $request)
     {
         try
         {
             $userprofile = Userprofile::where('user_id', Auth::id())->first();
-            
+
             $userprofile->firstname = $request->firstname;
             $userprofile->facebook_id = $request->facebook_id;
-            
+
             $userprofile->save();
 
             $message = __('admin_userprofile.profile_update');
@@ -167,7 +176,7 @@ class PreacherController extends Controller
                 Auth::user(),
                 ['ip' => $ip,'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_EDIT_USERPROFILE,
-                $message                        
+                $message
             );
 
             $res['success'] = $message;
@@ -176,7 +185,7 @@ class PreacherController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-           //dd($e->getMessage());
+
         }
-    }   
+    }
 }

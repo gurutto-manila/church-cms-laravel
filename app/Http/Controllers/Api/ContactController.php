@@ -16,6 +16,15 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * ContactController
+ *
+ * Handles contact form submissions and inquiries via API.
+ * Processes contact requests and sends notifications.
+ *
+ * @package App\Http\Controllers\Api
+ * @uses Common Trait for helper functions
+ */
 class ContactController extends Controller
 {
     use Common;
@@ -82,7 +91,7 @@ class ContactController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }  
+
+        }
     }
 }

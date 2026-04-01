@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Events\SinglePushEvent;
 use App\Traits\EventProcess;
-use Illuminate\Http\Request;
 use App\Models\Userprofile;
 use App\Traits\LogActivity;
 use App\Models\Smstemplate;
@@ -19,6 +18,18 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * BirthdayController
+ *
+ * Manages birthday and anniversary reminders for church members.
+ * Tracks member birthdays and anniversaries, sends reminders and notifications.
+ * Provides listing and management of upcoming birthday/anniversary events.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses EventProcess Trait for event-related processing
+ * @uses LogActivity Trait for activity tracking
+ * @uses Common Trait for utility functions
+ */
 class BirthdayController extends Controller
 {
     //
@@ -34,9 +45,9 @@ class BirthdayController extends Controller
                             ->ByChurch(Auth::user()->church_id)
                             ->ByRole(5)
                             ->get();
-                            
+
         $users = BirthdayResource::collection($birthday);
-         
+
         return $users;
     }
 
@@ -50,7 +61,7 @@ class BirthdayController extends Controller
                             ->ByRole(5)
                             ->get();
         $birthday = BirthdayResource::collection($birthday);
-        
+
         $templates = Smstemplate::where('name','birthday_message')->get();
 
         $array['birthdaylist'] = $birthday;
@@ -65,12 +76,12 @@ class BirthdayController extends Controller
     }
 
     public function birthdayMessage(BirthdayReminderRequest $request)
-    {  
+    {
         try
         {
             $church_id = Auth::user()->church_id;
             $data = array('subject'=>'Birthday Wishes' , 'message'=>$request->message , 'type'=>'birthday');
-       
+
             foreach($request->to as $to)
             {
                 $mobile_no = $to['mobile_no'];
@@ -99,7 +110,7 @@ class BirthdayController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -111,9 +122,9 @@ class BirthdayController extends Controller
                             ->ByChurch(Auth::user()->church_id)
                             ->ByRole(5)
                             ->get();
-                            
+
         $users = AnniversaryResource::collection($anniversary);
-         
+
         return $users;
     }
 
@@ -142,12 +153,12 @@ class BirthdayController extends Controller
     }
 
     public function anniversaryMessage(BirthdayReminderRequest $request)
-    {  
+    {
         try
         {
             $church_id = Auth::user()->church_id;
             $data = array('subject'=>'Anniversary Wishes' , 'message'=>$request->message , 'type'=>'anniversary');
-       
+
             foreach($request->to as $to)
             {
                 $mobile_no = $to['mobile_no'];
@@ -176,7 +187,7 @@ class BirthdayController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

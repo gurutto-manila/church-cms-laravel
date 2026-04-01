@@ -4,10 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Resources\API\Church as ChurchResource;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Church;
 use App\Models\City;
 
+/**
+ * ChurchController
+ *
+ * Provides church information and location-based church listings via API.
+ * Delivers church details grouped by city location for discovery.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class ChurchController extends Controller
 {
     /**
@@ -22,7 +29,7 @@ class ChurchController extends Controller
         $array = [];
         $cities = City::where('status',1)->get();
         $i = 0;
-        foreach ($cities as $city) 
+        foreach ($cities as $city)
         {
             $church = Church::where('city_id',$city->id)->count();
 

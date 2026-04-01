@@ -16,6 +16,18 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * NotesController
+ *
+ * Manages notes and annotations on entities (events, prayers, etc.).
+ * Handles note creation, updates, and deletion for entity-level documentation.
+ * Supports polymorphic note attachment to various entity types.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses NotesProcess Trait for note-related workflows
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class NotesController extends Controller
 {
     use NotesProcess;
@@ -25,32 +37,32 @@ class NotesController extends Controller
     public function index(Request $request)
     {
         $note= Notes::where([['entity_id',$request->entity_id],['entity_name',$request->entity_name]])->get();
-        
-        return $note; 
+
+        return $note;
     }
 
     public function create()
-    { 
+    {
         return view('admin.notes.add_notes');
     }
- 
+
     public function store(NotesRequest $request)
     {
         try
         {
             $userid=Auth::id();
 
-            if ($request->id=='') 
+            if ($request->id=='')
             {
                 $note = $this->createNotes($request->notes,$request->church_id,$request->entity_id,$request->entity_name,$userid,$userid);
-            } 
-            else 
+            }
+            else
             {
                 $note= Notes::where('id',$request->id)->first();
                 $note->notes=$request->notes;
                 $note->save();
             }
-    
+
             $message=__('notes.notes_message');
             $ip= $this->getRequestIP();
                 $this->doActivityLog(
@@ -59,16 +71,16 @@ class NotesController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_NOTE,
                 $message
-            ); 
+            );
 
             $res['message']=__('notes.notes_message');
-            return $res; 
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     public function edit($id)
@@ -81,16 +93,16 @@ class NotesController extends Controller
         else
         {
             abort(403);
-        } 
-    } 
-    
+        }
+    }
+
     public function delete($id)
     {
-        try 
+        try
         {
             $notes=Notes::where('id',$id)->first();
             $notes->delete();
-       
+
             $message = "Notes Deleted Successfully";
             $ip= $this->getRequestIP();
             $this->doActivityLog(
@@ -99,14 +111,14 @@ class NotesController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_DELETE_NOTE,
                 $message
-            ); 
+            );
             $res['message']='Notes Deleted Successfully';
             return $res;
-        } 
-        catch (Exception $e) 
+        }
+        catch (Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

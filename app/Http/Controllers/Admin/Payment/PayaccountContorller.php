@@ -13,7 +13,10 @@ use App\Models\Payaccount;
 use Exception;
 use Log;
 
-class PayaccountContorller extends Controller
+/**
+ * PayaccountContorller
+ *
+ * Manages payment accounts and payment gateway configurations.\n * Handles CRUD operations for payment account management.\n * Provides payment gateway selection and payment method setup.\n *\n * @package App\Http\Controllers\Admin\Payment\n */\nclass PayaccountContorller extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -95,7 +98,7 @@ class PayaccountContorller extends Controller
             'param5'            => $param5,
             'param6'            => $param6,
              ];
-        
+
         $payaccount=Payaccount::create($data);
 
         if($payaccount->status==1)
@@ -130,10 +133,10 @@ class PayaccountContorller extends Controller
         {
             $this->changeStatus($payaccount);
         }
-        
+
         $message['success']="Payaccount status Updated";
 
-        return $message;    
+        return $message;
 
     }
 
@@ -208,7 +211,7 @@ class PayaccountContorller extends Controller
             'param5'            => $param5,
             'param6'            => $param6,
              ];
-        
+
         $payaccount=Payaccount::find($id);
         $payaccount=$payaccount->update($data);
 

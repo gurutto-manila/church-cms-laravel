@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Gate;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Traits\MemberProcess;
-use Illuminate\Http\Request;
 use App\Helpers\SiteHelper;
 use App\Traits\LogActivity;
 use App\Models\Userprofile;
@@ -19,6 +18,17 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * GuestEditController
+ *
+ * Handles guest/visitor account editing and updates.
+ * Manages guest profile updates including contact and demographic information.
+ * Supports country/state/city selection for guest location data.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class GuestEditController extends Controller
 {
     //
@@ -58,7 +68,7 @@ class GuestEditController extends Controller
         $array['statelist']         	=   SiteHelper::getStates();
         $array['citylist']          	=   SiteHelper::getCities();
         $array['occupationlist']    	=   SiteHelper::getOccupationList();
-        
+
         return response()->json($array);
     }
 
@@ -80,7 +90,7 @@ class GuestEditController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     /**
@@ -108,7 +118,7 @@ class GuestEditController extends Controller
         {
             $user = User::where('name',$name)->first();
             $userprofile = Userprofile::where('user_id',$user->id)->first();
-            
+
             $userprofile->firstname             = $request->firstname;
             $userprofile->lastname              = $request->lastname;
             $userprofile->gender                = $request->gender;
@@ -124,7 +134,7 @@ class GuestEditController extends Controller
             $userprofile->sub_occupation        = $request->sub_occupation;
             $userprofile->aadhar_number         = $request->aadhar_number;
             $userprofile->notes                 = $request->notes;
-            
+
             $userprofile->save();
 
             $message=('Guest Details Updated Successfully');
@@ -136,7 +146,7 @@ class GuestEditController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_GUEST,
                 $message
-                ); 
+                );
             \Session::put('successmessage','Guest Details Updated Successfully');
             return redirect()->back();
         }
@@ -144,7 +154,7 @@ class GuestEditController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

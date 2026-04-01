@@ -3,9 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Models\Church;
 
+/**
+ * AboutController
+ *
+ * Manages public-facing about and policy pages for the church website.
+ * Displays church information, privacy policy, and other informational pages.
+ *
+ * @package App\Http\Controllers
+ */
 class AboutController extends Controller
 {
     /**
@@ -16,7 +23,7 @@ class AboutController extends Controller
     public function index()
     {
         $church = Church::where('id',Auth::user()->church_id)->first();
-        
+
         return view('/about',['church'=>$church]);
     }
 

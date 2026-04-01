@@ -21,7 +21,19 @@ class BulletinsController extends Controller
 {
     use LogActivity;
     use Common;
-    
+
+/**
+ * BulletinsController
+ *
+ * Manages church bulletins and weekly announcements.
+ * Handles bulletin creation, updates, and distribution to church members.
+ * Supports push notifications for new bulletin releases.
+ * Integrates with subscription-based bulletin features.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
     /**
      * Display a listing of the resource.
      *
@@ -43,18 +55,18 @@ class BulletinsController extends Controller
         if($type == 'month')
         {
             $bulletins = BulletinResource::collection($bulletins)->groupBy([function($bulletin) {
-                return date("F", mktime(0, 0, 0, $bulletin->month, 1)).' '.$bulletin->year; 
+                return date("F", mktime(0, 0, 0, $bulletin->month, 1)).' '.$bulletin->year;
             }]);
         }
         else
         {
             $bulletins = BulletinResource::collection($bulletins)->groupBy([function($bulletin) {
-                return 'Week - '.$bulletin->week.' '.$bulletin->year; 
+                return 'Week - '.$bulletin->week.' '.$bulletin->year;
             }]);
         }
-        return $bulletins;    
+        return $bulletins;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -63,7 +75,7 @@ class BulletinsController extends Controller
     public function index()
     {
         //
-        return view('/admin/bulletins/index');    
+        return view('/admin/bulletins/index');
     }
 
     public function getDate()
@@ -100,8 +112,8 @@ class BulletinsController extends Controller
     public function store(BulletinRequest $request)
     {
         //
-        try 
-        {  
+        try
+        {
             $bulletin = new Bulletin;
 
             $bulletin->church_id = Auth::user()->church_id;
@@ -124,7 +136,7 @@ class BulletinsController extends Controller
             {
                 $folder = Auth::user()->church_id.'/bulletins';
                 $bulletin_file_path = $this->uploadFile($folder,$bulletin_file);
-                $bulletin->path = $bulletin_file_path; 
+                $bulletin->path = $bulletin_file_path;
             }
 
              $cover_image = $request->file('cover_image');
@@ -132,11 +144,11 @@ class BulletinsController extends Controller
             {
                 $folder = Auth::user()->church_id.'/bulletins/cover';
                 $cover_image = $this->uploadFile($folder,$cover_image);
-                $bulletin->cover_image = $cover_image; 
+                $bulletin->cover_image = $cover_image;
             }
-            $bulletin->created_by = Auth::id();  
+            $bulletin->created_by = Auth::id();
             $bulletin->save();
- 
+
             $message=('Bulletin Added Successfully');
 
             $data=[];
@@ -144,7 +156,7 @@ class BulletinsController extends Controller
             $data['church_id']=Auth::user()->church_id;
             $data['message']='New Bulletin created';
             $data['type']='bulletin';
-            
+
             event(new PushEvent($data));
 
             $array=[];
@@ -161,16 +173,16 @@ class BulletinsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_BULLETIN,
                 $message
-            ); 
- 
+            );
+
             $res['success']="Bulletin Added Successfully";
             return $res;
-        } 
-        catch (Exception $e) 
+        }
+        catch (Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }   
+
+        }
     }
 
     /**
@@ -203,7 +215,7 @@ class BulletinsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -228,7 +240,7 @@ class BulletinsController extends Controller
             ];*/
             $headers    = [
                 'Content-Disposition' => 'attachment; filename="'. $name.'"',
-            ]; 
+            ];
 
             $message=('Bulletin Downloaded Successfully');
 
@@ -239,8 +251,8 @@ class BulletinsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_DOWNLOAD_BULLETIN,
                 $message
-                );  
-            
+                );
+
             /*return response()->download($path,$file,$headers); */
             return \Response::make($path, 200, $headers);
         }

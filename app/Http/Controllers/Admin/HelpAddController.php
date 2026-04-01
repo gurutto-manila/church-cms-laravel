@@ -6,13 +6,23 @@ use App\Repositories\HelpRepositoryInterface;
 use App\Http\Requests\HelpAddRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Traits\LogActivity;
 use App\Traits\Common;
 use App\Models\Help;
 use Exception;
 use Log;
 
+/**
+ * HelpAddController
+ *
+ * Handles help request creation and submission.
+ * Allows users to submit help requests for support inquiries.
+ * Integrates with HelpRepository for data persistence.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class HelpAddController extends Controller
 {
     use LogActivity;
@@ -54,7 +64,7 @@ class HelpAddController extends Controller
             $help->description      = $request->description;
             $help->contact_details  = $request->contact_details;
             $help->status           = "pending";
-            
+
             $help->save();*/
 
 
@@ -75,7 +85,7 @@ class HelpAddController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

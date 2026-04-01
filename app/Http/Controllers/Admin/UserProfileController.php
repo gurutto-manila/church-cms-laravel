@@ -20,6 +20,17 @@ use Exception;
 use Hash;
 use Log;
 
+/**
+ * UserProfileController
+ *
+ * Manages user profile information and personal details.
+ * Handles profile updates, avatar management, password changes, and profile-specific operations.
+ * Supports geographic location data (country, state, city selection).
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses Common Trait for helper functions
+ * @uses LogActivity Trait for audit logging
+ */
 class UserProfileController extends Controller
 {
     use Common;
@@ -40,15 +51,15 @@ class UserProfileController extends Controller
     }
 
     public function changeavatar(Request $request)
-    {   
+    {
         return view('admin/changeavatar');
     }
- 
+
     /**
      * Updates the avatar image for specified user.
-     * 
-     * @param \Illuminate\Http\Request $request 
-     * 
+     *
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function updatechangeavatar(Request $request)
@@ -61,10 +72,10 @@ class UserProfileController extends Controller
             if($path!='')
             {
                 $userprofile->avatar = $path ;
-                $userprofile->save();   
+                $userprofile->save();
                 \Session::put('successmessage',__('admin_userprofile.update_avatar'));
                 $res['message']=__('admin_userprofile.update_avatar');
-                $res['avatar']=$this->getFilePath($path);     
+                $res['avatar']=$this->getFilePath($path);
             }
             else
             {
@@ -81,13 +92,13 @@ class UserProfileController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_CHANGE_AVATAR,
                 'Changed Avatar'
-            );  
-            return $res; 
+            );
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -95,12 +106,12 @@ class UserProfileController extends Controller
     {
         return view('/admin/changepassword');
     }
-      
+
     /**
      * Updates the password of the specified user.
-     * 
-     * @param \Illuminate\Http\Request $request 
-     * 
+     *
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function updateChangePassword(ChangePasswordRequest $request)
@@ -111,7 +122,7 @@ class UserProfileController extends Controller
             $hashedPassword = $user->password;
 
             if($hashedPassword!='')
-            { 
+            {
                 $user->password = Hash::make($request->newpassword);
                 $user->save();
 
@@ -121,23 +132,23 @@ class UserProfileController extends Controller
                     Auth::user(),
                     ['ip' => $ip,'details' => $_SERVER['HTTP_USER_AGENT']],
                     LOGNAME_CHANGE_PASSWORD,
-                    'Changed Profile Password.'                        
+                    'Changed Profile Password.'
                 );
 
-                $successmessage = $request->session()->flash('successmessage',__('admin_userprofile.password_update'));         
-            } 
+                $successmessage = $request->session()->flash('successmessage',__('admin_userprofile.password_update'));
+            }
             $res['message']=__('admin_userprofile.password_update');
             return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
     public function edit(Request $request)
-    {  
+    {
         return view('/admin/editprofile');
     }
 
@@ -153,7 +164,7 @@ class UserProfileController extends Controller
         $city = CityResource::collection($city)->groupby('state_id');
 
         $userprofile = Userprofile::with('country','state','city')->where('user_id', Auth::id())->first();
-        
+
         if($userprofile->firstname == null)
         {
             $array['firstname']='';
@@ -225,15 +236,15 @@ class UserProfileController extends Controller
         $array['statelist']     =   $state;
         $array['citylist']      =   $city;
 
-        return $array;      
+        return $array;
     }
-    
+
     public function update(Request $request)
     {
       try
         {
             $userprofile = Userprofile::where('user_id', Auth::id())->first();
-            
+
             $userprofile->firstname         = $request->firstname;
             $userprofile->lastname          = $request->lastname;
             $userprofile->birth_firstname   = $request->birth_firstname;
@@ -245,7 +256,7 @@ class UserProfileController extends Controller
             $userprofile->state_id          = $request->state_id;
             $userprofile->country_id        = $request->country_id;
             $userprofile->pincode           = $request->pincode;
-            
+
             $userprofile->save();
 
             $ip= $this->getRequestIP();
@@ -255,16 +266,16 @@ class UserProfileController extends Controller
                 Auth::user(),
                 ['ip' => $ip,'details' => $_SERVER['HTTP_USER_AGENT']],
                 LOGNAME_EDIT_USERPROFILE,
-                'Changed Profile'                        
+                'Changed Profile'
             );
 
             $res['message']= "Userprofile updated successfully";
-            return $res; 
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-           //dd($e->getMessage());
-        } 
-    }     
+
+        }
+    }
 }

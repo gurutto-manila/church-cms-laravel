@@ -4,14 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ContactRequest;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Mail\ContactMail;
 use App\Models\Contact;
 use App\Models\User;
-use Exception;
 use Log;
 
+/**
+ * ContactController
+ *
+ * Manages public contact form submissions and inquiries.
+ * Handles form display, submission processing, email notifications, and contact logging.
+ * Sends email notifications to administrators and subscribers when contact form is submitted.
+ *
+ * @package App\Http\Controllers
+ */
 class ContactController extends Controller
 {
 
@@ -50,14 +56,14 @@ class ContactController extends Controller
             {
                 Mail::to($user->email)->send(new ContactMail($contact));
             }
-            
+
             $res['success'] = 'Contact Submitted Successfully';
-            return $res; 
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }  
+
+        }
     }
 }

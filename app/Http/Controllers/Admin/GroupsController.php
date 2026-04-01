@@ -22,12 +22,25 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * GroupsController
+ *
+ * Manages community groups (ministries, departments, etc.) within the church.
+ * Handles group creation, member management, group messaging, and group categorization.
+ * Supports permission-based group access and SendMail messaging to group members.
+ * Integrates with subscription-based group feature limits.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses SendMessageProcess Trait for group messaging functionality
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class GroupsController extends Controller
 {
     use SendMessageProcess;
     use LogActivity;
     use Common;
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -47,7 +60,7 @@ class GroupsController extends Controller
         $groups = $groups->get();
         $subscription = Subscription::where('church_id',Auth::user()->church_id)->first();
 
-        return view('/admin/groups/index',['groups' => $groups , 'subscription' => $subscription]);  
+        return view('/admin/groups/index',['groups' => $groups , 'subscription' => $subscription]);
     }
 
     public function getData()
@@ -88,7 +101,7 @@ class GroupsController extends Controller
             $id = $count+'1';
             $church_id  = Auth::user()->church_id;
             $created_by = Auth::id();
-           
+
             $group              = new Group;
 
             $group->church_id   = $church_id;
@@ -96,18 +109,18 @@ class GroupsController extends Controller
             $group->group_type  = $request->group_type;
             $group->name        = $request->name;
             $group->description = $request->description;
-           
+
             $cover_image = $request->file('cover_image');
             if($cover_image)
                 {
                     $path = $this->uploadFile('uploads/admin/groups/cover_image/'.$church_id.'/'.$id,$cover_image);
-                    $group->cover_image = $path; 
+                    $group->cover_image = $path;
                 }
 
-            $group->created_by = $created_by;    
+            $group->created_by = $created_by;
 
             $group->save();
- 
+
             $message=('Group Created Successfully');
 
             $ip= $this->getRequestIP();
@@ -117,15 +130,15 @@ class GroupsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_GROUP,
                 $message
-                ); 
- 
+                );
+
             $res['success']="Group Created Successfully";
             return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -150,7 +163,7 @@ class GroupsController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     /**
@@ -167,12 +180,12 @@ class GroupsController extends Controller
         {
             $group_category = GroupCategory::get();
 
-            return view('/admin/groups/edit',['group' => $group , 'group_category' => $group_category]);  
+            return view('/admin/groups/edit',['group' => $group , 'group_category' => $group_category]);
         }
         else
         {
             abort(403);
-        } 
+        }
     }
 
     /**
@@ -197,21 +210,21 @@ class GroupsController extends Controller
             $group->group_type  = $request->group_type;
             $group->name        = $request->name;
             $group->description = $request->description;
-            
+
             if($request->hasFile('cover_image'))
             {
                 $cover_image = $request->file('cover_image');
                 $path = $this->uploadFile('uploads/admin/groups/cover_image/'.$church_id.'/'.$id,$cover_image);
-                $group->cover_image = $path;   
+                $group->cover_image = $path;
             }
             else
             {
                 $group->cover_image = $group->cover_image;
-            } 
+            }
             $group->created_by = $created_by;
-            
+
             $group->save();
-            
+
 
             $message=('Group Details Updated Successfully');
 
@@ -223,13 +236,13 @@ class GroupsController extends Controller
                     LOGNAME_EDIT_GROUP,
                     $message
                     );
-            
+
             return redirect()->back()->with(['successmessage' => 'Group Details Updated Successfully']);
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -258,7 +271,7 @@ class GroupsController extends Controller
                     $groupMember->delete();
                 }
                 $group->delete();
-                
+
                 $message=('Group Deleted Successfully');
 
                 $ip= $this->getRequestIP();
@@ -269,19 +282,19 @@ class GroupsController extends Controller
                     LOGNAME_DELETE_GROUP,
                     $message
                 );
-                
+
                 return redirect('/admin/groups')->with('successmessage','Group Deleted Successfully');
             }
             else
             {
                 abort(403);
-            }  
+            }
 
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -295,7 +308,7 @@ class GroupsController extends Controller
             {
                 $user = User::where('id',$grouplink->user_id)->first();
                 $group = Group::where('id',$grouplink->group_id)->first();
-                
+
                 $request->entity_id     = $grouplink->group_id;
                 $request->entity_name   = get_class($group);
 
@@ -303,12 +316,12 @@ class GroupsController extends Controller
             }
 
             $res['success'] = 'Message Sent Successfully to Group Members';
-            return $res; 
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -317,7 +330,7 @@ class GroupsController extends Controller
         $messages = SendMail::where([['entity_id',$id],['entity_name','=','App\Models\Group'],['church_id',Auth::user()->church_id]])->orderBy('executed_at','desc');
 
         if($request->mode!= '')
-        { 
+        {
             $messages = $messages->where('mode',$request->mode);
         }
 

@@ -13,6 +13,18 @@ use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * SermonsController
+ *
+ * Manages sermon/message content within the church.
+ * Handles sermon creation, updates, deletion, and sermon link management (audio/video files).
+ * Supports searching by title and pastor name, voting, and sermon categorization.
+ * Integrates with voting system and sermon media links.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for file path utilities
+ */
 class SermonsController extends Controller
 {
      use LogActivity;
@@ -72,7 +84,7 @@ class SermonsController extends Controller
         if(Gate::allows('sermon',$sermon))
         {
            $path= $this->getFilePath($sermon->url);
-           //dd($path);
+
            // $path=public_path('/'.$sermon->url);
             $file=pathinfo($path);
             $extension = $file['extension'];

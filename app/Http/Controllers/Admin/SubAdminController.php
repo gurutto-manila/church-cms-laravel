@@ -21,9 +21,22 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * SubAdminController
+ *
+ * Manages sub-administrator account registration and management.
+ * Handles sub-admin creation, updates, and role assignments.
+ * Integrates with admin verification and role-based permissions.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses MemberProcess Trait for member processing
+ * @uses RegisterUser Trait for user registration
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class SubAdminController extends Controller
 {
-    // 
+    //
     use MemberProcess;
     use RegisterUser;
     use LogActivity;
@@ -118,7 +131,7 @@ class SubAdminController extends Controller
         	if($file)
         	{
           		$folder=Auth::user()->church_id.'/member/avatar';
-          		$path = $this->uploadFile($folder,$file); 
+          		$path = $this->uploadFile($folder,$file);
         	}
         	else
         	{
@@ -140,15 +153,15 @@ class SubAdminController extends Controller
           		['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
           		LOGNAME_ADD_SUBADMIN,
           		$message
-        	); 
+        	);
 
         	return redirect()->back()->with('successmessage','Member Added Successfully');
       	}
       	catch(Exception $e)
       	{
             Log::info($e->getMessage());
-        	//dd($e->getMessage());
-      	} 
+
+      	}
     }
 
     /**
@@ -159,8 +172,8 @@ class SubAdminController extends Controller
      */
     public function show($name)
     {
-        // 
-      	$user = User::with('userprofile')->where('name', $name)->first(); 
+        //
+      	$user = User::with('userprofile')->where('name', $name)->first();
       	if(Gate::allows('member',$user))
       	{
         	return view('/admin/subadmin/show',['user'=>$user]);
@@ -168,7 +181,7 @@ class SubAdminController extends Controller
       	else
       	{
         	abort(403);
-      	} 
+      	}
     }
 
     /**
@@ -208,7 +221,7 @@ class SubAdminController extends Controller
         else
         {
           	abort(403);
-        } 
+        }
     }
 
     /**
@@ -228,7 +241,7 @@ class SubAdminController extends Controller
         else
         {
           	abort(403);
-        } 
+        }
     }
 
     /**
@@ -256,19 +269,19 @@ class SubAdminController extends Controller
         {
             $user = User::where('name',$name)->first();
             $userprofile = Userprofile::where('id',$user->id)->first();
-            
+
             if(request('avatar'))
             {
               	$file = $request->file('avatar');
               	$folder=Auth::user()->church_id.'/subadmin/avatar';
-              	$path = $this->uploadFile($folder,$file); 
-              	$userprofile->avatar = $path;  
+              	$path = $this->uploadFile($folder,$file);
+              	$userprofile->avatar = $path;
             }
             else
             {
                 $userprofile->avatar = $userprofile->avatar;
             }
-            
+
             $userprofile->firstname             = $request->firstname;
             $userprofile->lastname              = $request->lastname;
             $userprofile->birth_firstname       = $request->birth_firstname;
@@ -284,7 +297,7 @@ class SubAdminController extends Controller
             $userprofile->city_id               = $request->city_id;
             $userprofile->pincode               = $request->pincode;
             $userprofile->notes                 = $request->notes;
-            
+
             $userprofile->save();
 
             $message= 'Sub Admin Details Updated Successfully';
@@ -296,14 +309,14 @@ class SubAdminController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_SUBADMIN,
                 $message
-            ); 
+            );
             return redirect()->back()->with(['successmessage' => $message]);
         }
 
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

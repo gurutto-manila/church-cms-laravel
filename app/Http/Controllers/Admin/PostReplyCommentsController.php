@@ -19,6 +19,17 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * PostReplyCommentsController
+ *
+ * Manages replies to post comments in forum discussion threads.
+ * Handles nested comment structure for threaded discussions.
+ * Supports comment reply creation, editing, and deletion.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PostReplyCommentsController extends Controller
 {
     //
@@ -60,8 +71,8 @@ class PostReplyCommentsController extends Controller
             $post_reply->entity_name = 'App\Models\PostComment';
             $post_reply->comments    = $request->reply_comments;
             $file = $request->reply_attachment;
-            
-            if($file != null) 
+
+            if($file != null)
             {
                 $path = $this->uploadFile(Auth::user()->school_id.'/posts/'.$post_comment->entity_id.'/comments'.$post_comment_id.'/reply',$file);
             }
@@ -115,7 +126,7 @@ class PostReplyCommentsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_REPLY_COMMENT,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -123,7 +134,7 @@ class PostReplyCommentsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -144,8 +155,8 @@ class PostReplyCommentsController extends Controller
 
             $post_reply->comments = $request->reply_comments;
             $file = $request->reply_attachment;
-            
-            if($file != null) 
+
+            if($file != null)
             {
                 $path = $this->uploadFile(Auth::user()->school_id.'/posts/'.$post_comment->entity_id.'/comments'.$post_comment_id.'/reply',$file);
             }
@@ -199,7 +210,7 @@ class PostReplyCommentsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_REPLY_COMMENT,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -207,7 +218,7 @@ class PostReplyCommentsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -265,7 +276,7 @@ class PostReplyCommentsController extends Controller
 
                     event(new SingleNotificationEvent($array));
                 }*/
-                
+
                 $ip= $this->getRequestIP();
                 $this->doActivityLog(
                     $post_reply,
@@ -285,7 +296,7 @@ class PostReplyCommentsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

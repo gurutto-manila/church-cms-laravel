@@ -13,6 +13,14 @@ use App\Token;
 use Exception;
 use Log;
 
+/**
+ * LoginController
+ *
+ * Handles user authentication and login via API.
+ * Processes user login requests and returns authentication tokens.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class LoginController extends Controller
 {
     public $successStatus = 200;
@@ -33,7 +41,7 @@ class LoginController extends Controller
             {
                 $user = Auth::user();
                 $user->tokens()->delete();
-            
+
                 $userprofile = Userprofile::where('user_id', $user->id)->first();
                 if ($userprofile->status == 'active')
                 {
@@ -41,7 +49,7 @@ class LoginController extends Controller
                     //$token = $user->createToken($request->email)->plainTextToken; //changed for new church app
 
                     $user = User::where([['id',$user->id],['church_id',$user->church_id]])->first();
-                     
+
                     $user->platform_token = $request->platform_token;
 
                     $user->save();
@@ -54,8 +62,8 @@ class LoginController extends Controller
                         'user_email'        =>  $user->email,
                         'user_name'         =>  $user->name,
                         'user_fullname'     =>  $user->FullName,
-                        'membership_type'   =>  $user->userprofile->membership_type, 
-                        'is_reset'          =>  $user->is_reset, 
+                        'membership_type'   =>  $user->userprofile->membership_type,
+                        'is_reset'          =>  $user->is_reset,
                     ], $this->successStatus);
                 }
             }
@@ -63,7 +71,7 @@ class LoginController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -71,7 +79,7 @@ class LoginController extends Controller
     {
         try
         {
-            if (Auth::check()) 
+            if (Auth::check())
             {
                 Auth()->user()->tokens()->delete();
             }
@@ -90,7 +98,7 @@ class LoginController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

@@ -5,10 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Widget;
 use App\Models\Church;
 use Illuminate\Http\Request;
-use Auth; 
+use Auth;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\WidgetRequest; 
+use App\Http\Requests\WidgetRequest;
 use Illuminate\Support\Str;
+
+/**
+ * WidgetController
+ *
+ * Manages dashboard widgets and customizable dashboard components.
+ * Handles widget creation, configuration, and dashboard layout management.
+ * Supports personalized dashboard customization for users.
+ *
+ * @package App\Http\Controllers\Admin
+ */
 class WidgetController extends Controller
 {
     /**
@@ -45,11 +55,11 @@ class WidgetController extends Controller
      */
     public function store(WidgetRequest $request)
     {
-        $uuid = Str::uuid()->toString(); 
+        $uuid = Str::uuid()->toString();
         $insertWidget = new Widget();
         $insertWidget->slug = $uuid;
         $insertWidget->church_id = Auth::user()->church_id;
-        $insertWidget->content = $request->content; 
+        $insertWidget->content = $request->content;
         $insertWidget->created_by = Auth::user()->id;
         $insertWidget->save();
 
@@ -94,7 +104,7 @@ class WidgetController extends Controller
     {
         $updateWidget = Widget::find($id);
         $updateWidget->church_id = Auth::user()->church_id;
-        $updateWidget->content = $request->content; 
+        $updateWidget->content = $request->content;
         $updateWidget->updated_by = Auth::user()->id;
         $updateWidget->save();
 

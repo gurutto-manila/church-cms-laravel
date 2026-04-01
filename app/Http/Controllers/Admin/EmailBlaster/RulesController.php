@@ -7,7 +7,6 @@ use App\Http\Resources\Campaign as CampaignResource;
 use App\Http\Requests\EmailBlaster\RuleAddRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Models\GetResponse;
 use App\Traits\LogActivity;
 use App\Models\Campaign;
@@ -15,6 +14,15 @@ use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * RulesController
+ *
+ * Manages email blaster GetResponse rules and automation.
+ * Handles creation and management of email campaign rules.
+ * Integrates with GetResponse API for email campaign automation.
+ *
+ * @package App\Http\Controllers\Admin\EmailBlaster
+ */
 class RulesController extends Controller
 {
     use LogActivity;
@@ -112,7 +120,7 @@ class RulesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -210,7 +218,7 @@ class RulesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -223,7 +231,7 @@ class RulesController extends Controller
     public function destroy($id)
     {
         //
-        try 
+        try
         {
             $rule = GetResponse::where('id', $id)->first();
 
@@ -242,11 +250,11 @@ class RulesController extends Controller
 
             $res['success'] = $message;
             return $res;
-        } 
-        catch(Exception $e) 
+        }
+        catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

@@ -22,10 +22,23 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * PreacherController
+ *
+ * Manages preacher/minister account registration and management.
+ * Handles preacher account creation, updates, and permission assignments.
+ * Integrates with sermon management and role-based access control.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses MemberProcess Trait for member processing
+ * @uses RegisterUser Trait for user registration
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PreacherController extends Controller
 {
     use MemberProcess;
-    use RegisterUser; 
+    use RegisterUser;
     use LogActivity;
     use Common;
 
@@ -85,17 +98,17 @@ class PreacherController extends Controller
             $file = $request->file('avatar');
             if($file)
             {
-                $path = $this->uploadFile('uploads/admin/preacher/avatar',$file); 
+                $path = $this->uploadFile('uploads/admin/preacher/avatar',$file);
             }
             else
             {
                 $path = '';
             }
-           
+
             $user = $this->CreateUser($request , $church_id , $path , 6);
             $user->attachPermissions(['create-sermons','read-sermons','update-sermons']);
             $message = 'Preacher Added Successfully';
-          
+
             $ip= $this->getRequestIP();
             $this->doActivityLog(
                 $user,
@@ -103,7 +116,7 @@ class PreacherController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_PREACHER,
                 $message
-            ); 
+            );
 
             $res['success'] ="Preacher Added Successfully";
             return $res;
@@ -111,8 +124,8 @@ class PreacherController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     /**
@@ -126,7 +139,7 @@ class PreacherController extends Controller
         //
         $users = User::with('userprofile')->where('name', $name)->get();
         $users = UserDetailResource::collection($users);
-         
+
         return $users;
     }
 
@@ -138,9 +151,9 @@ class PreacherController extends Controller
      */
     public function show($name)
     {
-        // 
-        $user = User::with('userprofile')->where('name', $name)->first(); 
-    
+        //
+        $user = User::with('userprofile')->where('name', $name)->first();
+
         $sermon = Sermon::where('user_id',$user->id)->get();
 
         $query   = \Request::getQueryString();
@@ -152,7 +165,7 @@ class PreacherController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     /**
@@ -196,7 +209,7 @@ class PreacherController extends Controller
         else
         {
           abort(403);
-        } 
+        }
     }
 
     /**
@@ -213,18 +226,18 @@ class PreacherController extends Controller
         {
             $user = User::where('name',$name)->first();
             $userprofile = Userprofile::where('user_id',$user->id)->first();
-            
+
             if(request('avatar'))
             {
                 $file = $request->file('avatar');
-                $path = $this->uploadFile('uploads/admin/preacher/avatar',$file,'public'); 
-                $userprofile->avatar = $path;  
+                $path = $this->uploadFile('uploads/admin/preacher/avatar',$file,'public');
+                $userprofile->avatar = $path;
             }
             else
             {
                 $userprofile->avatar = $userprofile->avatar;
             }
-            
+
             $userprofile->firstname             = $request->firstname;
             $userprofile->lastname              = $request->lastname;
             $userprofile->description           = $request->description;
@@ -241,7 +254,7 @@ class PreacherController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_PREACHER,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -249,7 +262,7 @@ class PreacherController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

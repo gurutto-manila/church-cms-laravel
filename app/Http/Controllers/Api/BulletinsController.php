@@ -7,6 +7,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Bulletin;
 
+/**
+ * BulletinsController
+ *
+ * Provides bulletin content delivery via API for mobile/web consumption.
+ * Returns latest church bulletins and announcements paginated.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class BulletinsController extends Controller
 {
     public function show()

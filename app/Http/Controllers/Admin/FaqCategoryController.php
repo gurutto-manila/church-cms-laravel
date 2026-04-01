@@ -5,13 +5,23 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\FaqCategoryRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Models\FaqCategory;
 use App\Traits\LogActivity;
 use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * FaqCategoryController
+ *
+ * Manages FAQ categories for organizing frequently asked questions.
+ * Handles category creation, updates, and deletion for FAQ organization.
+ * Supports grouping FAQs by category for better content structure.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class FaqCategoryController extends Controller
 {
     use LogActivity;
@@ -45,7 +55,7 @@ class FaqCategoryController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_FAQ_CATEGORY,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -53,7 +63,7 @@ class FaqCategoryController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

@@ -8,15 +8,24 @@ use App\Http\Controllers\Controller;
 use App\Models\SermonLink;
 use App\Models\Sermon;
 
+/**
+ * SermonLinkController
+ *
+ * Manages sermon links and external resources associated with sermons via API.
+ * Retrieves paginated sermon link resources for a specific sermon.
+ * Returns formatted sermon link data with related sermon information.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class SermonLinkController extends Controller
 {
 	public function showdetails($sermons_id)
     {
     	$sermon = Sermon::where('id',$sermons_id)->first();
         $links = SermonLink::with('sermons')->where([['sermons_id',$sermon->id],['church_id',Auth::user()->church_id]])->paginate(10);
-        
+
         $links = ShowSermonLinkResource::collection($links);
-        
+
         return $links;
     }
 }

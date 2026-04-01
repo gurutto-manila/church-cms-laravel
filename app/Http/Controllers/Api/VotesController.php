@@ -9,6 +9,15 @@ use App\Traits\VoteProcess;
 use Exception;
 use Log;
 
+/**
+ * VotesController
+ *
+ * Manages user voting interactions (likes/unlikes) for content via API.
+ * Handles creation and deletion of vote entries for various resources.
+ * Uses VoteProcess trait for centralized voting logic and validation.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class VotesController extends Controller
 {
     use VoteProcess;
@@ -23,7 +32,7 @@ class VotesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -33,7 +42,7 @@ class VotesController extends Controller
         {
             $vote = $this->createunlikeVote($request,Auth::user()->church_id,Auth::id());
             return $vote;
-        } 
+        }
         catch(Exception $e)
         {
             Log::info($e->getMessage());

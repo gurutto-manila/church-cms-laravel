@@ -66,3 +66,8 @@ public/uploads/video/*
 
 public/uploads/files/*
 !public/uploads/files/index.html
+
+.DS_Store
+*.log
+composer.phar
+.env_churchcms

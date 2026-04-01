@@ -4,12 +4,20 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Traits\Common;
 use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * ImpersonateController
+ *
+ * Handles user impersonation for administrative access and testing.
+ * Allows administrators to temporarily assume identity of other users.
+ * Provides admin-only functionality for debugging and support purposes.
+ *
+ * @package App\Http\Controllers\Auth
+ */
 class ImpersonateController extends Controller
 {
     use Common;
@@ -23,10 +31,10 @@ class ImpersonateController extends Controller
         try
         {
             $user = User::find($id);
-              
+
             $is_admin = $this->is_admin($user->id);
             if($is_admin == false)
-            { 
+            {
                 Auth::user()->setImpersonating($user->id);
             }
             else
@@ -39,7 +47,7 @@ class ImpersonateController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -49,18 +57,18 @@ class ImpersonateController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function stopImpersonate()
-    {  
+    {
         try
-        {      
+        {
             $user = User::where('id', Auth::user()->id)->first();
             Auth::user()->stopImpersonating();
-            
+
             return redirect('/admin/dashboard');
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

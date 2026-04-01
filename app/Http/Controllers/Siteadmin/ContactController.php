@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Siteadmin;
 
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ContactMail;
 //use App\Http\Requests\ContactRequest;
@@ -13,7 +11,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Bus\Queueable;
 use Config;
 
-
+/**
+ * ContactController
+ *
+ * Manages contact inquiries and messages for siteadmin.
+ * Handles CRUD operations for system contact submissions.
+ * Processes mail notifications and contact management.
+ *
+ * @package App\Http\Controllers\Siteadmin
+ */
 class ContactController extends Controller
 {
     /**
@@ -24,10 +30,10 @@ class ContactController extends Controller
     public function index()
     {
         $contacts = Contact::paginate(10);
-       
+
         return view('site_admin.contacts.show',[
                         'contacts'=>$contacts,
-                      
+
             ]);
     }
 
@@ -49,8 +55,8 @@ class ContactController extends Controller
      */
     public function store(ContactRequest $request)
     {
-        
-        
+
+
       /*  $contact = new Contact;
         $contact->fullname = $request->fullname;
         $contact->email = $request->emailid;
@@ -68,10 +74,10 @@ class ContactController extends Controller
 
          $message=__('notes.notes_message');
 
-       
-        
+
+
          $res['message']=__('notes.notes_message');
-        return $res;   
+        return $res;
         */
     }
 

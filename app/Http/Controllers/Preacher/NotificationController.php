@@ -6,12 +6,20 @@ use App\Http\Resources\Notification\NotificationResource;
 use App\Notifications\NewMessageNotification;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Notification;
 use Exception;
 use Log;
 
+/**
+ * NotificationController
+ *
+ * Manages notifications for preachers in the system.
+ * Fetches and displays notifications for the authenticated preacher.
+ * Handles notification resource formatting and retrieval.
+ *
+ * @package App\Http\Controllers\Preacher
+ */
 class NotificationController extends Controller
 {
     //
@@ -43,7 +51,7 @@ class NotificationController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -84,7 +92,7 @@ class NotificationController extends Controller
       	catch(Exception $e)
       	{
             Log::info($e->getMessage());
-        	//dd($e->getMessage());
+
       	}
     }
 
@@ -131,7 +139,7 @@ class NotificationController extends Controller
       	catch(Exception $e)
       	{
         	Log::info($e->getMessage());
-            //dd($e->getMessage());
+
       	}
     }
 }

@@ -6,6 +6,15 @@ use App\Http\Controllers\Controller;
 //use Illuminate\Foundation\Auth\ResetsPasswords;
 use App\Traits\ResetsPasswords;
 
+/**
+ * ResetPasswordController
+ *
+ * Handles password reset functionality for users who forgot their password.
+ * Uses ResetsPasswords trait for standard password reset operations.
+ * Validates reset tokens and updates user passwords securely.
+ *
+ * @package App\Http\Controllers\Auth
+ */
 class ResetPasswordController extends Controller
 {
     /*

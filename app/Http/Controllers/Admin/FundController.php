@@ -18,11 +18,23 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * FundController
+ *
+ * Manages church fundraising, donations, and financial tracking.
+ * Handles fund creation, donation recording, payment processing, and financial reports.
+ * Supports multiple payment gateways and fund categorization.
+ * Provides fund listing with search and filtering by payment method.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for recording fund transactions
+ * @uses Common Trait for helper functions
+ */
 class FundController extends Controller
 {
     use LogActivity;
     use Common;
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -68,10 +80,10 @@ class FundController extends Controller
         $funds = $funds->latest()->paginate(10);
 
         $funds = FundResource::collection($funds);
-        
+
         return $funds;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -92,7 +104,7 @@ class FundController extends Controller
     {
         $users = User::ByChurch(Auth::user()->church_id)->ByRole(5)->get();
         //$users = FundResource::collection($users);
-        $users = UserResource::collection($users); 
+        $users = UserResource::collection($users);
 
         return $users;
     }
@@ -124,7 +136,7 @@ class FundController extends Controller
             $fund->authorised_by     = Auth::id();
             $fund->authorised_at     = date('Y-m-d H:i:s');
             $array =[];
-            
+
             $fund->membership        = $request->membership;
             if($request->membership == 'member')
             {
@@ -136,7 +148,7 @@ class FundController extends Controller
                 $array['last_name']     = $request->last_name;
                 $array['address']       = $request->address;
                 $array['mobile_number'] = $request->mobile_number;
-                
+
                 $fund->data            = $array;
             }
 
@@ -144,17 +156,17 @@ class FundController extends Controller
             if($request->amount >= '100000')
             {
                 $array['pan_number']    = $request->pan_number;
-                $fund->data = $array; 
+                $fund->data = $array;
             }
             $fund->method            = $request->method;
             $payment_details = [];
             if($request->method == 'cheque')
             {
                 $payment_details['cheque_number']   = $request->cheque_number;
-                $payment_details['account_number']  = $request->account_number; 
-                $payment_details['payee_name']      = $request->payee_name; 
+                $payment_details['account_number']  = $request->account_number;
+                $payment_details['payee_name']      = $request->payee_name;
 
-                $fund->payment_details  = $payment_details; 
+                $fund->payment_details  = $payment_details;
             }
             elseif($request->method == 'card')
             {
@@ -180,7 +192,7 @@ class FundController extends Controller
             $fund->save();
 
             $message= 'Fund Added Successfully';
-          
+
             $ip= $this->getRequestIP();
             $this->doActivityLog(
                 $fund,
@@ -188,16 +200,16 @@ class FundController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_FUND,
                 $message
-            ); 
-            
+            );
+
             $res['success']=$message;
-            return $res;  
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }       
+
+        }
     }
 
     public function fundDetails($id)
@@ -210,7 +222,7 @@ class FundController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     public function edit($id)
@@ -231,7 +243,7 @@ class FundController extends Controller
         else
         {
             abort(403);
-        } 
+        }
     }
 
     public function editList($id)
@@ -240,10 +252,10 @@ class FundController extends Controller
         if(Gate::allows('fund',$fund))
         {
             $users = User::ByChurch(Auth::user()->church_id)->ByRole(5)->get();
-            $users = FundResource::collection($users); 
-           
+            $users = FundResource::collection($users);
+
             $array=[];
-           
+
             $array['membership']=$fund->membership;
             if($array['membership']=='guest')
             {
@@ -271,14 +283,14 @@ class FundController extends Controller
             if($array['method'] == 'cheque')
             {
                 $array['cheque_number'] = $fund->payment_details['cheque_number'];
-                $array['account_number']= $fund->payment_details['account_number'];         
+                $array['account_number']= $fund->payment_details['account_number'];
                 $array['payee_name']    = $fund->payment_details['payee_name'];
             }
 
             elseif($array['method'] == 'demanddraft')
             {
-                $array['payable_at']        = $fund->payment_details['payable_at']; 
-                $array['account_number']    = $fund->payment_details['account_number'];  
+                $array['payable_at']        = $fund->payment_details['payable_at'];
+                $array['account_number']    = $fund->payment_details['account_number'];
             }
 
             elseif($array['method'] == 'card')
@@ -293,12 +305,12 @@ class FundController extends Controller
                 $array['comments']=$fund->comments;
             }
             $array['memberlist'] = $users;
-            return $array;  
+            return $array;
         }
         else
         {
             abort(403);
-        }    
+        }
     }
 
     /**
@@ -350,7 +362,7 @@ class FundController extends Controller
                                             'cheque_number'     => $request->cheque_number,
                                             'account_number'    => $request->account_number,
                                             'payee_name'        => $request->payee_name
-                                        ); 
+                                        );
             }
             elseif($request->method == 'card')
             {
@@ -371,11 +383,11 @@ class FundController extends Controller
             {
                 $fund->comments = $request->comments;
             }
-            
+
             $fund->save();
 
             $message='Fund Details Updated Successfully';
-           
+
             $ip= $this->getRequestIP();
             $this->doActivityLog(
                 $fund,
@@ -383,15 +395,15 @@ class FundController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_FUND,
                 $message
-            ); 
+            );
             $res['success'] = $message;
-            return $res;  
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     /**
@@ -425,7 +437,7 @@ class FundController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

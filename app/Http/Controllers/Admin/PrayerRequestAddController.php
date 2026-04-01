@@ -6,13 +6,23 @@ use App\Http\Requests\PrayerAddRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\PrayerRequest;
-use Illuminate\Http\Request;
 use App\Traits\LogActivity;
 use App\Traits\Common;
 use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * PrayerRequestAddController
+ *
+ * Handles creation of new prayer requests.
+ * Allows church members to submit prayer requests for community prayer support.
+ * Integrates with prayer request notification system.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PrayerRequestAddController extends Controller
 {
     use LogActivity;
@@ -52,7 +62,7 @@ class PrayerRequestAddController extends Controller
             if($file != null)
             {
                 $folder = Auth::user()->church_id.'/prayer';
-                $prayer->image  = $this->uploadFile($folder,$file); 
+                $prayer->image  = $this->uploadFile($folder,$file);
             }
             else
             {
@@ -78,7 +88,7 @@ class PrayerRequestAddController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

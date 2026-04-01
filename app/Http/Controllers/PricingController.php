@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Plan;
 
+/**
+ * PricingController
+ *
+ * Displays subscription pricing and plan information to potential customers.
+ * Shows available subscription plans and pricing tiers for the church CMS platform.
+ *
+ * @package App\Http\Controllers
+ */
 class PricingController extends Controller
 {
     /**

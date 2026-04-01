@@ -6,6 +6,15 @@ use App\Http\Controllers\Controller;
 //use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Traits\AuthenticatesUsers;
 
+/**
+ * LoginController
+ *
+ * Handles user authentication and login functionality.
+ * Uses AuthenticatesUsers trait for standardized authentication logic.
+ * Redirects authenticated users to member home page after login.
+ *
+ * @package App\Http\Controllers\Auth
+ */
 class LoginController extends Controller
 {
     /*

@@ -2,8 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
+/**
+ * HomeController
+ *
+ * Displays the authenticated user's application dashboard.
+ * Entry point for authenticated users after login, showing personalized dashboard content.
+ *
+ * @package App\Http\Controllers
+ * @middleware auth
+ */
 class HomeController extends Controller
 {
     /**

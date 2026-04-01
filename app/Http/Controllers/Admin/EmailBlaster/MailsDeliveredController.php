@@ -5,9 +5,17 @@ namespace App\Http\Controllers\Admin\EmailBlaster;
 use App\Http\Resources\MailQueue as MailQueueResource;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\MailQueue;
 
+/**
+ * MailsDeliveredController
+ *
+ * Displays email delivery status and delivered emails for email blaster campaigns.
+ * Shows mail queue entries with delivery information and status tracking.
+ * Provides insights into email campaign delivery performance.
+ *
+ * @package App\Http\Controllers\Admin\EmailBlaster
+ */
 class MailsDeliveredController extends Controller
 {
     /**
@@ -30,9 +38,9 @@ class MailsDeliveredController extends Controller
     {
         //
         $mailqueue = MailQueue::ByChurch(Auth::user()->church_id)->orderby('id','desc')->where('fired_at','!=',null)->get();
-         
+
         $mailqueue= MailQueueResource::collection($mailqueue);
-               
+
         return $mailqueue;
     }
 
@@ -46,7 +54,7 @@ class MailsDeliveredController extends Controller
     {
         //
         $mailqueue = MailQueue::where([['id',$id],['fired_at','!=',null]])->first();
-        
+
         if($_SERVER['HTTP_REFERER'] != null)
         {
             $prev_url = $_SERVER['HTTP_REFERER'];

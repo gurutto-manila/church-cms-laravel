@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Siteadmin;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Subscription;
 use App\Models\Userprofile;
 use App\Traits\LogActivity;
@@ -17,6 +16,15 @@ use App\Models\User;
 use App\Models\Plan;
 use Exception;
 
+/**
+ * SiteadminController
+ *
+ * Manages siteadmin profile and system administration features.
+ * Handles siteadmin account updates and system configuration.
+ * Provides tools for managing subscriptions, galleries, events and plans.
+ *
+ * @package App\Http\Controllers\Siteadmin
+ */
 class SiteadminController extends Controller
 {
 
@@ -71,8 +79,8 @@ class SiteadminController extends Controller
         $filecount = File::where('church_id',$subscription->church_id)->count();
         //$videocount = Video::where('church_id',$subscription->church_id)->count();
         $membership = $subscription->user->userprofile->membership_type;
-        $plan = Plan::where('id',$subscription->plan_id)->get(); 
-        
+        $plan = Plan::where('id',$subscription->plan_id)->get();
+
         return view("/site_admin/show",['membercount'=>$membercount , 'eventcount'=>$eventcount , 'gallerycount'=>$gallerycount , 'filecount'=>$filecount ,  'subscriptions'=>$subscription , 'membership'=>$membership , 'plan'=>$plan]);//'videocount'=>$videocount ,
     }
 
@@ -87,7 +95,7 @@ class SiteadminController extends Controller
     {
         //
         $subscription = Subscription::where('id',$id)->first();
-        
+
         return view("/site_admin/subscription_detail",['subscriptions'=>$subscription]);
     }
 
@@ -130,16 +138,16 @@ class SiteadminController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 $log_name,
                 $message
-                ); 
+                );
 
             \Session::put('successmessage','User Membership Status Updated Successfully');
-            return redirect()->back(); 
+            return redirect()->back();
         }
         catch(Exception $e)
         {
-            //dd($e->getMessage());
+
         }
-        
+
     }
 
     /**

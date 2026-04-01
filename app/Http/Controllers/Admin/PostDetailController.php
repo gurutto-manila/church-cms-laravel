@@ -16,6 +16,17 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * PostDetailController
+ *
+ * Manages post-level interactions like/dislike functionality.
+ * Handles user engagement with forum posts.
+ * Tracks post reactions for community engagement metrics.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PostDetailController extends Controller
 {
     //
@@ -108,7 +119,7 @@ class PostDetailController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_LIKE_POST,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -116,7 +127,7 @@ class PostDetailController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -206,7 +217,7 @@ class PostDetailController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_UNLIKE_POST,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -214,7 +225,7 @@ class PostDetailController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -250,7 +261,7 @@ class PostDetailController extends Controller
 
                 $post_reply->save();
             }
-            
+
             $message = trans('messages.save_success_msg');
 
             $ip= $this->getRequestIP();
@@ -260,7 +271,7 @@ class PostDetailController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_SAVE_POST,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -268,7 +279,7 @@ class PostDetailController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -314,7 +325,7 @@ class PostDetailController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_UNSAVE_POST,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -322,7 +333,7 @@ class PostDetailController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

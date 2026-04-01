@@ -18,7 +18,19 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
-class AttachSubscriberController extends Controller 
+/**
+ * AttachSubscriberController
+ *
+ * Manages the process of attaching subscribers to mailing lists.
+ * Provides functionality to add individual subscribers, handle bulk imports,
+ * and manage subscriber-mailing list associations.
+ * Logs activity for audit trails using LogActivity trait.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for activity logging
+ * @uses Common Trait for utility methods
+ */
+class AttachSubscriberController extends Controller
 {
     use LogActivity;
     use Common;
@@ -33,7 +45,7 @@ class AttachSubscriberController extends Controller
         {
             $prev_url = url('/admin/mailinglist/show/'.$id);
         }
-        
+
         return view('/admin/mailinglist/attachsubscriber',['mailinglist_id' => $id , 'prev_url' => $prev_url]);
     }
 
@@ -60,20 +72,20 @@ class AttachSubscriberController extends Controller
 
             $res['success'] ='Subscriber Attached To MailingList Successfully';
             return $res;
-        } 
-        catch( Exception $e ) 
+        }
+        catch( Exception $e )
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
     public function show($id)
     {
         $mailinglist = MailingList::where('id','!=',$id)->get();
-         
+
         $mailinglist= MailinglistResource::collection($mailinglist);
-     
+
         return $mailinglist;
     }
 
@@ -88,7 +100,7 @@ class AttachSubscriberController extends Controller
                 $mailinglist = MailingList::where('id',$request->id)->first();
 
                 $mailinglist->subscribers()->sync($subscribers,false);
-             
+
                 foreach($subscribers as $subscriber)
                 {
                     $check = MailinglistSubscriber::where([['mailing_list_id',$mailinglist->id],['subscribers_id',$subscriber]])->first();
@@ -122,13 +134,13 @@ class AttachSubscriberController extends Controller
             {
                 $res['success']="";
             }
-            return $res;  
+            return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     public function importcsv(Request $request,$id)
@@ -151,7 +163,7 @@ class AttachSubscriberController extends Controller
             {
                 $subscribers=Subscribers::where('email',$csv['email'])->exists();
                 if(!$subscribers && (!in_array(strtolower($csv['email']),$emails)))
-                {        
+                {
                     if($this->valid_email($csv['email']))
                     {
                         $res[$i]['church_id']   =   $church_id;
@@ -168,10 +180,10 @@ class AttachSubscriberController extends Controller
                     {
                         $error[] = $csv['email'];
                     }
-                } 
+                }
                 else
                 {
-                    $duplicate[] = $csv['email'];                     
+                    $duplicate[] = $csv['email'];
                 }
                 $i++;
             }
@@ -223,7 +235,7 @@ class AttachSubscriberController extends Controller
             $file='uploads/error'.date('_d-m-Y_H_i_s').'.csv';
             $file_open = fopen($file, 'w');
             fputcsv($file_open, $error);
-            $errorpath=$file;  
+            $errorpath=$file;
             //Duplicate
             $file='uploads/duplicate'.date('_d-m-Y_H_i_s').'.csv';
             $file_open = fopen($file, 'w');
@@ -253,12 +265,12 @@ class AttachSubscriberController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     public function valid_email($email)
     {
         return (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $email)) ? FALSE : TRUE;
-    } 
+    }
 }

@@ -17,7 +17,7 @@ class PayaccountContorller extends Controller
     
     public function getlist($church_id)
     {
-        //dd($church_id);
+
          $paymentgateways=Paymentgateway::get();
          $paymentgateways=PaymentgatewayResource::collection($paymentgateways);
          return $paymentgateways;

@@ -14,6 +14,15 @@ use App\Models\Photos;
 use App\Models\Sermon;
 use App\Models\User;
 
+/**
+ * TestController
+ *
+ * Testing and validation endpoint for API functionality.
+ * Provides endpoints for testing notifications, data grouping, and push events.
+ * Used for development and debugging of API features and notification systems.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class TestController extends Controller
 {
     public function index()
@@ -35,7 +44,7 @@ class TestController extends Controller
     }
 
     public function notification(Request $request)
-    { 
+    {
         try
         {
             if($request->type=='event')
@@ -53,7 +62,7 @@ class TestController extends Controller
                 $events->image        = 'uploads/images.jpg';
                 $events->start_date   = '2019-11-24 10:00:00';
                 $events->end_date     = '2019-11-25 10:00:00';
-         
+
                 $events->save();
 
                 $data=[];
@@ -63,27 +72,27 @@ class TestController extends Controller
                 $data['type']      = 'event';
 
                 event(new PushEvent($data));
-    
+
                 $res['success']='Event Added Successfully';
-                return $res;  
+                return $res;
             }
             elseif($request->type=='bulletin')
-            {  
+            {
                 $church_id  = Auth::user()->church_id;
                 $created_by = Auth::id();
-           
+
                 $bulletin   = new Bulletin;
 
                 $bulletin->church_id = $church_id;
                 $bulletin->name = 'Test';
-                $bulletin->type = 'week';        
-                $bulletin->week = '1';          
-                $bulletin->year = '2016';           
+                $bulletin->type = 'week';
+                $bulletin->week = '1';
+                $bulletin->year = '2016';
                 $bulletin->cover_image    ='uploads/images.jpg';
-                $bulletin->path = 'uploads/file.pdf';         
-                $bulletin->created_by = $created_by;    
+                $bulletin->path = 'uploads/file.pdf';
+                $bulletin->created_by = $created_by;
                 $bulletin->save();
- 
+
                 $message=('Bulletin Added Successfully');
 
                 $data=[];
@@ -94,7 +103,7 @@ class TestController extends Controller
 
                 $res['success']="Bulletin Added Successfully";
                 return $res;
-            } 
+            }
             elseif($request->type=='gallery')
             {
                 $church_id      = Auth::user()->church_id;
@@ -122,7 +131,7 @@ class TestController extends Controller
             }
             elseif($request->type=='photos')
             {
-                $church_id      = Auth::user()->church_id;              
+                $church_id      = Auth::user()->church_id;
                 $created_by = Auth::id();
                 $updated_by = Auth::id();
 
@@ -133,7 +142,7 @@ class TestController extends Controller
                     'created_by'  => $created_by,
                     'updated_by'  => $updated_by,
                 ];
-           
+
                 $photo = Photos::create($create);
 
                 $data=[];
@@ -143,16 +152,16 @@ class TestController extends Controller
                 $data['type']='photos';
 
                 event(new PushEvent($data));
-           
+
                 $res['message']="Uploaded Successfully";
                 return $res;
-            } 
+            }
             elseif($request->type=='sermon')
             {
                 $church_id      = Auth::user()->church_id;
                 $user_id        = Auth::id();
-          
-                $sermon = new Sermon;   
+
+                $sermon = new Sermon;
 
                 $sermon->church_id   = $church_id;
                 $sermon->user_id     = $user_id;
@@ -169,7 +178,7 @@ class TestController extends Controller
                 $data['type']='sermon';
 
                 event(new PushEvent($data));
-           
+
                 $res['message']="Sermon Created Successfully";
                 return $res;
             }
@@ -177,7 +186,7 @@ class TestController extends Controller
             {
                 $church_id = Auth::user()->church_id;
                 $user_id = Auth::id();
-         
+
                 $sermon=new SermonLink;
                 $sermon->church_id  = $church_id;
                 $sermon->user_id    = $user_id;
@@ -186,7 +195,7 @@ class TestController extends Controller
                 $sermon->location   = 'chennai';
                 $sermon->date       = '2019-10-20';
                 $sermon->url        = 'uploads\file.pdf';
-             
+
                 $sermon->save();
 
                 $data=[];
@@ -203,7 +212,7 @@ class TestController extends Controller
         }
         catch(Exception $e)
         {
-            //dd($e->getMessage());
-        }     
+
+        }
     }
 }

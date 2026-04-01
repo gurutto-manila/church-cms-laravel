@@ -4,9 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\Faq as FaqResource;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Models\Faq;
 
+/**
+ * FaqController
+ *
+ * Manages frequently asked questions for the church.
+ * Displays FAQ listings organized by categories for both public and authenticated users.
+ *
+ * @package App\Http\Controllers
+ */
 class FaqController extends Controller
 {
     /**

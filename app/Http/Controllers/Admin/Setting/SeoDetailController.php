@@ -12,6 +12,15 @@ use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * SeoDetailController
+ *
+ * Manages SEO settings and metadata for the church website.
+ * Handles both basic and advanced SEO configuration.
+ * Uses SettingProcess trait for centralized settings management.
+ *
+ * @package App\Http\Controllers\Admin\Setting
+ */
 class SeoDetailController extends Controller
 {
     use SettingProcess;
@@ -79,8 +88,8 @@ class SeoDetailController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }    
+
+        }
     }
 
     /**
@@ -130,7 +139,7 @@ class SeoDetailController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }    
+
+        }
     }
 }

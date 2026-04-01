@@ -15,6 +15,15 @@ use App\Models\Sermon;
 use Exception;
 use Log;
 
+/**
+ * SermonsController
+ *
+ * Manages sermon creation, updates, and deletion by preachers.
+ * Handles sermon CRUD operations with event triggers and logging.
+ * Manages sermon relationships with sermon links and metadata.
+ *
+ * @package App\Http\Controllers\Preacher
+ */
 class SermonsController extends Controller
 {
     //
@@ -25,14 +34,14 @@ class SermonsController extends Controller
     {
         //
         $sermon = Sermon::where('church_id',Auth::user()->church_id)->with('vote');
-        
+
         $q = request('q');
         if($q!= '')
         {
             $sermon= Sermon::where('church_id',Auth::user()->church_id)->where(function ($query) use($q)
             {
                 $query->where('title','LIKE','%'.$q.'%');
-              
+
             });
         }
         $sermon=$sermon->paginate(9);
@@ -53,7 +62,7 @@ class SermonsController extends Controller
             $user_id        = Auth::id();
             $file = $request->file('cover_image');
             $path = $this->uploadFile('/uploads/sermons/covers/1',$file);
-        
+
             $sermon = new Sermon;
 
             $sermon->church_id   = $church_id;
@@ -61,7 +70,7 @@ class SermonsController extends Controller
             $sermon->title       = $request->title;
             $sermon->description = $request->description;
             $sermon->cover_image = $path;
-       
+
             $sermon->save();
 
             if(env('MAIL_STATUS') == 'on')
@@ -70,7 +79,7 @@ class SermonsController extends Controller
             }
 
             return redirect('/preacher/sermon/create')->with('successmessage', 'Sermon Created!');
-      
+
             $message = 'Sermon Added Successfully';
 
             $ip= $this->getRequestIP();
@@ -80,13 +89,13 @@ class SermonsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_SERMON,
                 $message
-            ); 
+            );
         }
-        catch (Exception $e) 
+        catch (Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     public function edit($id)
@@ -102,7 +111,7 @@ class SermonsController extends Controller
             $church_id      = Auth::user()->church_id;
             $user_id        = Auth::id();
             $file = $request->file('cover_image');
-        
+
             $sermon =Sermon::find($id);
 
             $sermon->church_id   = $church_id;
@@ -114,7 +123,7 @@ class SermonsController extends Controller
             $path = $this->uploadFile('/uploads/sermons/covers/1',$file);
             $sermon->cover_image = $path;
             }
-       
+
             $sermon->save();
 
             if(env('MAIL_STATUS') == 'on')
@@ -123,7 +132,7 @@ class SermonsController extends Controller
             }
 
             return redirect('/preacher/sermon/edit/'.$sermon->id)->with('successmessage', 'Sermon Updated!');
-      
+
             $message = 'Sermon updated Successfully';
 
             $ip= $this->getRequestIP();
@@ -133,18 +142,18 @@ class SermonsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_UPDATE_SERMON,
                 $message
-            ); 
+            );
         }
-        catch (Exception $e) 
+        catch (Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 
     public function destroy($id)
     {
-        try 
+        try
         {
             $sermon = Sermon::findOrFail($id);
             $links = SermonLink::where([['sermons_id',$id],['user_id',Auth::id()]]);
@@ -162,11 +171,11 @@ class SermonsController extends Controller
             );
 
             return redirect('/preacher/sermon')->with(['successmessage' => 'Sermon deleted']);
-        } 
-        catch (Exception $e) 
+        }
+        catch (Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

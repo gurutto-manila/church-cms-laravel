@@ -12,6 +12,15 @@ use Illuminate\Http\Request;
 use Exception;
 use Log;
 
+/**
+ * PrayerResponsesController
+ *
+ * Handles prayer response management and interactions via API.
+ * Allows users to view, create, and manage responses to prayer requests.
+ * Events triggered on prayer response creation for real-time notifications.
+ *
+ * @package App\Http\Controllers\Api
+ */
 class PrayerResponsesController extends Controller
 {
     /**
@@ -71,7 +80,7 @@ class PrayerResponsesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        } 
+
+        }
     }
 }

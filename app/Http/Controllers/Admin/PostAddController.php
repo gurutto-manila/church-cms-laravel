@@ -14,6 +14,17 @@ use App\Models\Tag;
 use Exception;
 use Log;
 
+/**
+ * PostAddController
+ *
+ * Handles creation of new user-generated forum posts.
+ * Manages post creation with tag association and content moderation.
+ * Integrates with post categorization and tag management system.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PostAddController extends Controller
 {
     //
@@ -44,11 +55,11 @@ class PostAddController extends Controller
         if(count(\Request::getQueryString())>0)
         {
             if($request->entity_id != '')
-            { 
+            {
                 $entity_id = $request->entity_id;
             }
             if($request->entity_name != '')
-            { 
+            {
                 $entity_name = $request->entity_name;
             }
         }
@@ -88,7 +99,7 @@ class PostAddController extends Controller
             {
                 $post->visibility       = $request->visibility;
             }
-            
+
             if($request->visibility == 'select_class')
             {
                 $post->visible_for      = $request->visible_for;
@@ -119,7 +130,7 @@ class PostAddController extends Controller
                 $tag=Tag::firstOrCreate(['tag_name' => $tag]);
                 array_push($tagObjects,$tag);
             }
-           
+
             $post->tag()->saveMany($tagObjects);
 
             $message = trans('messages.add_success_msg',['module' => 'Post']);
@@ -131,7 +142,7 @@ class PostAddController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_POST,
                 $message
-            ); 
+            );
 
             $res['id'] = $post->id;
             $res['success'] = $message;
@@ -140,7 +151,7 @@ class PostAddController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -158,25 +169,25 @@ class PostAddController extends Controller
             $post = Post::where('id',$request->post_id)->first();
             $i =0;
             $files = $request->file;
-            
-            if(count($files) > 0) 
+
+            if(count($files) > 0)
             {
                 $post->attachment_file = null;
                 $post->save();
                 $path = [];
-                foreach($files as $file) 
+                foreach($files as $file)
                 {
-                    $path[$i] = $this->uploadFile(Auth::user()->church_id.'/posts/'.$request->post_id,$file); 
-                    $i++;     
+                    $path[$i] = $this->uploadFile(Auth::user()->church_id.'/posts/'.$request->post_id,$file);
+                    $i++;
                 }
-                $post->attachment_file = $path; 
+                $post->attachment_file = $path;
                 $post->save();
             }
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

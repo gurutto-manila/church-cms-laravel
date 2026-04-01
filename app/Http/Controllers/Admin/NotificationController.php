@@ -12,6 +12,17 @@ use Notification;
 use Exception;
 use Log;
 
+/**
+ * NotificationController
+ *
+ * Manages system and user notifications within the admin panel.
+ * Handles notification retrieval, marking as read, and notification management.
+ * Provides real-time notification updates and notification preferences for administrators.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses NewMessageNotification for message notification events
+ * @uses NotificationResource for API resource transformation
+ */
 class NotificationController extends Controller
 {
     //
@@ -28,11 +39,11 @@ class NotificationController extends Controller
             $array = [];
 
             $unreadNotifications = \DB::table('notifications')->where('notifiable_id',Auth::id())->whereNull('read_at')->get();
-            
+
             $unreadNotifications = NotificationResource::collection($unreadNotifications);
 
             $readNotifications = \DB::table('notifications')->where('notifiable_id',Auth::id())->whereNotNull('read_at')->orderBy('read_at','ASC')->get();
-            
+
             $readNotifications = NotificationResource::collection($readNotifications);
 
             $array['read_list']     = $readNotifications;
@@ -43,7 +54,7 @@ class NotificationController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -55,7 +66,7 @@ class NotificationController extends Controller
 
     /**
      * Mark the notification as read.
-     * 
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
@@ -84,9 +95,9 @@ class NotificationController extends Controller
       	catch(Exception $e)
       	{
             Log::info($e->getMessage());
-        	//dd($e->getMessage());
+
       	}
-    } 
+    }
 
     /**
      * Fetches the notifications.
@@ -119,7 +130,7 @@ class NotificationController extends Controller
                             $type = null;
                         }
                     }
-                    $array['list'][$i]['notification_id']=$notification['id'];                  
+                    $array['list'][$i]['notification_id']=$notification['id'];
                     $array['list'][$i]['data']=$val;
                     $array['list'][$i]['type']=$type;
                     $array['list'][$i]['date']=$notification->created_at->diffForHumans();
@@ -131,7 +142,7 @@ class NotificationController extends Controller
       	catch(Exception $e)
       	{
         	Log::info($e->getMessage());
-            //dd($e->getMessage());
+
       	}
     }
 }

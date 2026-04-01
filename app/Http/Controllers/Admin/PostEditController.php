@@ -14,6 +14,17 @@ use App\Models\Post;
 use Exception;
 use Log;
 
+/**
+ * PostEditController
+ *
+ * Handles editing and updating of user-generated forum posts.
+ * Manages post content updates and attachment management.
+ * Enforces post ownership verification before allowing edits.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PostEditController extends Controller
 {
     //
@@ -131,7 +142,7 @@ class PostEditController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_POST,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -139,7 +150,7 @@ class PostEditController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -170,15 +181,15 @@ class PostEditController extends Controller
             }
 
             $files = $request->file;
-            
-            if(count($files) > 0) 
+
+            if(count($files) > 0)
             {
                 $i = $request->count+1;
                 $path = [];
-                foreach($files as $file) 
+                foreach($files as $file)
                 {
-                    $path[$i] = $this->uploadFile(Auth::user()->church_id.'/posts/'.$id,$file); 
-                    $i++;     
+                    $path[$i] = $this->uploadFile(Auth::user()->church_id.'/posts/'.$id,$file);
+                    $i++;
                 }
                 $post->attachment_file = array_merge($post->attachment_file,$path);
                 $post->save();
@@ -187,7 +198,7 @@ class PostEditController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

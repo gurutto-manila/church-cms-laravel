@@ -7,7 +7,6 @@ use App\Http\Resources\API\Fund as FundResource;
 use App\Http\Requests\Api\FundRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use App\Traits\LogActivity;
 use App\Helpers\SiteHelper;
 use App\Traits\Common;
@@ -18,6 +17,16 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * FundController
+ *
+ * Provides donation and fundraising information via API.
+ * Returns fund listings, donations, and payment methods.
+ *
+ * @package App\Http\Controllers\Api
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class FundController extends Controller
 {
     use LogActivity;
@@ -40,7 +49,7 @@ class FundController extends Controller
 
         return $funds;
     }
-    
+
     public function store(FundRequest $request)
     {
     	$user=User::where([['id',Auth::id()],['church_id',Auth::user()->church_id]])->first();
@@ -51,19 +60,19 @@ class FundController extends Controller
             $funds->church_id         = Auth::user()->church_id;
            /* $funds->authorised_by     = Auth::id();
             $funds->authorised_at     = Carbon::now();*/
-           
+
             $funds->membership        ='member';
-            
-            $funds->user_id           = $user->id;            
+
+            $funds->user_id           = $user->id;
 
             $funds->amount            = $request->amount;
 
             $funds->payaccount_id     = $request->payaccount_id;
-           
+
             $funds->status            = 'request';
 
             $funds->uuid=uniqid();
-            
+
             $funds->save();
 
             $message= 'Fund Requested Successfully';
@@ -74,7 +83,7 @@ class FundController extends Controller
              $array['details']  = 'New Fund Request Received';
 
              event(new SingleNotificationEvent($array));
-          
+
             /*$ip= $this->getRequestIP();
             $this->doActivityLog(
                 $fund,
@@ -88,16 +97,16 @@ class FundController extends Controller
               return response()->json([
                 'status'    =>  true,
                 'message'   =>  $message,
-            ], 200); 
+            ], 200);
         }
         catch(Exception $e)
         {
               return response()->json([
                 'status'    =>  false,
                 'message'   =>  'Something went wrong',
-            ], 200); 
+            ], 200);
             Log::info($e->getMessage());
-            //dd($e->getMessage());
-        }     
+
+        }
     }
 }

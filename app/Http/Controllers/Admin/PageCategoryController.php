@@ -15,6 +15,17 @@ use App\Models\User;
 use Exception;
 use Log;
 
+/**
+ * PageCategoryController
+ *
+ * Manages page categories for organizing static content.
+ * Handles category creation, updates, and deletion for page organization.
+ * Supports categorizing pages by topic/purpose.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PageCategoryController extends Controller
 {
     //
@@ -66,7 +77,7 @@ class PageCategoryController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_PAGE_CATEGORY,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -74,7 +85,7 @@ class PageCategoryController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

@@ -14,6 +14,16 @@ use App\Traits\Dashboard;
 use App\Models\Events;
 use Analytics;
 
+/**
+ * DashboardController
+ *
+ * Manages the admin dashboard interface displaying key metrics and summaries.
+ * Provides analytics overview, upcoming events,  recent sermon links, and attendance tracking.
+ * Integrates with Spatie Analytics for tracking website visitor data.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses Dashboard Trait for common dashboard calculation methods
+ */
 class DashboardController extends Controller
 {
     use Dashboard;
@@ -50,7 +60,7 @@ class DashboardController extends Controller
     public function sermon()
     {
         $links = SermonLink::with('sermons')->where('church_id',Auth::user()->church_id)->orderBy('id','desc')->take(5)->get();
-        
+
         $links = ShowSermonLinkResource::collection($links);
 
         return $links;

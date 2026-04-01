@@ -3,8 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
+/**
+ * BlogsController
+ *
+ * Manages blog posts and articles within the church CMS.
+ * Provides CRUD operations for creating, viewing, and managing blog content.
+ *
+ * @package App\Http\Controllers\Admin
+ */
 class BlogsController extends Controller
 {
     /**

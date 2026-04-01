@@ -15,6 +15,17 @@ use App\Models\Page;
 use Exception;
 use Log;
 
+/**
+ * PageDetailsController
+ *
+ * Manages page follower relationships and page metadata.
+ * Handles user follow/unfollow functionality for specific pages.
+ * Tracks page interactions and user engagement with page content.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PageDetailsController extends Controller
 {
     use LogActivity;
@@ -34,7 +45,7 @@ class PageDetailsController extends Controller
             $page = Page::where('id',$page_id)->first();
 
             $page_detail = PageDetail::where([['user_id',Auth::id()],['page_id',$page_id]])->first();
-            
+
             if($page_detail != null)
             {
                 $page_detail->is_following = $request->is_following;
@@ -84,7 +95,7 @@ class PageDetailsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_FOLLOW_PAGE,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -92,7 +103,7 @@ class PageDetailsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -158,7 +169,7 @@ class PageDetailsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_LIKE_PAGE,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -166,7 +177,7 @@ class PageDetailsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -233,7 +244,7 @@ class PageDetailsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_UNLIKE_PAGE,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -241,7 +252,7 @@ class PageDetailsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

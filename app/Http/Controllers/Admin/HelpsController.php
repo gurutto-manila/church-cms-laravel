@@ -19,11 +19,23 @@ use Carbon\Carbon;
 use Exception;
 use Log;
 
+/**
+ * HelpsController
+ *
+ * Manages help requests and support ticket system.
+ * Handles help request viewing, responding, and resolution tracking.
+ * Supports push notifications for new help requests.
+ * Integrates with HelpRepository for data access patterns.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class HelpsController extends Controller
 {
     use LogActivity;
     use Common;
-    
+
     public function __construct(HelpRepositoryInterface $help)
     {
         $this->help = $help;
@@ -56,7 +68,7 @@ class HelpsController extends Controller
 
         $helps = HelpResource::collection($helps);
 
-        return $helps;    
+        return $helps;
     }
 
     /**
@@ -90,7 +102,7 @@ class HelpsController extends Controller
             return view('/admin/helps/show',['help'=>$help]);
         }
         else
-        { 
+        {
             abort(403);
         }
     }
@@ -116,7 +128,7 @@ class HelpsController extends Controller
             return $array;
         }
         else
-        { 
+        {
             abort(403);
         }
     }
@@ -138,7 +150,7 @@ class HelpsController extends Controller
             return view('/admin/helps/edit',['help'=>$help]);
         }
         else
-        { 
+        {
             abort(403);
         }
     }
@@ -184,7 +196,7 @@ class HelpsController extends Controller
 
             $array['church_id']         = Auth::user()->church_id;
             $array['user_id']           = $help->user_id;
-            $array['details']           = 'New Help Request received';  
+            $array['details']           = 'New Help Request received';
 
             event(new PrayerNotificationEvent($array));
 
@@ -200,13 +212,13 @@ class HelpsController extends Controller
             );
 
             $res['message']='Help Status Updated Successfully';
-                
+
             return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

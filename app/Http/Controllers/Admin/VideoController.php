@@ -16,6 +16,18 @@ use App\Traits\Common;
 use Exception;
 use Log;
 
+/**
+ * VideoController
+ *
+ * Manages video file uploads and video media content.
+ * Handles video upload, processing, and storage.
+ * Supports subscription-based video feature limits and push notifications.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses SendPushNotification Trait for video notifications
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for file utilities
+ */
 class VideoController extends Controller
 {
     use SendPushNotification;
@@ -54,7 +66,7 @@ class VideoController extends Controller
         }
         catch(Exception $e)
         {
-            //dd($e->getMessage());
+
         }
     }
 
@@ -83,7 +95,7 @@ class VideoController extends Controller
             {
                 $video->url = \Session::get('path');
             }
-             
+
             $video->save();
 
             \Session::forget('path');
@@ -105,15 +117,15 @@ class VideoController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_VIDEO,
                 $message
-            );  
+            );
 
             $res['success'] = $message;
             return $res;
         }
-        catch (Exception $e) 
+        catch (Exception $e)
         {
             Log::info($e->getMessage());
-           //dd($e->getMessage());
-        }  
+
+        }
     }
 }

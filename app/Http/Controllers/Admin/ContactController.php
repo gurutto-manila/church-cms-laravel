@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Contact;
 
+/**
+ * ContactController
+ *
+ * Manages contact inquiries and messages submitted through the church contact forms.
+ * Provides viewing, searching, and management of contact submissions with pagination support.
+ *
+ * @package App\Http\Controllers\Admin
+ */
 class ContactController extends Controller
 {
     /**

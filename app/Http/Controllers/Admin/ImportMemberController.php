@@ -20,6 +20,18 @@ use Exception;
 use Log;
 use DB;
 
+/**
+ * ImportMemberController
+ *
+ * Handles bulk member import functionality.
+ * Processes CSV file uploads for member data import with validation.
+ * Integrates with user registration system for member account creation.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses RegisterUser Trait for user registration logic
+ * @uses LogActivity Trait for activity tracking
+ * @uses Common Trait for utility functions
+ */
 class ImportMemberController extends Controller
 {
 
@@ -37,23 +49,23 @@ class ImportMemberController extends Controller
         //
         return view('admin/member/import/import');
     }
-  
+
     /**
     * @return \Illuminate\Support\Collection
     */
     public function importUsers(ImportMemberRequest $request)//ImportMember
     {
-        // 
+        //
         try
         {
             Excel::import(new UsersImport,$request->file('import_file'));
             $count = \Session::get('count');
-            
+
           /*  if($count != 0)
             {
                 return back()->with('failmessage','You can add only '.$count.' Members');
             }*/
-           
+
             $insertedcount = \Session::get('insertedcount');
 
             if($insertedcount > 0)
@@ -73,17 +85,17 @@ class ImportMemberController extends Controller
             else
             {
                 return back()->with('failmessage','No Records Inserted.');
-            } 
+            }
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
     public function downloadFormat(Request $request)
-    {      
+    {
         try
         {
             $csv = Writer::createFromFileObject(new \SplTempFileObject());
@@ -117,7 +129,7 @@ class ImportMemberController extends Controller
             ]);
 
             $csv->output('Church Social Add Member Format'.date('_d-m-Y_H:i').'.csv');
-       
+
             $message = 'Downloaded Sample Format File Successfully';
 
             $ip= $this->getRequestIP();
@@ -132,7 +144,7 @@ class ImportMemberController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

@@ -19,11 +19,29 @@ use App\Traits\Common;
 use Exception;
 use Log;
 use App\Events\Notification\PushNotificationEvent;
+
+/**
+ * GalleryController
+ *
+ * Manages photo galleries and image collections within the church.
+ * Handles gallery creation, photo uploads, gallery management, and event-specific galleries.
+ * Implements subscription-based feature restrictions and push notifications for new galleries.
+ * Supports search and filtering of gallery content.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class GalleryController extends Controller
 {
 
     use LogActivity;
     use Common;
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for file and path utilities
+ */
 
     public function index(Request $request)
     {
@@ -39,18 +57,18 @@ class GalleryController extends Controller
 
         $gallery = $gallery->get();
 
-        return view('admin.gallery.index',['count' => $count , 'subscription' => $subscription , 'gallery' => $gallery]);  
+        return view('admin.gallery.index',['count' => $count , 'subscription' => $subscription , 'gallery' => $gallery]);
     }
 
     public function create()
-    { 
-        return view('admin.gallery.create'); 
+    {
+        return view('admin.gallery.create');
     }
 
     public function store(GalleryRequest $request)
     {
         try
-        {   
+        {
             $gallery = new Gallery;
 
             $gallery->church_id    = Auth::user()->church_id;
@@ -61,7 +79,7 @@ class GalleryController extends Controller
             if($file != null)
             {
                 $folder = Auth::user()->church_id.'/gallery/covers';
-                $gallery->path = $this->uploadFile($folder,$file); 
+                $gallery->path = $this->uploadFile($folder,$file);
             }
 
             $gallery->save();
@@ -90,28 +108,28 @@ class GalleryController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_GALLERY_ALBUM,
                 $message
-            ); 
+            );
 
             return redirect('/admin/gallery')->with(['successmessage' => $message]);
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
     public function edit($id)
-    { 
+    {
         $gallery = Gallery::where('id',$id)->first();
 
-        return view('admin.gallery.edit',['gallery' => $gallery]); 
+        return view('admin.gallery.edit',['gallery' => $gallery]);
     }
 
     public function update(GalleryUpdateRequest $request,$id)
     {
         try
-        {	
+        {
         	$gallery = Gallery::where('id',$id)->first();
 
         	$gallery->name         = $request->name;
@@ -121,9 +139,9 @@ class GalleryController extends Controller
             if($file != null)
             {
                 $folder = Auth::user()->church_id.'/gallery/covers';
-                $gallery->path = $this->uploadFile($folder,$file); 
+                $gallery->path = $this->uploadFile($folder,$file);
             }
-            else 
+            else
             {
                 $gallery->path = $gallery->path;
             }
@@ -147,14 +165,14 @@ class GalleryController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_EDIT_GALLERY_ALBUM,
                 $message
-            ); 
+            );
 
             return redirect('/admin/gallery')->with(['successmessage' => $message]);
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -200,7 +218,7 @@ class GalleryController extends Controller
             $group = Gallery::where('id',$id)->first();
 
             $group->delete();
-                
+
             $message = 'Gallery Album Deleted Successfully';
 
             $ip= $this->getRequestIP();
@@ -211,13 +229,13 @@ class GalleryController extends Controller
                 LOGNAME_DELETE_GALLERY_ALBUM,
                 $message
             );
-                
+
             return redirect('/admin/gallery')->with(['successmessage' => $message]);
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

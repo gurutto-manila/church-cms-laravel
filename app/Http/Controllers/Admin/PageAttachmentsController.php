@@ -13,6 +13,17 @@ use App\Models\Page;
 use Exception;
 use Log;
 
+/**
+ * PageAttachmentsController
+ *
+ * Manages file attachments for static church pages.
+ * Handles uploading and managing media files associated with pages.
+ * Supports bulk file uploads and attachment organization.
+ *
+ * @package App\Http\Controllers\Admin
+ * @uses LogActivity Trait for audit logging
+ * @uses Common Trait for helper functions
+ */
 class PageAttachmentsController extends Controller
 {
     use LogActivity;
@@ -45,8 +56,8 @@ class PageAttachmentsController extends Controller
                 {
                     $folder =   $church_id.'/pages/'.$page_id.'/attachments';
                     $path   =   $this->uploadFile($folder,$file);
-                    $page_attachment->attachment_file = $path; 
-                }   
+                    $page_attachment->attachment_file = $path;
+                }
 
                 $page_attachment->save();
 
@@ -62,7 +73,7 @@ class PageAttachmentsController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_PAGE_ATTACHMENT,
                 $message
-            ); 
+            );
 
             $res['success'] = $message;
             return $res;
@@ -70,7 +81,7 @@ class PageAttachmentsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -112,7 +123,7 @@ class PageAttachmentsController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 }

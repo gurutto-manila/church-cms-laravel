@@ -19,6 +19,16 @@ use Exception;
 use Log;
 use DB;
 
+/**
+ * VideoConferencesController
+ *
+ * Manages video conference meetings and virtual gathering functionality.
+ * Handles conference creation, participant management, and room invitations.
+ * Supports conference scheduling, status tracking, and participant list management.
+ * Integrates with email notifications for conference invitations.
+ *
+ * @package App\Http\Controllers\Admin
+ */
 class VideoConferencesController extends Controller
 {
     //
@@ -49,7 +59,7 @@ class VideoConferencesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {   
+    {
         $members = User::ByChurch(Auth::user()->church_id)->ByRole(5)->ByMembershipType('member')->ByStatus('active')->get();
 
         return view('admin.video_conference.create', ['members' => $members]);
@@ -93,7 +103,7 @@ class VideoConferencesController extends Controller
             $members = $request->members;
             if(count($members)>0)
             {
-                foreach ($members as $key => $user_id) 
+                foreach ($members as $key => $user_id)
                 {
                     $conferenceUsers                  = new VideoConferenceUser;
 
@@ -107,7 +117,7 @@ class VideoConferencesController extends Controller
                     if($user->email != null)
                     {
                         Mail::to($user->email)->queue(new RoomInvitationMail($user,$conference));
-                    } 
+                    }
                 }
             }
 
@@ -124,7 +134,7 @@ class VideoConferencesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -157,7 +167,7 @@ class VideoConferencesController extends Controller
         {
           $identity=Auth::user()->name;
         }
-    
+
         $details = \Conference::showDetails($conference->slug,$identity);
 
         $accessToken = 0;
@@ -186,7 +196,7 @@ class VideoConferencesController extends Controller
             $array['description']    =   $conference->description;
             $array['duration']       =   $conference->duration;
             $array['joining_date']=$conference->joining_date==null ? '':date('d-m-Y h:i:s a',strtotime($conference->joining_date));
-            foreach ($conference->participantInfo as $key => $user) 
+            foreach ($conference->participantInfo as $key => $user)
             {
                 $array['members'][$key] = $user->id;
             }
@@ -223,7 +233,7 @@ class VideoConferencesController extends Controller
         $multipleUsers = array();
         if(count($conference->participantInfo)>0)
         {
-            foreach ($conference->participantInfo as $key => $xvalue) 
+            foreach ($conference->participantInfo as $key => $xvalue)
             {
                 $multipleUsers[] = $xvalue->id;
             }
@@ -258,12 +268,12 @@ class VideoConferencesController extends Controller
             $participant_data = $request->members;
             $participant_count = VideoConferenceUser::where('conference_id', $conference->id)->get();
             $remove_participant_id = array();
-            if (count($participant_count) > 0) 
+            if (count($participant_count) > 0)
             {
-                foreach ($participant_count as $pn_key => $pn_value) 
+                foreach ($participant_count as $pn_key => $pn_value)
                 {
                     $participant_id = $pn_value->id;
-                    if (isset($participant_data[$pn_key])) 
+                    if (isset($participant_data[$pn_key]))
                     {
                         $remove_participant_id[] = $participant_id;
                         $update_participants = VideoConferenceUser::find($participant_id);
@@ -272,22 +282,22 @@ class VideoConferencesController extends Controller
                     }
                 }
 
-                if (count($remove_participant_id) > 0 && count($participant_count) != count($remove_participant_id)) 
+                if (count($remove_participant_id) > 0 && count($participant_count) != count($remove_participant_id))
                 {
                     VideoConferenceUser::whereNotIn('id', $remove_participant_id)->where('conference_id', $conference->id)->delete();
                 }
             }
 
-            if (count($participant_data) == 0 && count($participant_count) > 0) 
+            if (count($participant_data) == 0 && count($participant_count) > 0)
             {
                 VideoConferenceUser::where('conference_id', $conference->id)->delete();
             }
 
-            if (count($participant_data) > 0 && count($participant_count) < count($participant_data)) 
+            if (count($participant_data) > 0 && count($participant_count) < count($participant_data))
             {
-                foreach ($participant_data as $key => $participant) 
+                foreach ($participant_data as $key => $participant)
                 {
-                    if ($key >= count($participant_count) && !empty($participant)) 
+                    if ($key >= count($participant_count) && !empty($participant))
                     {
                         $inser_participant = new VideoConferenceUser();
                         $inser_participant->conference_id = $conference->id;
@@ -303,7 +313,7 @@ class VideoConferencesController extends Controller
         catch(Exception $e)
         {
             Log::info($e->getMessage());
-            //dd($e->getMessage());
+
         }
     }
 
@@ -331,7 +341,7 @@ class VideoConferencesController extends Controller
         if(empty($conference)){
             return redirect('admin/video-conference')->with('error', 'No records found.');
         }
-        
+
         VideoConference::where('id',$id)->delete();
         VideoConferenceUser::where('conference_id',$id)->delete();
 
@@ -355,7 +365,7 @@ class VideoConferencesController extends Controller
              $url ='admin/video-conference/manage-invites/'.$conferenceId;
              $message=  'Invites has been deleted successfully.';
              $type = 'message';
-        } 
+        }
 
         return redirect($url)->with($type, $message);
     }
@@ -404,7 +414,7 @@ class VideoConferencesController extends Controller
         $multipleUsers = array();
         if(count($conference->participantInfo)>0)
         {
-            foreach ($conference->participantInfo as $key => $xvalue) 
+            foreach ($conference->participantInfo as $key => $xvalue)
             {
                 $multipleUsers[] = $xvalue->id;
             }
@@ -460,5 +470,5 @@ class VideoConferencesController extends Controller
         //return redirect('admin/video-conference/manage-invites/'.$id)->with('message', 'Invites has been updated successfully.');
         $res['success'] = 'Invites Updated Successfully';
         return $res;
-    }  
+    }
 }
