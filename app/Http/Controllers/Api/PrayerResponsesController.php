@@ -49,7 +49,7 @@ class PrayerResponsesController extends Controller
         try
         {
             $prayer_request = PrayerRequest::where('id',$id)->first();
-            if( $prayer_request->church_id == Auth::user()->church_id)
+            if( $prayer_request->church_id === Auth::user()->church_id)
             {
                 $prayer = new PrayerResponse;
 

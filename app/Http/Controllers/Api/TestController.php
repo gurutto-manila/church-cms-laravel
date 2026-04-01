@@ -47,7 +47,7 @@ class TestController extends Controller
     {
         try
         {
-            if($request->type=='event')
+            if($request->type==='event')
             {
                 $events= new Events;
 
@@ -76,7 +76,7 @@ class TestController extends Controller
                 $res['success']='Event Added Successfully';
                 return $res;
             }
-            elseif($request->type=='bulletin')
+            elseif($request->type==='bulletin')
             {
                 $church_id  = Auth::user()->church_id;
                 $created_by = Auth::id();
@@ -104,7 +104,7 @@ class TestController extends Controller
                 $res['success']="Bulletin Added Successfully";
                 return $res;
             }
-            elseif($request->type=='gallery')
+            elseif($request->type==='gallery')
             {
                 $church_id      = Auth::user()->church_id;
 
@@ -129,7 +129,7 @@ class TestController extends Controller
                 $res['success']="Gallery Added Successfully";
                 return $res;
             }
-            elseif($request->type=='photos')
+            elseif($request->type==='photos')
             {
                 $church_id      = Auth::user()->church_id;
                 $created_by = Auth::id();
@@ -156,7 +156,7 @@ class TestController extends Controller
                 $res['message']="Uploaded Successfully";
                 return $res;
             }
-            elseif($request->type=='sermon')
+            elseif($request->type==='sermon')
             {
                 $church_id      = Auth::user()->church_id;
                 $user_id        = Auth::id();
@@ -182,7 +182,7 @@ class TestController extends Controller
                 $res['message']="Sermon Created Successfully";
                 return $res;
             }
-            elseif($request->type=='sermonlink')
+            elseif($request->type==='sermonlink')
             {
                 $church_id = Auth::user()->church_id;
                 $user_id = Auth::id();

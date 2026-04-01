@@ -35,10 +35,6 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        // $analyticsData = Analytics::fetchMostVisitedPages(Period::days(7));
-        // echo "<pre>";
-        // print_r($analyticsData);exit;
-
         $admin_id  =   Auth::id();
         $church_id =   Auth::user()->church_id;
         $query     =   \Request::getQueryString();

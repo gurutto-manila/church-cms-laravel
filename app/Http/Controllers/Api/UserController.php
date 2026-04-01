@@ -28,7 +28,7 @@ class UserController extends Controller
     use AuthenticationProcess;
     use ResetPasswordProcess;
     use SendMessageProcess;
-  
+
     public function show($id)
     {
         $users = User::with('userprofile')->where([['id',Auth::user()->id],['church_id',Auth::user()->church_id]])->get();
@@ -44,20 +44,20 @@ class UserController extends Controller
         try
         {
             $user = User::where([['id',Auth::id()],['church_id',Auth::user()->church_id]])->first();
-            
+
             $user->platform_token  = $request->platform_token;
-             
+
             $user->save();
 
             $res['message']='Token Updated Successfully';
-        
+
             return $res;
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
 
-        } 
+        }
     }
 
     public function changePassword(ChangePasswordRequest $request)
@@ -67,9 +67,9 @@ class UserController extends Controller
             $user = User::where('id',Auth::id())->first();
 
             $hashedPassword = $user->password;
-            if (Hash::check($request->oldpassword, $hashedPassword)) 
+            if (Hash::check($request->oldpassword, $hashedPassword))
             {
-                //Change the password          
+                //Change the password
                 $user->password = Hash::make($request->newpassword);
                 $user->is_reset  = 0;
 
@@ -118,8 +118,8 @@ class UserController extends Controller
 
             $this->createAuthentication($user,$request);
 
-            //$token = $this->resetPasswordSms($user);
-        
+
+
             return response()->json([
                 'success'   =>  true,
                 'message'   =>  'Check sms to reset the password'
@@ -129,7 +129,7 @@ class UserController extends Controller
         {
             Log::info($e->getMessage());
 
-        }    
+        }
     }
 
     /**
@@ -150,7 +150,7 @@ class UserController extends Controller
                 ['status',0]
             ])->orderBy('id','DESC')->get();
 
-            if($authentication[0]['token'] == $request->password)
+            if($authentication[0]['token'] === $request->password)
             {
                 $authentication_update = Authentication::where('id',$authentication[0]['id'])->first();
 
@@ -162,7 +162,7 @@ class UserController extends Controller
                 $user = User::where('mobile_no',$request->mobile_no)->first();
 
                 $user->is_reset  = 1;
-                //$user->password  = bcrypt($request->password);
+
 
                 $user->save();
 
@@ -194,7 +194,7 @@ class UserController extends Controller
         try
         {
             $user = User::where('mobile_no',$request->mobile_no)->first();
-        
+
             return response()->json([
                 'success'   =>  true,
                 'is_reset'  =>  $user->is_reset
@@ -204,7 +204,7 @@ class UserController extends Controller
         {
             Log::info($e->getMessage());
 
-        }    
+        }
     }
 
     public function resetChangePassword(ResetChangePasswordRequest $request)
@@ -220,11 +220,11 @@ class UserController extends Controller
 
             $admin = User::where([['church_id',$user->church_id],['usergroup_id',3]])->first();
 
-            if($authentication[0]['token'] == $request->oldpassword)
+            if($authentication[0]['token'] === $request->oldpassword)
             {
                 $user->tokens()->delete();
 
-                //Change the password          
+                //Change the password
                 $user->password         = Hash::make($request->newpassword);
                 $user->platform_token   = NULL;
                 $user->is_reset         = 0;

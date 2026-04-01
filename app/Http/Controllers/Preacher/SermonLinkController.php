@@ -87,7 +87,7 @@ class SermonLinkController extends Controller
             }
 
             $sermon->save();
-            if(env('MAIL_STATUS') == 'on')
+            if(env('MAIL_STATUS') === 'on')
             {
                 event(new SermonLinkEvent($sermon));
             }
@@ -158,7 +158,7 @@ class SermonLinkController extends Controller
             $links->type      = $request->type;
             $links->location  = $request->location;
             $links->date      = date('Y-m-d',strtotime($request->date));
-            if($request->type=='document')
+            if($request->type==='document')
             {
                 $file = $request->file('url');
                 $path = $this->uploadFile('/uploads/sermons/documents'.'/'.Auth::user()->church_id,$file);

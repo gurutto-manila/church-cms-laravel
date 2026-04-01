@@ -55,7 +55,7 @@ class ExportMemberController extends Controller
 
         if(count($users) > 0)
         {
-            if($request->usergroup_id == 5)
+            if($request->usergroup_id === 5)
             {
                 $csv->insertOne(['ref_name','firstname','lastname','birth_firstname','birth_lastname','gender','date_of_birth','profession','sub_occupation','address','city','state','country','pincode','mobile_no','email','membership_type','membership_start_date','family','marriage_status','marriage_start_date','relation','notes','status',]);
 
@@ -93,7 +93,7 @@ class ExportMemberController extends Controller
                 $message=('Member Details Exported Successfully');
                 $log = LOGNAME_EXPORT_MEMBER;
             }
-            elseif ($request->usergroup_id == 4)
+            elseif ($request->usergroup_id === 4)
             {
                 $csv->insertOne(['firstname','lastname','birth_firstname','birth_lastname','aadhar_number','date_of_birth','mobile_no','email','gender','profession','sub_occupation','address','country','state','city','pincode','notes','status']);
 

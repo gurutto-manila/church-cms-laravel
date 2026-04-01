@@ -55,11 +55,11 @@ class MemberController extends Controller
 
         $array = [];
 
-        if(count($user->members) == 0)
+        if(count($user->members) === 0)
         {
             $array['members'][1]['name']        = $user->refer->name;
             $array['members'][1]['fullname']    = $user->refer->FullName;
-            $array['members'][1]['relation']    = $user->userprofile->relation == 'patner' ? 'Partner':ucfirst($user->userprofile->relation);
+            $array['members'][1]['relation']    = $user->userprofile->relation === 'patner' ? 'Partner':ucfirst($user->userprofile->relation);
             $array['members'][1]['avatar']      = $user->refer->userprofile->AvatarPath;
 
             $i = 2;
@@ -69,7 +69,7 @@ class MemberController extends Controller
                 {
                     $array['members'][$i]['name']        = $member->name;
                     $array['members'][$i]['fullname']    = $member->FullName;
-                    $array['members'][$i]['relation']    = $member->userprofile->relation == 'patner' ? 'Partner':ucfirst($member->userprofile->relation);
+                    $array['members'][$i]['relation']    = $member->userprofile->relation === 'patner' ? 'Partner':ucfirst($member->userprofile->relation);
                     $array['members'][$i]['avatar']      = $member->userprofile->AvatarPath;
                     $i++;
                 }
@@ -84,7 +84,7 @@ class MemberController extends Controller
                 {
                     $array['members'][$i]['name']        = $member->name;
                     $array['members'][$i]['fullname']    = $member->FullName;
-                    $array['members'][$i]['relation']    = $member->userprofile->relation == 'patner' ? 'Partner':ucfirst($member->userprofile->relation);
+                    $array['members'][$i]['relation']    = $member->userprofile->relation === 'patner' ? 'Partner':ucfirst($member->userprofile->relation);
                     $array['members'][$i]['avatar']      = $member->userprofile->AvatarPath;
                     $i++;
                 }
@@ -99,7 +99,7 @@ class MemberController extends Controller
         $users = User::where('name', $name)->first();
         $user=$this->mytree($name);
         /* $referuser=$user[0]->refer;
-        if($referuser==null){
+        if($referuser===null){
             $user=$this->mytree($name);
         }
         else
@@ -124,7 +124,7 @@ class MemberController extends Controller
     {
         $user = User::where('name', $son->mother[0]->name)->get();
         $user = $user->map(function( $user, $key) use ($family,$son)  {
-            if($user->userprofile->relation == 'patner')
+            if($user->userprofile->relation === 'patner')
             {
                 $relation = 'Partner';
             }
@@ -153,7 +153,7 @@ class MemberController extends Controller
             }
             else
             {
-                if($son->mother[0]->userprofile->relation == 'patner')
+                if($son->mother[0]->userprofile->relation === 'patner')
                 {
                     $relation = 'Partner';
                 }
@@ -166,7 +166,7 @@ class MemberController extends Controller
                     'image_url' =>  $son->mother[0]->userprofile->AvatarPath
                 ];
             }
-            if($user->userprofile->relation == 'patner')
+            if($user->userprofile->relation === 'patner')
             {
                 $relations = 'Partner';
             }
@@ -213,7 +213,7 @@ class MemberController extends Controller
                 {
                     if($user->userprofile->relation != null)
                     {
-                        if($user->userprofile->relation == 'patner')
+                        if($user->userprofile->relation === 'patner')
                         {
                             $relation1 = 'Partner';
                         }
@@ -224,7 +224,7 @@ class MemberController extends Controller
                     }
                     else
                     {
-                        if($user->userprofile->relation == 'patner')
+                        if($user->userprofile->relation === 'patner')
                         {
                             $relation1 = 'Partner';
                         }
@@ -245,7 +245,7 @@ class MemberController extends Controller
             }
             else
             {
-                if($user->patner[0]->userprofile->relation == 'patner')
+                if($user->patner[0]->userprofile->relation === 'patner')
                 {
                     $relation = 'Partner';
                 }
@@ -260,7 +260,7 @@ class MemberController extends Controller
             }
             if($user->userprofile->relation != null)
             {
-                if($user->userprofile->relation == 'patner')
+                if($user->userprofile->relation === 'patner')
                 {
                     $relations = 'Partner';
                 }
@@ -271,7 +271,7 @@ class MemberController extends Controller
             }
             else
             {
-                if($user->patner[0]->userprofile->relation == 'patner')
+                if($user->patner[0]->userprofile->relation === 'patner')
                 {
                     $relations = 'Partner';
                 }
@@ -291,7 +291,7 @@ class MemberController extends Controller
 
             return $userData;
         });
-        //$user = json_decode($user);
+
         return $user;
     }
 
@@ -304,7 +304,7 @@ class MemberController extends Controller
             }
             else
             {
-                if($children->patner[0]->userprofile->relation == 'patner')
+                if($children->patner[0]->userprofile->relation === 'patner')
                 {
                     $relation = 'Partner';
                 }
@@ -317,7 +317,7 @@ class MemberController extends Controller
                     'image_url' =>  $children->patner[0]->userprofile->AvatarPath
                 ];
             }
-            if($children->userprofile->relation == 'patner')
+            if($children->userprofile->relation === 'patner')
             {
                 $relations = 'Partner';
             }

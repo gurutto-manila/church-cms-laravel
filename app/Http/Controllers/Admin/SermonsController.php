@@ -85,7 +85,7 @@ class SermonsController extends Controller
         {
            $path= $this->getFilePath($sermon->url);
 
-           // $path=public_path('/'.$sermon->url);
+
             $file=pathinfo($path);
             $extension = $file['extension'];
             $headers = [

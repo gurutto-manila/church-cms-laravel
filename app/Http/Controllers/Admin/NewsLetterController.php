@@ -55,12 +55,12 @@ class NewsLetterController extends Controller
         //
         try
         {
-            if($request->to == 1)
+            if($request->to === 1)
             {
                 $newsletters = NewsLetter::where([['church_id',Auth::user()->church_id],['status',1]])->get();
             }
 
-            if($request->to == 0)
+            if($request->to === 0)
             {
                 $newsletters = NewsLetter::where([['church_id',Auth::user()->church_id],['status',0]])->get();
             }

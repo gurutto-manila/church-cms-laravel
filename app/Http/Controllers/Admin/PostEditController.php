@@ -42,14 +42,14 @@ class PostEditController extends Controller
         //
         $post = Post::where('id',$id)->first();
 
-        if($post->created_by == Auth::id())
+        if($post->created_by === Auth::id())
         {
             $array = [];
 
             $array['title']             = $post->title;
             $array['description']       = $post->description;
-            //$array['visibility']        = $post->visibility;
-            /*if($post->visibility == 'select_class')
+
+            /*if($post->visibility === 'select_class')
             {
                 $array['visible_for']   = $post->visible_for;
             }
@@ -59,7 +59,7 @@ class PostEditController extends Controller
             }*/
             $array['post_created_at']   = date('d-m-Y H:i:s',strtotime($post->post_created_at));
             $array['is_posted']         = $post->is_posted;
-            if($post->is_posted == 1)
+            if($post->is_posted === 1)
             {
                 $array['post_later'] = 0;
             }
@@ -88,7 +88,7 @@ class PostEditController extends Controller
         //
         $post = Post::where('id',$id)->first();
 
-        if($post->created_by == Auth::id())
+        if($post->created_by === Auth::id())
         {
             $entity_id      = Auth::id();
             $entity_name    = 'App\Models\User';
@@ -117,8 +117,8 @@ class PostEditController extends Controller
 
             $post->title            = $request->title;
             $post->description      = $request->description;
-            //$post->visibility       = $request->visibility;
-            if($request->post_later == 'true')
+
+            if($request->post_later === 'true')
             {
                 $post->post_created_at = date('Y-m-d H:i:s',strtotime($request->posted_at));
                 $post->status  = 'pending';

@@ -127,7 +127,6 @@ class SendMessageController extends Controller
             $data['attachments']=$request->attachments;
             $data['count']=$request->count;
             $datas=(object)$data;
-           // dd($datas);
             event (new SendMessageAllEvent ($datas , Auth::user()->church_id , Auth::user()->email , Auth::user() ) );
 
             $res['message'] = 'Message Sent Successfully';

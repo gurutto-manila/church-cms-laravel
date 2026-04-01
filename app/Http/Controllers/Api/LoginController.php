@@ -36,17 +36,17 @@ class LoginController extends Controller
     {
         try
         {
-         //   if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password'),'church_id'=>request('church_id')]) )
+
             if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password')]) )
             {
                 $user = Auth::user();
                 $user->tokens()->delete();
 
                 $userprofile = Userprofile::where('user_id', $user->id)->first();
-                if ($userprofile->status == 'active')
+                if ($userprofile->status === 'active')
                 {
                     $token = $user->createToken("churchcms")->plainTextToken;
-                    //$token = $user->createToken($request->email)->plainTextToken; //changed for new church app
+
 
                     $user = User::where([['id',$user->id],['church_id',$user->church_id]])->first();
 

@@ -101,7 +101,7 @@ class EventsController extends Controller
             $executed_at  =  date('Y-m-d', strtotime('-2 days', strtotime($events->start_date)));
             $this->sendToReminderEvent($events,$executed_at,'first');
 
-            if(env('MAIL_STATUS') == 'on')
+            if(env('MAIL_STATUS') === 'on')
             {
                 event(new CalendarEvent($events));
             }
@@ -228,10 +228,10 @@ class EventsController extends Controller
         {
             $event = Events::findOrFail($id);
 
-            if ($request->end_date == 'undefined')
+            if ($request->end_date === 'undefined')
                 $request['end_date'] = date('Y-m-d H:i:s', strtotime($request->start_date));
 
-            if($request->start_date == $request->end_date)
+            if($request->start_date === $request->end_date)
                 $request['allDay']=1;
 
             $event->fill($request->all());
@@ -287,27 +287,27 @@ class EventsController extends Controller
 
         foreach ($events as $event) {
 
-            if ($event->repeats == 1) {
+            if ($event->repeats === 1) {
                 //create multiple entries for repeating events
                 //count days from start to end and repeat
-                if ($event->freq_term == 'day') {
+                if ($event->freq_term === 'day') {
                     foreach ($this->getDailyTasks($event) as $s) {
                         array_push($items, $s);
                     }
                 }
 
-                if ($event->freq_term == 'week') {
+                if ($event->freq_term === 'week') {
                     foreach ($this->getWeeklyTasks($event) as $s) {
                         array_push($items, $s);
                     }
                 }
 
-                if ($event->freq_term == 'month') {
+                if ($event->freq_term === 'month') {
                     foreach ($this->getMonthlyTasks($event) as $s) {
                         array_push($items, $s);
                     }
                 }
-                if ($event->freq_term == 'year') {
+                if ($event->freq_term === 'year') {
                     foreach ($this->getYearlyTasks($event) as $s) {
                         array_push($items, $s);
                     }
@@ -371,7 +371,7 @@ class EventsController extends Controller
             $array['title']=$events->title;
             $array['description']=$events->description;
             $array['repeats']=$events->repeats;
-            if($array['repeats']=='yes')
+            if($array['repeats']==='yes')
             {
                 $array['freq']=$events->freq;
                 $array['freq_term']=$events->freq_term;
@@ -393,7 +393,7 @@ class EventsController extends Controller
 
     public function showAttendees($id,$status)
     {
-        if($status == 'not_attended')
+        if($status === 'not_attended')
         {
             $is_present = 0;
         }

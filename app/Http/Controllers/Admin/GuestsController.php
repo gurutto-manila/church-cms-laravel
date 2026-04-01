@@ -51,14 +51,14 @@ class GuestsController extends Controller
     {
         //
         $church_id = Auth::user()->church_id;
-        //return Cache::remember('guest_list'.$church_id, 30, function () use($church_id,$request)  {
+
             $guests = $this->GuestFilter($request,$church_id,5);
             if(count($guests) > 0)
             {
                 return $guests;
             }
             return null;
-        //});
+
     }
 
     public function filterList()
@@ -170,7 +170,7 @@ class GuestsController extends Controller
             $user = User::where('id', $id)->first();
             if(Gate::allows('member',$user))
             {
-                if(env('MAIL_STATUS') == 'on')
+                if(env('MAIL_STATUS') === 'on')
                 {
                     event(new VerificationMailEvent($user));
                     \Session::put('successmessage','Verification code sent Successfully');
@@ -273,7 +273,7 @@ class GuestsController extends Controller
             );
 
             //\Session::put('successmessage','Member Exited Successfully');
-            //return redirect()->back();
+
 
             $res['success'] = $message;
 

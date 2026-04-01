@@ -39,7 +39,6 @@ class EventGalleryController extends Controller
      */
     public function index()
     {
-       // return view('admin.albums.create');
     }
 
     /**
@@ -74,7 +73,7 @@ class EventGalleryController extends Controller
             $image_base64   = base64_decode($image_parts[1]);
             $church_id      = Auth::user()->church_id;
             $location        = Auth::user()->church_id.'/photos/events';
-            //$location_path   = public_path().'/'.$location;
+
 
             $file            =  uniqid() .'.png';
 

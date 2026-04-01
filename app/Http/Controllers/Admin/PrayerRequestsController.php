@@ -96,7 +96,7 @@ class PrayerRequestsController extends Controller
         $prayer = PrayerRequest::where('id',$id)->first();
         if(Gate::allows('prayer',$prayer))
         {
-            if($prayer->audio == '')
+            if($prayer->audio === '')
             {
                 return view('/admin/prayerrequest/audio',['prayer' => $prayer]);
             }
@@ -212,7 +212,7 @@ class PrayerRequestsController extends Controller
             $array['user_name']         = $prayer->user->name;
             $array['user_fullname']     = $prayer->user->FullName;
             $array['status']            = $prayer->status;
-            $array['image']             = $prayer->image == null ? null:$prayer->ImagePath;
+            $array['image']             = $prayer->image === null ? null:$prayer->ImagePath;
 
             return $array;
         }
@@ -260,9 +260,9 @@ class PrayerRequestsController extends Controller
             $prayer->status = $request->status;
 
             $prayer->approved_at = date('Y-m-d H:i:s');
-            if($request->status == 'approve')
+            if($request->status === 'approve')
             {
-                if( ( $request->publish_later == null ) || ( $request->publish_later == 'false' ) )
+                if( ( $request->publish_later === null ) || ( $request->publish_later === 'false' ) )
                 {
                     $prayer->publish_at  = Carbon::now();
                 }
@@ -283,7 +283,7 @@ class PrayerRequestsController extends Controller
 
             $user['church_id']  =   Auth::user()->church_id;
             $user['user_id']    =   $prayer->user_id;
-            if($prayer->status == 'approve')
+            if($prayer->status === 'approve')
             {
                 $user['message']    =   'Your Prayer Request Has Been Approved';
             }
@@ -301,7 +301,7 @@ class PrayerRequestsController extends Controller
 
              event(new SingleNotificationEvent($array));
 
-            if( ($prayer->status == 'approve') && ($request->publish_later != 'true') )
+            if( ($prayer->status === 'approve') && ($request->publish_later != 'true') )
             {
                 $data=[];
 
@@ -329,7 +329,7 @@ class PrayerRequestsController extends Controller
             $user_id = $prayer->user_id;
             $this->sendToPrayerRequestReminder($church_id,$entity_id,$entity_name,$date,$array,$user_id);
 
-            if($prayer->status == 'approve')
+            if($prayer->status === 'approve')
             {
                 $message = 'Prayer Request Approved Successfully';
             }

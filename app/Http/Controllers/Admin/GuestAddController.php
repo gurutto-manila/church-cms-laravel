@@ -107,7 +107,7 @@ class GuestAddController extends Controller
             }
             $user = $this->createGuest($request , $church_id , $path , 5);
 
-            //Forgot cache Dashboard
+
             $guest_count = 'guestCount'.$church_id;
             $maleGuestCount = 'maleGuestCount'.$church_id;
             $femaleGuestCount = 'femaleGuestCount'.$church_id;
@@ -117,7 +117,7 @@ class GuestAddController extends Controller
             Cache::forget($femaleGuestCount);
             Cache::forget($recentMember);
 
-            if( (env('MAIL_STATUS') == "on") && ($user->email != '') )
+            if( (env('MAIL_STATUS') === "on") && ($user->email != '') )
             {
                 event(new VerificationMailEvent($user));
             }

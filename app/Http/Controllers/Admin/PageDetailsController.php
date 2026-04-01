@@ -65,17 +65,17 @@ class PageDetailsController extends Controller
 
             $user = User::where('id',$page->created_by)->first();
 
-            if($request->is_following == 1)
+            if($request->is_following === 1)
             {
                 $message = trans('messages.follow_success_msg',['page' => $page->page_name]);
 
-                //$details = trans('notification.page_follow_success_msg',['user' => Auth::user()->FullName , 'page' => $page->page_name]);
+
             }
             else
             {
                 $message = trans('messages.unfollow_success_msg',['page' => $page->page_name]);
 
-                //$details = trans('notification.page_unfollow_success_msg',['user' => Auth::user()->FullName , 'page' => $page->page_name]);
+
             }
 
             /*if($user->id != Auth::id())
@@ -139,17 +139,17 @@ class PageDetailsController extends Controller
             }
 
             $user = User::where('id',$page->created_by)->first();
-            if($request->like == 1)
+            if($request->like === 1)
             {
                 $message = trans('messages.like_success_msg',['page' => $page->page_name]);
 
-                //$details = trans('notification.page_like_success_msg',['user' => Auth::user()->FullName , 'page' => $page->page_name]);
+
             }
             else
             {
                 $message = trans('messages.remove_like_success_msg',['page' => $page->page_name]);
 
-                //$details = trans('notification.page_remove_like_success_msg',['user' => Auth::user()->FullName , 'page' => $page->page_name]);
+
             }
 
             /*if($user->id != Auth::id())
@@ -214,17 +214,17 @@ class PageDetailsController extends Controller
 
             $user = User::where('id',$page->created_by)->first();
 
-            if($request->dislike == 1)
+            if($request->dislike === 1)
             {
                 $message = trans('messages.unlike_success_msg',['page' => $page->page_name]);
 
-                //$details = trans('notification.page_unlike_success_msg',['user' => Auth::user()->FullName , 'page' => $page->page_name]);
+
             }
             else
             {
                 $message = trans('messages.remove_unlike_success_msg',['page' => $page->page_name]);
 
-                //$details = trans('notification.page_remove_unlike_success_msg',['user' => Auth::user()->FullName , 'page' => $page->page_name]);
+
             }
 
             /*if($user->id != Auth::id())

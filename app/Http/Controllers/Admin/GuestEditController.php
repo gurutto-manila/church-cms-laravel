@@ -51,8 +51,8 @@ class GuestEditController extends Controller
 
         $array['firstname']             =   $userprofile->firstname;
         $array['lastname']              =   $userprofile->lastname;
-        $array['aadhar_number']         =   $userprofile->aadhar_number == null ? null:$userprofile->aadhar_number;
-        $array['date_of_birth']         =   $userprofile->date_of_birth == null ? null:date('Y-m-d',strtotime($userprofile->date_of_birth));
+        $array['aadhar_number']         =   $userprofile->aadhar_number === null ? null:$userprofile->aadhar_number;
+        $array['date_of_birth']         =   $userprofile->date_of_birth === null ? null:date('Y-m-d',strtotime($userprofile->date_of_birth));
         $array['gender']                =   $userprofile->gender;
         $array['profession']            =   $userprofile->profession;
         $array['sub_occupation']        =   $userprofile->sub_occupation;
@@ -62,7 +62,7 @@ class GuestEditController extends Controller
         $array['pincode']               =   $userprofile->pincode;
         $array['notes']                 =   $userprofile->notes;
         $array['was_baptized']          =   $userprofile->was_baptized;
-        $array['baptism_date']          =   $userprofile->baptism_date == null ? null:date('Y-m-d',strtotime($userprofile->baptism_date));
+        $array['baptism_date']          =   $userprofile->baptism_date === null ? null:date('Y-m-d',strtotime($userprofile->baptism_date));
 
         $array['countrylist']       	=   SiteHelper::getCountries();
         $array['statelist']         	=   SiteHelper::getStates();
@@ -123,8 +123,7 @@ class GuestEditController extends Controller
             $userprofile->lastname              = $request->lastname;
             $userprofile->gender                = $request->gender;
             $userprofile->date_of_birth         = $request->date_of_birth;
-            //$userprofile->was_baptized          = $request->was_baptized;
-            //$userprofile->baptism_date          = $request->baptism_date;
+
             $userprofile->address               = $request->address;
             $userprofile->city_id               = $request->city_id;
             $userprofile->state_id              = $request->state_id;

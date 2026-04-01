@@ -57,24 +57,24 @@ class MemberEditController extends Controller
         $array['birth_firstname']       =   $userprofile->birth_firstname;
         $array['birth_lastname']        =   $userprofile->birth_lastname;
         $array['aadhar_number']         =   $userprofile->aadhar_number;
-        $array['date_of_birth']         =   $userprofile->date_of_birth == null ? null:date('Y-m-d',strtotime($userprofile->date_of_birth));
+        $array['date_of_birth']         =   $userprofile->date_of_birth === null ? null:date('Y-m-d',strtotime($userprofile->date_of_birth));
         $array['gender']                =   $userprofile->gender;
         $array['profession']            =   $userprofile->profession;
-        $array['sub_occupation']        =   $userprofile->sub_occupation ==  null ? null:$userprofile->sub_occupation;
+        $array['sub_occupation']        =   $userprofile->sub_occupation ===  null ? null:$userprofile->sub_occupation;
         $array['country_id']            =   $userprofile->country_id;
         $array['state_id']              =   $userprofile->state_id;
         $array['city_id']               =   $userprofile->city_id;
         $array['pincode']               =   $userprofile->pincode;
         $array['family']                =   $userprofile->family;
         $array['marriage_status']       =   $userprofile->marriage_status;
-        $array['marriage_start_date']	=   $userprofile->marriage_start_date == null ? null:date('Y-m-d',strtotime($userprofile->marriage_start_date));
-        $array['marriage_end_date']     =   $userprofile->marriage_end_date == null ? null:date('Y-m-d',strtotime($userprofile->marriage_end_date));
+        $array['marriage_start_date']	=   $userprofile->marriage_start_date === null ? null:date('Y-m-d',strtotime($userprofile->marriage_start_date));
+        $array['marriage_end_date']     =   $userprofile->marriage_end_date === null ? null:date('Y-m-d',strtotime($userprofile->marriage_end_date));
         $array['avatar_display']        =   $userprofile->AvatarPath;
         $array['membership_type']       =   $userprofile->membership_type;
         $array['relation']              =   $userprofile->relation;
         $array['notes']                 =   $userprofile->notes;
         $array['was_baptized']          =   $userprofile->was_baptized;
-        $array['baptism_date']          =   $userprofile->baptism_date == null ? null:date('Y-m-d',strtotime($userprofile->baptism_date));
+        $array['baptism_date']          =   $userprofile->baptism_date === null ? null:date('Y-m-d',strtotime($userprofile->baptism_date));
 
         $array['countrylist']       	=   SiteHelper::getCountries();
         $array['statelist']         	=   SiteHelper::getStates();
@@ -140,8 +140,7 @@ class MemberEditController extends Controller
             $userprofile->birth_lastname        = $request->birth_lastname;
             $userprofile->gender                = $request->gender;
             $userprofile->date_of_birth         = $request->date_of_birth;
-            //$userprofile->was_baptized          = $request->was_baptized;
-            //$userprofile->baptism_date          = $request->baptism_date;
+
             $userprofile->profession            = $request->profession;
             $userprofile->sub_occupation        = $request->sub_occupation;
             $userprofile->address               = $request->address;
@@ -154,12 +153,11 @@ class MemberEditController extends Controller
                 $userprofile->membership_type       = $request->membership_type;
             }*/
             $userprofile->membership_type       = "member";
-            //$userprofile->membership_start_date = $request->membership_start_date;
-            //$userprofile->membership_end_date   = $request->membership_end_date;
+
             $userprofile->family                = $request->family;
             $userprofile->marriage_status       = $request->marriage_status;
             $userprofile->marriage_start_date   = $request->marriage_start_date;
-            //$userprofile->marriage_end_date     = $request->marriage_end_date;
+
             $userprofile->relation              = $request->relation;
             $userprofile->aadhar_number         = $request->aadhar_number;
             $userprofile->notes                 = $request->notes;

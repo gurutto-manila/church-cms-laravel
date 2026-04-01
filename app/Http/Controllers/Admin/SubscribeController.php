@@ -98,7 +98,7 @@ class SubscribeController extends Controller
        $subscriber = Subscribers::where('email',$email)->first();
              if(count($subscriber)>0)
                   {
-                      if($subscriber->email_verified_at=='')
+                      if($subscriber->email_verified_at==='')
                       {
                              $MailinglistSubscriber=MailinglistSubscriber::where('subscriber_id',$subscriber->id)->first();
 

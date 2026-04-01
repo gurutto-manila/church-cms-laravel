@@ -60,7 +60,6 @@ class FundController extends Controller
             if($request->paymentgateway_id != null)
             {
                 $paymentgateway_id=$request->paymentgateway_id;
-               // dd($request->paymentgateway_id);
                 $funds = $funds->WhereHas('payaccount',function ($query) use($paymentgateway_id)
                 {
                     $query->where('paymentgateway_id',$paymentgateway_id);
@@ -103,7 +102,7 @@ class FundController extends Controller
     public function searchMember()
     {
         $users = User::ByChurch(Auth::user()->church_id)->ByRole(5)->get();
-        //$users = FundResource::collection($users);
+
         $users = UserResource::collection($users);
 
         return $users;
@@ -138,7 +137,7 @@ class FundController extends Controller
             $array =[];
 
             $fund->membership        = $request->membership;
-            if($request->membership == 'member')
+            if($request->membership === 'member')
             {
                 $fund->user_id       = $request->selectedUsers['id'];
             }
@@ -160,7 +159,7 @@ class FundController extends Controller
             }
             $fund->method            = $request->method;
             $payment_details = [];
-            if($request->method == 'cheque')
+            if($request->method === 'cheque')
             {
                 $payment_details['cheque_number']   = $request->cheque_number;
                 $payment_details['account_number']  = $request->account_number;
@@ -168,14 +167,14 @@ class FundController extends Controller
 
                 $fund->payment_details  = $payment_details;
             }
-            elseif($request->method == 'card')
+            elseif($request->method === 'card')
             {
                 $payment_details['card_name']   = $request->card_name;
                 $payment_details['bank_name']   = $request->bank_name;
 
                 $fund->payment_details = $payment_details;
             }
-            elseif($request->method == 'demanddraft')
+            elseif($request->method === 'demanddraft')
             {
                 $fund->payment_details['payable_at']        = $request->payable_at;
                 $fund->payment_details['account_number']    = $request->account_number;
@@ -184,7 +183,7 @@ class FundController extends Controller
             }
             $fund->status            = $request->status;
 
-            if($request->status == 'cancel')
+            if($request->status === 'cancel')
             {
                 $fund->comments = $request->comments;
             }
@@ -257,14 +256,14 @@ class FundController extends Controller
             $array=[];
 
             $array['membership']=$fund->membership;
-            if($array['membership']=='guest')
+            if($array['membership']==='guest')
             {
                 $array['first_name']    = $fund->data['first_name'];
                 $array['last_name']     = $fund->data['last_name'];
                 $array['address']       = $fund->data['address'];
                 $array['mobile_number'] = $fund->data['mobile_number'];
             }
-            elseif($array['membership']=='member')
+            elseif($array['membership']==='member')
             {
                 $user = User::where('id',$fund->user_id)->first();
                 $array['selectedUsers']['id']       = $fund->user_id;
@@ -280,27 +279,27 @@ class FundController extends Controller
 
             $array['method']=$fund->method;
 
-            if($array['method'] == 'cheque')
+            if($array['method'] === 'cheque')
             {
                 $array['cheque_number'] = $fund->payment_details['cheque_number'];
                 $array['account_number']= $fund->payment_details['account_number'];
                 $array['payee_name']    = $fund->payment_details['payee_name'];
             }
 
-            elseif($array['method'] == 'demanddraft')
+            elseif($array['method'] === 'demanddraft')
             {
                 $array['payable_at']        = $fund->payment_details['payable_at'];
                 $array['account_number']    = $fund->payment_details['account_number'];
             }
 
-            elseif($array['method'] == 'card')
+            elseif($array['method'] === 'card')
             {
                 $array['card_name'] = $fund->payment_details['card_name'];
                 $array['bank_name'] = $fund->payment_details['bank_name'];
             }
 
             $array['status']=$fund->status;
-            if($array['status'] == 'cancel')
+            if($array['status'] === 'cancel')
             {
                 $array['comments']=$fund->comments;
             }
@@ -328,7 +327,7 @@ class FundController extends Controller
             $fund = Fund::where('id',$id)->first();
 
             $fund->membership        = $request->membership;
-            if($request->membership == 'member')
+            if($request->membership === 'member')
             {
                 if( $request->selectedUsers['id'] != null)
                 {
@@ -339,7 +338,7 @@ class FundController extends Controller
                     $funds->user_id = $funds->user_id;
                 }
             }
-            if($request->membership == 'guest')
+            if($request->membership === 'guest')
             {
                 $fund->data              = array(
                                             'first_name'    => $request->first_name,
@@ -356,7 +355,7 @@ class FundController extends Controller
             }
             $fund->method            = $request->method;
 
-            if($request->method == 'cheque')
+            if($request->method === 'cheque')
             {
                 $fund->payment_details  = array(
                                             'cheque_number'     => $request->cheque_number,
@@ -364,14 +363,14 @@ class FundController extends Controller
                                             'payee_name'        => $request->payee_name
                                         );
             }
-            elseif($request->method == 'card')
+            elseif($request->method === 'card')
             {
                 $fund->payment_details = array(
                                             'card_name' => $request->card_name,
                                             'bank_name' => $request->bank_name
                                         );
             }
-            elseif($request->method == 'demanddraft')
+            elseif($request->method === 'demanddraft')
             {
                 $fund->payment_details = array(
                                             'payable_at'        => $request->payable_at,
@@ -379,7 +378,7 @@ class FundController extends Controller
                                         );
             }
             $fund->status            = $request->status;
-            if($request->status == 'cancel')
+            if($request->status === 'cancel')
             {
                 $fund->comments = $request->comments;
             }

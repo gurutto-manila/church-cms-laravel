@@ -68,7 +68,7 @@ class FundController extends Controller
                 'status'    =>  true,
                 'message'   =>  $message,
             ], 200);
-            //return $res;
+
         }
         catch(Exception $e)
         {

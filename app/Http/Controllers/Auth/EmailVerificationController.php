@@ -24,7 +24,7 @@ class EmailVerificationController extends Controller
     if (!is_null($check))
     {
       $user=User::where('id',$check->id)->first();
-      if ($user->email_verified == 1)
+      if ($user->email_verified === 1)
       {
         if (!is_null(Auth::id()))
         {

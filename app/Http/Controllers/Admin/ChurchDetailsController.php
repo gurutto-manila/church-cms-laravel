@@ -50,20 +50,20 @@ class ChurchDetailsController extends Controller
         $churchdetails  = ChurchDetail::select('meta_key','meta_value')->where('church_id',$church_id)->get();
         $plucked  = $churchdetails->pluck('meta_value','meta_key');
 
-        $churchdetail['church_logo']     = $plucked['church_logo'] == '-' ? null:$this->getFilePath($plucked['church_logo']);
-        $churchdetail['name']   = $plucked['name'] == '-' ? null:$plucked['name'];
-        $churchdetail['short_summary']   = $plucked['short_summary'] == '-' ? null:$plucked['short_summary'];
-        $churchdetail['long_summary']    = $plucked['long_summary'] == '-' ? null:$plucked['long_summary'];
-        $churchdetail['quotes']          = $plucked['quotes'] == '-' ? null:$plucked['quotes'];
-        $churchdetail['phone']           = $plucked['phone'] == '-' ? null:$plucked['phone'];
-        $churchdetail['email']           = $plucked['email'] == '-' ? null:$plucked['email'];
-        $churchdetail['address']         = $plucked['address'] == '-' ? null:$plucked['address'];
-        $churchdetail['latitude']        = $plucked['latitude'] == '-' ? null:$plucked['latitude'];
-        $churchdetail['longitude']       = $plucked['longitude'] == '-' ? null:$plucked['longitude'];
-        $churchdetail['website']         = $plucked['website'] == '-' ? null:$plucked['website'];
-        $churchdetail['facebook']        = $plucked['facebook'] == '-' ? null:$plucked['facebook'];
-        $churchdetail['twitter']         = $plucked['twitter'] == '-' ? null:$plucked['twitter'];
-        $churchdetail['instagram']       = $plucked['instagram'] == '-' ? null:$plucked['instagram'];
+        $churchdetail['church_logo']     = $plucked['church_logo'] === '-' ? null:$this->getFilePath($plucked['church_logo']);
+        $churchdetail['name']   = $plucked['name'] === '-' ? null:$plucked['name'];
+        $churchdetail['short_summary']   = $plucked['short_summary'] === '-' ? null:$plucked['short_summary'];
+        $churchdetail['long_summary']    = $plucked['long_summary'] === '-' ? null:$plucked['long_summary'];
+        $churchdetail['quotes']          = $plucked['quotes'] === '-' ? null:$plucked['quotes'];
+        $churchdetail['phone']           = $plucked['phone'] === '-' ? null:$plucked['phone'];
+        $churchdetail['email']           = $plucked['email'] === '-' ? null:$plucked['email'];
+        $churchdetail['address']         = $plucked['address'] === '-' ? null:$plucked['address'];
+        $churchdetail['latitude']        = $plucked['latitude'] === '-' ? null:$plucked['latitude'];
+        $churchdetail['longitude']       = $plucked['longitude'] === '-' ? null:$plucked['longitude'];
+        $churchdetail['website']         = $plucked['website'] === '-' ? null:$plucked['website'];
+        $churchdetail['facebook']        = $plucked['facebook'] === '-' ? null:$plucked['facebook'];
+        $churchdetail['twitter']         = $plucked['twitter'] === '-' ? null:$plucked['twitter'];
+        $churchdetail['instagram']       = $plucked['instagram'] === '-' ? null:$plucked['instagram'];
 
         return view('/admin/churchdetails/edit',['churchdetail' => $churchdetail]);
     }
@@ -99,12 +99,12 @@ class ChurchDetailsController extends Controller
                 $arrays = ['short_summary' , 'long_summary' , 'quotes' , 'phone' , 'email' , 'address' , 'latitude' , 'longitude' , 'website' , 'facebook' , 'twitter' , 'instagram'];
                 foreach($arrays as $array)
                 {
-                    if($key == $array)
+                    if($key === $array)
                     {
                         $churchdetail = ChurchDetail::where([['church_id',$church_id],['meta_key',$key]])->first();
                         if($churchdetail)
                         {
-                            if($value == null)
+                            if($value === null)
                             {
                                 $churchdetail->meta_value = $churchdetail->meta_value;
                             }

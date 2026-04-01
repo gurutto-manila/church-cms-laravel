@@ -63,7 +63,7 @@ class ContactController extends Controller
         $contact->serve_at = $request->serve_at;
         $contact->role = $request->role;
         $contact->contact_no = $request->contact_no;
-      //  $contact->message = $request->message;
+
         $contact->select = $request->select;
         $contact->save();
 

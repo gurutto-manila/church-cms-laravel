@@ -19,11 +19,11 @@ class QuotesController extends Controller
 
         if($quote){
         $array['id']                =  $quote->id;
-        $array['image']             =  $quote->image == null ? null:$quote->ImagePath;
-        $array['text']              =  $quote->text == null ? null:$quote->text;
-        $array['tamil_quotes']      =  $quote->tamil_quotes==null ? null:$quote->tamil_quotes;
-        $array['english_quotes']    =  $quote->english_quotes==null ? null:$quote->english_quotes;
-        $array['publish_on']        =  $quote->publish_on==null ? null:date('d-m-Y H:i:s',strtotime($quote->publish_on));
+        $array['image']             =  $quote->image === null ? null:$quote->ImagePath;
+        $array['text']              =  $quote->text === null ? null:$quote->text;
+        $array['tamil_quotes']      =  $quote->tamil_quotes===null ? null:$quote->tamil_quotes;
+        $array['english_quotes']    =  $quote->english_quotes===null ? null:$quote->english_quotes;
+        $array['publish_on']        =  $quote->publish_on===null ? null:date('d-m-Y H:i:s',strtotime($quote->publish_on));
         }
 
         return $array;

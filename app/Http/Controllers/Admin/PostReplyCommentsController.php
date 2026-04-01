@@ -88,12 +88,12 @@ class PostReplyCommentsController extends Controller
 
             $message = trans('messages.add_success_msg',['module' => 'Post Reply Comment']);
 
-            /*if($post_comment->post->entity_name == 'App\Models\User')
+            /*if($post_comment->post->entity_name === 'App\Models\User')
             {
                 $user    = User::where('id',$post_comment->post->entity_id)->first();
                 $details = trans('notification.post_comment_add_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Post']);
             }
-            elseif($post_comment->post->entity_name == 'App\Models\Page')
+            elseif($post_comment->post->entity_name === 'App\Models\Page')
             {
                 $user    = User::where('id',$post_comment->post->created_by)->first();
                 $details = trans('notification.post_comment_add_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Page']);
@@ -172,12 +172,12 @@ class PostReplyCommentsController extends Controller
 
             $message = trans('messages.update_success_msg',['module' => 'Post Comment']);
 
-            /*if($post_reply->post->entity_name == 'App\Models\User')
+            /*if($post_reply->post->entity_name === 'App\Models\User')
             {
                 $user    = User::where('id',$post_reply->post->entity_id)->first();
                 $details = trans('notification.post_comment_update_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Post']);
             }
-            elseif($post_reply->post->entity_name == 'App\Models\Page')
+            elseif($post_reply->post->entity_name === 'App\Models\Page')
             {
                 $user    = User::where('id',$post_reply->post->created_by)->first();
                 $details = trans('notification.post_comment_update_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Page']);
@@ -234,7 +234,7 @@ class PostReplyCommentsController extends Controller
         try
         {
             $post_reply = PostComment::where('id',$post_comment_id)->first();
-            if($post_reply->user_id == Auth::id())
+            if($post_reply->user_id === Auth::id())
             {
                 $post_comment = PostComment::where('id',$post_reply->entity_id)->first();
 
@@ -243,12 +243,12 @@ class PostReplyCommentsController extends Controller
 
                 $message=trans('messages.delete_success_msg',['module' => 'Post Comment']);
 
-                /*if($post_reply->post->entity_name == 'App\Models\User')
+                /*if($post_reply->post->entity_name === 'App\Models\User')
                 {
                     $user    = User::where('id',$post_reply->post->entity_id)->first();
                     $details = trans('notification.post_comment_delete_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Post']);
                 }
-                elseif($post_reply->post->entity_name == 'App\Models\Page')
+                elseif($post_reply->post->entity_name === 'App\Models\Page')
                 {
                     $user    = User::where('id',$post_reply->post->created_by)->first();
                     $details = trans('notification.post_comment_delete_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Page']);

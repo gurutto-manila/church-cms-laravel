@@ -25,19 +25,12 @@ class PageController extends Controller
      */
     public function news()
     {
-       // $news  = News::where('active', '=', '1')->latest('updated_at')->paginate(\Config::get('settings.pagecount'));
-      //  $latestnews = News::where('active', '=', '1')->latest('updated_at')->take(6)->get();
-
         return view('pages.news.newspage', [
-               // 'news' => $news,
-             //   'latestnews' => $latestnews,
             ]);
     }
 
      public function privacy()
     {
-       // $news  = News::where('active', '=', '1')->latest('updated_at')->paginate(\Config::get('settings.pagecount'));
-      //  $latestnews = News::where('active', '=', '1')->latest('updated_at')->take(6)->get();
            if(!is_null(\Session::get('locale')))
        {
            $lang = \Session::get('locale');
@@ -65,8 +58,6 @@ class PageController extends Controller
 
      public function terms()
     {
-       // $news  = News::where('active', '=', '1')->latest('updated_at')->paginate(\Config::get('settings.pagecount'));
-      //  $latestnews = News::where('active', '=', '1')->latest('updated_at')->take(6)->get();
            if(!is_null(\Session::get('locale')))
        {
            $lang = \Session::get('locale');
@@ -102,15 +93,6 @@ class PageController extends Controller
                 'news' => $news,
             ]);
     }
-
-    /**
-     * Load Account - Selection Page
-     * @return \Illuminate\Http\Response
-     */
-    // public function accountselection()
-    // {
-    //     return view('pages.account_selection.main');
-    // }
 
     /**
      * Load FAQ Page
@@ -156,7 +138,6 @@ class PageController extends Controller
      */
     public function show($slug)
     {
-        //$pages  = Page::get();
         if(!is_null(\Session::get('locale')))
         {
             $lang = \Session::get('locale');

@@ -92,11 +92,11 @@ class PostsController extends Controller
         //
         $post = Post::where('id',$id)->first();
 
-        if($post->visibility == 'all_class')
+        if($post->visibility === 'all_class')
         {
             $visibility = str_replace('_', ' ', ucwords($post->visibility));
         }
-        elseif($post->visibility == 'select_class')
+        elseif($post->visibility === 'select_class')
         {
             $visibility = $post->StandardLink->StandardSection;
         }
@@ -106,7 +106,7 @@ class PostsController extends Controller
         $array['id']                = $post->id;
         $array['title']             = $post->title;
         $array['description']       = $post->description;
-        //$array['visibility']        = $visibility;
+
         $array['post_created_at']   = $post->post_created_at->diffForHumans();
         $array['created_by']        = $post->created_by;
         $array['is_posted']         = $post->is_posted;
@@ -117,8 +117,8 @@ class PostsController extends Controller
         $array['save']              = $post_detail->save;
         $array['unsave']            = $post_detail->unsave;
         $array['auth_id']           = Auth::id();
-        $array['like_count']        = $post->postDetail== null ?null:$post->postDetail->ByLikeCount($post->id);
-        $array['unlike_count']      = $post->postDetail== null ?null:$post->postDetail->ByUnlikeCount($post->id);
+        $array['like_count']        = $post->postDetail=== null ?null:$post->postDetail->ByLikeCount($post->id);
+        $array['unlike_count']      = $post->postDetail=== null ?null:$post->postDetail->ByUnlikeCount($post->id);
         $array['comment_list']['comments']          = $post->PostComments;
         $array['comment_list']['comments_count']    = count($post->PostComments);
 
@@ -166,7 +166,7 @@ class PostsController extends Controller
             $post = Post::where('id',$id)->first();
             if(Gate::allows('post',$post))
             {
-                if($post->created_by == Auth::id())
+                if($post->created_by === Auth::id())
                 {
                     $post->status  = 'cancelled';
                     $post->save();

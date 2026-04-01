@@ -38,7 +38,7 @@ class VideoConferencesController extends Controller
     public function index()
     {
         //
-        //$videoconferenceusers = VideoConferenceUser::where('participant_id',Auth::id())->get();
+
         $user_id=Auth::id();
          $videoconference = VideoConference::where('user_id',$user_id)->orWhereHas('videoConferenceUser' , function($query) use ($user_id){
             $query->where('participant_id',$user_id);
@@ -64,15 +64,15 @@ class VideoConferencesController extends Controller
         $videoconference = VideoConference::where('slug',$slug)->first();
         $videoconferenceusers = VideoConferenceUser::where('conference_id',$videoconference->id)->pluck('participant_id')->toArray();
 
-        foreach ($videoconferenceusers as $videoconferenceuser) 
+        foreach ($videoconferenceusers as $videoconferenceuser)
         {
-            if($user_id == $videoconferenceuser)
+            if($user_id === $videoconferenceuser)
             {
                 $user = User::where('id',$user_id)->first();
 
                 $name=$user->FullName;
 
-                if($name==null || $name=='' )
+                if($name===null || $name==='' )
                 {
                    $name=$user->name;
                 }
@@ -86,7 +86,7 @@ class VideoConferencesController extends Controller
                 $accessToken = $token->toJWT();
             }
         }
- 
+
         $array = [];
 
         $array['title']         = $videoconference->name;
@@ -108,6 +108,6 @@ class VideoConferencesController extends Controller
         {
              Log::info($e->getMessage());
 
-        }     
+        }
     }
 }

@@ -60,7 +60,7 @@ class VideoController extends Controller
         {
             $filename   = date('d_m_Y_H_i_s').'_video.mp4';
             $folder     = '/uploads/video/'.Auth::user()->church_id;
-            //$path       = $this->putContentsByFilename($folder,$request->file,$filename);
+
             $path = \Storage::disk('s3')->putFileAs($folder, $request->file,$filename);
             \Session::put('path',$path);
         }
@@ -87,7 +87,7 @@ class VideoController extends Controller
             $video->name            = $request->input('name');
             $video->description     = $request->input('description');
             $video->type            = $request->video_type;
-            if($request->video_type == 'url')
+            if($request->video_type === 'url')
             {
                 $video->url             = $request->videourl;
             }

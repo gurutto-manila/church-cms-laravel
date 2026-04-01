@@ -33,7 +33,7 @@ class ImpersonateController extends Controller
             $user = User::find($id);
 
             $is_admin = $this->is_admin($user->id);
-            if($is_admin == false)
+            if($is_admin === false)
             {
                 Auth::user()->setImpersonating($user->id);
             }

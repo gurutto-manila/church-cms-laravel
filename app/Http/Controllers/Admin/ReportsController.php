@@ -110,7 +110,7 @@ class ReportsController extends Controller
     {
         /*$users = User::with('userprofile')->where('church_id',Auth::user()->church_id)->ByRole(5)->get();
         $response = Response::make($users, 200);
-        // using this will allow you to do some checks on it (if pdf/docx/doc/xls/xlsx)
+
         $response->header('Content-Type', 'application/pdf');
 
         return $response;*/
@@ -240,7 +240,7 @@ class ReportsController extends Controller
 
             foreach($userprofiles as $userprofile)
             {
-                $payment_date = $userprofile->user->subscription['0']['payment_details']['addedon']=="" ? null:date('d-m-Y',strtotime($userprofile->user->subscription['0']['payment_details']['addedon']));
+                $payment_date = $userprofile->user->subscription['0']['payment_details']['addedon']==="" ? null:date('d-m-Y',strtotime($userprofile->user->subscription['0']['payment_details']['addedon']));
                 $ref_user = User::where('id',$userprofile->user->ref_id)->first();
                 $csv->insertOne([
                     $ref_user->FullName,

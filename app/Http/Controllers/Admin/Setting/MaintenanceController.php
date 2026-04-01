@@ -43,15 +43,15 @@ class MaintenanceController extends Controller
         //
         try
         {
-            if($request->maintenance==1)
+            if($request->maintenance===1)
             {
                 $maintenance=$request->maintenance;
             }
-            if($request->register==1)
+            if($request->register===1)
             {
                 $register=$request->register;
             }
-            if($request->login_status==1)
+            if($request->login_status===1)
             {
                 $login_status=$request->login_status;
             }

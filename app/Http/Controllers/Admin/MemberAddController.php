@@ -51,7 +51,7 @@ class MemberAddController extends Controller
         $count    = User::ByRole(5)->ByChurch(Auth::user()->church_id)->count();
         $subscription = Subscription::with('user','church')->where('church_id',Auth::user()->church_id)->first();
         $membership_start_date = Carbon::now()->format('Y-m-d');
-        //$membership_end_date = Carbon::now()->addMonth(1)->format('Y-m-d');
+
 
         return view('/admin/member/create',['ref_name' => $ref_name , 'membership_start_date' => $membership_start_date  ,'count' => $count , 'subscription' => $subscription]);
         //  'membership_end_date'=>$membership_end_date
@@ -115,7 +115,7 @@ class MemberAddController extends Controller
 
             $user = $this->CreateUser($request , $church_id , $path , 5);
 
-            //Forgot cache Dashboard
+
             $member = 'memberCount'.$church_id;
             $male_member = 'maleMemberCount'.$church_id;
             $female_member = 'femaleMemberCount'.$church_id;
@@ -125,7 +125,7 @@ class MemberAddController extends Controller
             Cache::forget($female_member);
             Cache::forget($recentMember);
 
-            if( (env('MAIL_STATUS') == "on") && ($user->email != '') )
+            if( (env('MAIL_STATUS') === "on") && ($user->email != '') )
             {
                 event(new VerificationMailEvent($user));
             }

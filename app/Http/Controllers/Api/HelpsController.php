@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\Notification\SingleNotificationEvent;
 use App\Http\Resources\API\HelpUser as HelpUserResource;
 use App\Http\Resources\API\Help as HelpResource;
-//use App\Http\Resources\Help as HelpsResource;
+
 use App\Http\Requests\HelpAddRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -109,7 +109,7 @@ class HelpsController extends Controller
         {
             $help = Help::where('id',$id)->first();
 
-            if(Auth::id() == $help->user_id)
+            if(Auth::id() === $help->user_id)
             {
                 $help->status           = "close";
                 $help->expired_at       = Carbon::now();

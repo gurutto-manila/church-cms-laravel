@@ -165,7 +165,7 @@ class UserProfileController extends Controller
 
         $userprofile = Userprofile::with('country','state','city')->where('user_id', Auth::id())->first();
 
-        if($userprofile->firstname == null)
+        if($userprofile->firstname === null)
         {
             $array['firstname']='';
         }
@@ -174,7 +174,7 @@ class UserProfileController extends Controller
             $array['firstname']=$userprofile->firstname;
         }
 
-        if($userprofile->lastname == null)
+        if($userprofile->lastname === null)
         {
             $array['lastname']='';
         }
@@ -183,7 +183,7 @@ class UserProfileController extends Controller
             $array['lastname']=$userprofile->lastname;
         }
 
-        if($userprofile->birth_firstname == null)
+        if($userprofile->birth_firstname === null)
         {
             $array['birth_firstname']='';
         }
@@ -192,7 +192,7 @@ class UserProfileController extends Controller
             $array['birth_firstname']=$userprofile->birth_firstname;
         }
 
-        if($userprofile->birth_lastname == null)
+        if($userprofile->birth_lastname === null)
         {
             $array['birth_lastname']='';
         }
@@ -201,7 +201,7 @@ class UserProfileController extends Controller
             $array['birth_lastname']=$userprofile->birth_lastname;
         }
 
-        if($userprofile->gender == null)
+        if($userprofile->gender === null)
         {
             $array['gender']='';
         }
@@ -210,7 +210,7 @@ class UserProfileController extends Controller
             $array['gender']=$userprofile->gender;
         }
 
-        if($userprofile->date_of_birth == null)
+        if($userprofile->date_of_birth === null)
         {
             $array['date_of_birth']='';
         }
@@ -219,7 +219,7 @@ class UserProfileController extends Controller
             $array['date_of_birth']=date('Y-m-d',strtotime($userprofile->date_of_birth));
         }
 
-        if($userprofile->address == null)
+        if($userprofile->address === null)
         {
             $array['address']='';
         }

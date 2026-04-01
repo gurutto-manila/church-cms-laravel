@@ -151,8 +151,8 @@ class PreacherController extends Controller
         $array['firstname']         = $userprofile->firstname;
         $array['lastname']          = $userprofile->lastname;
         $array['avatar_display']    = $userprofile->AvatarPath;
-        $array['description']       = $userprofile->description == null ? null:$userprofile->description;
-        $array['facebook_id']       = $userprofile->facebook_id == null ? null:$userprofile->facebook_id;
+        $array['description']       = $userprofile->description === null ? null:$userprofile->description;
+        $array['facebook_id']       = $userprofile->facebook_id === null ? null:$userprofile->facebook_id;
 
         return $array;
     }

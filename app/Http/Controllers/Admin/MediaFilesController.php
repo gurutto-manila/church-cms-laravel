@@ -75,13 +75,13 @@ class MediaFilesController extends Controller
         //
         $file  = MediaFile::where('id',$id)->first();
 
-        if($file->media_type == 'audio')
+        if($file->media_type === 'audio')
         {
             $url = $file->UrlPath;
         }
         else
         {
-            if($file->type == 'url')
+            if($file->type === 'url')
             {
                 $url = $file->url;
             }

@@ -78,7 +78,7 @@ class VideoConferencesController extends Controller
         $conferenceId = $conference->id;
         if($logged!=$conference->user_id){
             $checkUser = VideoConferenceUser::where('conference_id',$conferenceId)->where('participant_id',$logged)->get();
-            if(count($checkUser)==0){
+            if(count($checkUser)===0){
                 return redirect('member/video-conference')->with('error', 'No records found.');
             }
         }

@@ -67,10 +67,10 @@ class PostCommentDetailsController extends Controller
                 $post_comment_detail->save();
             }
 
-            /*if($post_comment_detail->postComment->post->entity_name == 'App\Models\User')
+            /*if($post_comment_detail->postComment->post->entity_name === 'App\Models\User')
             {
                 $user = User::where('id',$post_comment_detail->postComment->post->entity_id)->first();
-                if($request->like == 1)
+                if($request->like === 1)
                 {
                     $details = trans('notification.page_comment_like_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Post']);
                 }
@@ -79,12 +79,12 @@ class PostCommentDetailsController extends Controller
                     $details = trans('notification.page_comment_remove_like_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Post']);
                 }
             }
-            elseif($post_comment_detail->postComment->post->entity_name == 'App\Models\Page')
+            elseif($post_comment_detail->postComment->post->entity_name === 'App\Models\Page')
             {
                 $page = ClassRoomPage::where('id',$post_comment_detail->postComment->post->entity_id)->first();
                 $user = User::where('id',$page->created_by)->first();
 
-                if($request->like == 1)
+                if($request->like === 1)
                 {
                     $details = trans('notification.page_comment_like_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Page']);
                 }
@@ -94,7 +94,7 @@ class PostCommentDetailsController extends Controller
                 }
             }*/
 
-            if($request->like == 1)
+            if($request->like === 1)
             {
                 $message = trans('messages.like_success_msg',['page' => 'comment']);
             }
@@ -164,10 +164,10 @@ class PostCommentDetailsController extends Controller
                 $post_comment_detail->save();
             }
 
-            /*if($post_comment_detail->postComment->post->entity_name == 'App\Models\User')
+            /*if($post_comment_detail->postComment->post->entity_name === 'App\Models\User')
             {
                 $user = User::where('id',$post_comment_detail->postComment->post->entity_id)->first();
-                if($request->dislike == 1)
+                if($request->dislike === 1)
                 {
                     $details = trans('notification.page_comment_dislike_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Post']);
                 }
@@ -176,12 +176,12 @@ class PostCommentDetailsController extends Controller
                     $details = trans('notification.page_comment_remove_dislike_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Post']);
                 }
             }
-            elseif($post_comment_detail->postComment->post->entity_name == 'App\Models\Page')
+            elseif($post_comment_detail->postComment->post->entity_name === 'App\Models\Page')
             {
                 $page = ClassRoomPage::where('id',$post_comment_detail->postComment->post->entity_id)->first();
                 $user = User::where('id',$page->created_by)->first();
 
-                if($request->dislike == 1)
+                if($request->dislike === 1)
                 {
                     $details = trans('notification.page_comment_dislike_success_msg',['user' => Auth::user()->FullName , 'entity' => 'Page']);
                 }
@@ -191,7 +191,7 @@ class PostCommentDetailsController extends Controller
                 }
             }*/
 
-            if($request->dislike == 1)
+            if($request->dislike === 1)
             {
                 $message = trans('messages.unlike_success_msg',['page' => 'comment']);
             }

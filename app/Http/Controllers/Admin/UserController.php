@@ -58,14 +58,13 @@ class UserController extends Controller
     {
         //
         $church_id = Auth::user()->church_id;
-        //return Cache::remember('member_list'.$church_id, 30, function () use($church_id,$request)  {
-            $members = $this->MemberFilter($request,$church_id,5);
+        $members = $this->MemberFilter($request,$church_id,5);
             if( count($members) > 0)
             {
                 return $members;
             }
             return null;
-        //});
+        //
     }
 
     public function filterList()
@@ -106,7 +105,7 @@ class UserController extends Controller
     {
         try
         {
-            //$user = User::where('name',$name)->first();
+
             $user = $this->user->getUser($name)->first();
 
             $userprofile = Userprofile::where('user_id',$user->id)->first();
@@ -127,8 +126,6 @@ class UserController extends Controller
             );
 
             return $message;
-           // \Session::put('successmessage','Member Status Updated Successfully');
-            //return redirect()->back();
         }
         catch(Exception $e)
         {
@@ -176,7 +173,7 @@ class UserController extends Controller
             $user = User::where('id', $id)->first();
             if(Gate::allows('member',$user))
             {
-                if(env('MAIL_STATUS') == 'on')
+                if(env('MAIL_STATUS') === 'on')
                 {
                     event(new VerificationMailEvent($user));
                     \Session::put('successmessage','Verification code sent Successfully');

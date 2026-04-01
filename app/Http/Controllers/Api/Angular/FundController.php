@@ -21,7 +21,7 @@ class FundController extends Controller
         $church = Church::where('slug','=',$slug)->first();
 
         $funds = Fund::where('church_id',$church->id)->get();
-        
+
         $funds = FundResource::collection($funds);
 
         return $funds;
@@ -38,37 +38,37 @@ class FundController extends Controller
             $fund->authorised_by     = Auth::id();
             $fund->authorised_at     = date('Y-m-d H:i:s');
             $array =[];
-            
-            $fund->membership        = 'guest';           
+
+            $fund->membership        = 'guest';
             $array['first_name']    = $request->firstname;
             $array['last_name']     = $request->lastname;
             $array['address']       = $request->address;
-            $array['mobile_number'] = $request->mobile_no;            
-            $fund->data            = $array;      
+            $array['mobile_number'] = $request->mobile_no;
+            $fund->data            = $array;
             $fund->amount            = $request->amount;
             if($request->amount >= '100000')
             {
                 $array['pan_number']    = $request->pan_num;
-                $fund->data = $array; 
+                $fund->data = $array;
             }
             $fund->method            = $request->method;
             $payment_details = [];
-            if($request->method == 'cheque')
+            if($request->method === 'cheque')
             {
                 $payment_details['cheque_number']   = $request->cheque_num;
-                $payment_details['account_number']  = $request->acc_num; 
-                $payment_details['payee_name']      = $request->payee_name; 
+                $payment_details['account_number']  = $request->acc_num;
+                $payment_details['payee_name']      = $request->payee_name;
 
-                $fund->payment_details  = $payment_details; 
+                $fund->payment_details  = $payment_details;
             }
-            elseif($request->method == 'card')
+            elseif($request->method === 'card')
             {
                 $payment_details['card_name']   = $request->card_name;
                 $payment_details['bank_name']   = $request->bank_name;
 
                 $fund->payment_details = $payment_details;
             }
-            elseif($request->method == 'demanddraft')
+            elseif($request->method === 'demanddraft')
             {
                 $fund->payment_details['payable_at']        = $request->payable_at;
                 $fund->payment_details['account_number']    = $request->dd_accnum;
@@ -76,7 +76,7 @@ class FundController extends Controller
             }
             $fund->status            = $request->status;
 
-            if($request->status == 'cancel')
+            if($request->status === 'cancel')
             {
                 $fund->comments = $request->comments;
             }
@@ -84,27 +84,26 @@ class FundController extends Controller
             $fund->save();
             if ($fund) {
             	$success = true;
-            	// $ip= $this->getRequestIP();
-            	// $this->doActivityLog(
-	            //     $fund,
+
+
 	            //     Auth::user(),
 	            //     ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
 	            //     LOGNAME_ADD_FUND,
-	            //     $message
-            	// ); 
+
+            	// );
             }else{
             	$success = false;
             }
-          
+
           	return response()->json([
 	            'status'    =>  $success,
 	        ], 200);
-            
+
         }
         catch(Exception $e)
         {
             Log::info($e->getMessage());
 
-        }       
+        }
     }
 }

@@ -104,7 +104,7 @@ class AttachSubscriberController extends Controller
                 foreach($subscribers as $subscriber)
                 {
                     $check = MailinglistSubscriber::where([['mailing_list_id',$mailinglist->id],['subscribers_id',$subscriber]])->first();
-                    if($check == null)
+                    if($check === null)
                     {
                         $mailinglistSubscriber = new MailinglistSubscriber;
 

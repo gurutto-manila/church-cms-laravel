@@ -70,7 +70,6 @@ class AudioController extends Controller
             $folder     = Auth::user()->church_id.'/uploads/files/audio';
             $path = $this->uploadFile($folder,$request->file);
             \Session::put('path',$path);
-            // dump( \Session::get('audiopath_urls'));
         }
         catch(Exception $e)
         {
@@ -100,19 +99,19 @@ class AudioController extends Controller
             $audio->description     = $request->description;
             $audio->type            = $request->audio_type;
 
-            if($request->audio_type == 'record')
+            if($request->audio_type === 'record')
             {
                 $file = $request->file('audioupload');
                 if($file)
                 {
-                    //$path = $this->uploadFile('/uploads/audio/'.Auth::user()->church_id,$file);
+
                      $folder     = Auth::user()->church_id.'/uploads/files/audio';
                      $filename   = 'audio_'.date('d_m_Y_H_i_s').'_audio.mp3';
                      $path  = $this->putContentsByFilename($folder,$request->audioupload,$filename);
                      $audio->url = $path;
                 }
             }
-            elseif($request->audio_type == 'attach')
+            elseif($request->audio_type === 'attach')
             {
                 $audio->url = \Session::get('path');
             }

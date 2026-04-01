@@ -40,7 +40,7 @@ class PhotosController extends Controller
      */
     public function index()
     {
-       // return view('admin.albums.create');
+
     }
 
     /**
@@ -73,7 +73,7 @@ class PhotosController extends Controller
 
                 $location        = Auth::user()->church_id.'/gallery/covers/'.$gallery_id;
 
-                //$location_path   = public_path().'/'.$location;
+
                 $file            =  uniqid() .'.png';
 
                 $db_path=$location.$file;

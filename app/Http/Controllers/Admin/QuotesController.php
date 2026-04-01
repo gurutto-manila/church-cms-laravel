@@ -56,11 +56,11 @@ class QuotesController extends Controller
 
         if($type != '')
         {
-            if($type == 'upcoming')
+            if($type === 'upcoming')
             {
                 $quotes = $quotes->where('publish_on','>',$today);
             }
-            elseif($type == 'published')
+            elseif($type === 'published')
             {
                 $quotes = $quotes->where('published_at','<=',$today);
             }
@@ -140,7 +140,7 @@ class QuotesController extends Controller
 
             $quote->church_id   = Auth::user()->church_id;
             $quote->user_id     = Auth::id();
-            if($request->tab == 'images')
+            if($request->tab === 'images')
             {
                 $image = $request->file('image');
                 if($image)
@@ -148,11 +148,11 @@ class QuotesController extends Controller
                     $quote->image = $this->uploadFile(Auth::user()->church_id.'/quotes',$image);
                 }
             }
-            elseif ($request->tab == 'text')
+            elseif ($request->tab === 'text')
             {
                 $quote->text    = $request->text;
             }
-            elseif($request->tab == 'bible')
+            elseif($request->tab === 'bible')
             {
                 $quote->tamil_quotes    = $request->tamil;
                 $quote->english_quotes  = $request->english;
@@ -211,7 +211,7 @@ class QuotesController extends Controller
         $array = [];
 
         $array['id']        =   $quote->id;
-        $array['image']     =   $quote->image == null ? null:$quote->ImagePath;
+        $array['image']     =   $quote->image === null ? null:$quote->ImagePath;
         if($quote->image != null)
         {
             $array['tab']   = 'images';
@@ -286,7 +286,7 @@ class QuotesController extends Controller
         {
             $quote  = Quote::where('id',$id)->first();
 
-            if($request->tab == 'images')
+            if($request->tab === 'images')
             {
                 $image = $request->file('image');
                 if($image)
@@ -298,11 +298,11 @@ class QuotesController extends Controller
                     $quote->image = $quote->image;
                 }
             }
-            elseif ($request->tab == 'text')
+            elseif ($request->tab === 'text')
             {
                 $quote->text    = $request->text;
             }
-            elseif($request->tab == 'bible')
+            elseif($request->tab === 'bible')
             {
                 $quote->tamil_quotes    = $request->tamil;
                 $quote->english_quotes  = $request->english;
@@ -421,7 +421,7 @@ class QuotesController extends Controller
 
     public function books($type)
     {
-        if($type=='tamil'){
+        if($type==='tamil'){
             $tamilVerse = BibleBook::select('book_id','tamil_book','chapter_count')->get();
             $bible = BibleTamilResource::collection($tamilVerse);
         }else{
@@ -441,7 +441,7 @@ class QuotesController extends Controller
             $verse['chapter_count'] = $chapter_count;
             for ($i=1; $i <= $chapter_count; $i++) {
                 $chapter_id = $i;
-                if($type=='tamil'){
+                if($type==='tamil'){
                     $tamilVerse = BibleVerse::select('id','tamil_verse','book_id','chapter_id','verse_id')->where('chapter_id',$chapter_id)->where('book_id',$book_id)->get();
                     $bibleVerse = BibleTamilVersesResource::collection($tamilVerse);
                 }else{

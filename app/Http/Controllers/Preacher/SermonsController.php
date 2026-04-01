@@ -73,7 +73,7 @@ class SermonsController extends Controller
 
             $sermon->save();
 
-            if(env('MAIL_STATUS') == 'on')
+            if(env('MAIL_STATUS') === 'on')
             {
                 event(new SermonEvent($sermon));
             }
@@ -126,7 +126,7 @@ class SermonsController extends Controller
 
             $sermon->save();
 
-            if(env('MAIL_STATUS') == 'on')
+            if(env('MAIL_STATUS') === 'on')
             {
                 event(new SermonEvent($sermon));
             }

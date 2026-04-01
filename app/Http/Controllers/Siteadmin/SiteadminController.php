@@ -77,7 +77,7 @@ class SiteadminController extends Controller
         $eventcount = Events::where('church_id',$subscription->church_id)->count();
         $gallerycount = Gallery::where('church_id',$subscription->church_id)->count();
         $filecount = File::where('church_id',$subscription->church_id)->count();
-        //$videocount = Video::where('church_id',$subscription->church_id)->count();
+
         $membership = $subscription->user->userprofile->membership_type;
         $plan = Plan::where('id',$subscription->plan_id)->get();
 

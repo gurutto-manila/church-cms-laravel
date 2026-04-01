@@ -59,11 +59,11 @@ class CampaignController extends Controller
             $campaign->church_id    = Auth::user()->church_id;
             $campaign->name         = $request->name;
             $campaign->description  = $request->description;
-            if($request->status == 'true')
+            if($request->status === 'true')
             {
                 $campaign->status = 1;
             }
-            elseif($request->status == 'false')
+            elseif($request->status === 'false')
             {
                 $campaign->status = 0;
             }
@@ -114,11 +114,11 @@ class CampaignController extends Controller
 
             $campaign->name         = $request->name;
             $campaign->description  = $request->description;
-            if($request->status == 'true')
+            if($request->status === 'true')
             {
                 $campaign->status = 1;
             }
-            elseif($request->status == 'false')
+            elseif($request->status === 'false')
             {
                 $campaign->status = 0;
             }
@@ -195,7 +195,7 @@ class CampaignController extends Controller
                 $message
             );
 
-            //return redirect('/admin/campaign')->with(['successmessage' => $message]);
+
             $res['success'] = $message;
             return $res;
         }

@@ -52,7 +52,7 @@ class BulletinsController extends Controller
         }
         $bulletins = $bulletins->get();
 
-        if($type == 'month')
+        if($type === 'month')
         {
             $bulletins = BulletinResource::collection($bulletins)->groupBy([function($bulletin) {
                 return date("F", mktime(0, 0, 0, $bulletin->month, 1)).' '.$bulletin->year;
@@ -119,12 +119,12 @@ class BulletinsController extends Controller
             $bulletin->church_id = Auth::user()->church_id;
             $bulletin->name = $request->name;
             $bulletin->type = $request->type;
-            if($bulletin->type == "week")
+            if($bulletin->type === "week")
             {
                 $bulletin->week = $request->week;
                 $bulletin->cover_image = 'uploads/week.jpg';
             }
-            if($bulletin->type == "month")
+            if($bulletin->type === "month")
             {
                 $bulletin->month = $request->month;
                 $bulletin->cover_image = 'uploads/month.jpg';
@@ -224,10 +224,10 @@ class BulletinsController extends Controller
         $bulletin = Bulletin::where('id', '=', $id)->first();
         if(Gate::allows('bulletin',$bulletin))
         {
-            //$path=public_path('/'.$bulletin->path);
+
             $file=$bulletin->path;
             $path=$this->getFilePathforDownload($file,env('FILESYSTEM_DRIVER'));
-            if($bulletin->type == 'week')
+            if($bulletin->type === 'week')
             {
                 $name='bulletin_week-'.$bulletin->week.'_'.$bulletin->year.'.pdf';
             }

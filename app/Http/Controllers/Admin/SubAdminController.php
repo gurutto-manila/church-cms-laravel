@@ -139,7 +139,7 @@ class SubAdminController extends Controller
         	}
         	$user = $this->CreateUser($request , $church_id , $path , 4);
 
-        	if( (env('MAIL_STATUS') == "on") && ($user->email != '') )
+        	if( (env('MAIL_STATUS') === "on") && ($user->email != '') )
         	{
             	event(new VerificationMailEvent($user));
         	}
@@ -203,7 +203,7 @@ class SubAdminController extends Controller
         	$array['lastname'] 			= $userprofile->lastname;
         	$array['birth_firstname']	= $userprofile->birth_firstname;
         	$array['birth_lastname'] 	= $userprofile->birth_lastname;
-            $array['aadhar_number']     = $userprofile->aadhar_number == null ? '':$userprofile->aadhar_number;
+            $array['aadhar_number']     = $userprofile->aadhar_number === null ? '':$userprofile->aadhar_number;
             $array['gender']            = $userprofile->gender;
             $array['date_of_birth']     = date('Y-m-d',strtotime($userprofile->date_of_birth));
             $array['profession']        = $userprofile->profession;
@@ -213,7 +213,7 @@ class SubAdminController extends Controller
             $array['state_id']          = $userprofile->state_id;
             $array['city_id']           = $userprofile->city_id;
             $array['pincode']           = $userprofile->pincode;
-            $array['avatar']			= $userprofile->avatar == null ? null:$userprofile->AvatarPath;
+            $array['avatar']			= $userprofile->avatar === null ? null:$userprofile->AvatarPath;
             $array['notes']             = $userprofile->notes;
 
           	return $array;

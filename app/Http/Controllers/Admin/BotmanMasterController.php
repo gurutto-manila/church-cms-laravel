@@ -162,7 +162,7 @@ class BotmanMasterController extends Controller
             }
         }
 
-        if (count($tagInput) == 0 && count($tags_count) > 0) {
+        if (count($tagInput) === 0 && count($tags_count) > 0) {
             BotmanTag::where('master_id', $id)->delete();
         }
 
@@ -367,7 +367,7 @@ class BotmanMasterController extends Controller
     }
 
     public function getDetails(Request $request, $id, $type){
-        if($type=='code'){
+        if($type==='code'){
             $query = BotmanMessage::where('bot_id',$id)->get();
         }else{
             $query = BotmanMessage::with('userInfo')->where('user_id',$id)->get();

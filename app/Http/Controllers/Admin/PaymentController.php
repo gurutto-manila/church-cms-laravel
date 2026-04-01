@@ -44,7 +44,7 @@ class PaymentController extends Controller
         if(Gate::allows('payment',$id))
         {
             $subscription = Subscription::with('plan')->where('user_id',Auth::user()->id)->first();
-            if($subscription->status == 'pending')
+            if($subscription->status === 'pending')
             {
                 $plan       =   Plan::where('id',$id)->first();
                 $key        =   "dyTv15Mu";

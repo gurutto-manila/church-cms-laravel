@@ -39,15 +39,15 @@ class LoginController extends Controller
             if (Auth::attempt(['mobile_no' => request('email'), 'password' => request('password')]) )
             {
                 $user = Auth::user();
-            
+
                 $userprofile = Userprofile::where('user_id', $user->id)->first();
-                if ($userprofile->status == 'active')
+                if ($userprofile->status === 'active')
                 {
                     $token = $user->createToken("churchcms")->plainTextToken;
-                    //$token = $user->createToken($request->email)->plainTextToken; //changed for new church app
+
 
                     $user = User::where([['id',$user->id],['church_id',$user->church_id]])->first();
-                     
+
                     $user->platform_token = $request->platform_token;
 
                     $user->save();
@@ -60,7 +60,7 @@ class LoginController extends Controller
                         'user_email'        =>  $user->email,
                         'user_name'         =>  $user->name,
                         'user_fullname'     =>  $user->FullName,
-                        'membership_type'   =>  $user->userprofile->membership_type,  
+                        'membership_type'   =>  $user->userprofile->membership_type,
                     ], $this->successStatus);
                 }
             }
@@ -76,7 +76,7 @@ class LoginController extends Controller
     {
         try
         {
-            if (Auth::check()) 
+            if (Auth::check())
             {
                 Auth()->user()->tokens()->delete();
             }
@@ -139,7 +139,7 @@ class LoginController extends Controller
                 ['ip' => $ip, 'details' => $_SERVER['HTTP_USER_AGENT'] ],
                 LOGNAME_ADD_GUEST,
                 $message
-            ); 
+            );
 
             return response()->json([
                 'success'   =>  true,

@@ -52,8 +52,8 @@ class BlogsController extends Controller
         $array['created_by']        = $post->createdBy->name;
         $array['is_posted']         = $post->is_posted;
         $array['attachments']       = $post->AttachmentPath;
-        $array['like_count']        = $post->postDetail== null ?null:$post->postDetail->ByLikeCount($post->id);
-        $array['unlike_count']      = $post->postDetail== null ?null:$post->postDetail->ByUnlikeCount($post->id);
+        $array['like_count']        = $post->postDetail=== null ?null:$post->postDetail->ByLikeCount($post->id);
+        $array['unlike_count']      = $post->postDetail=== null ?null:$post->postDetail->ByUnlikeCount($post->id);
         $array['comment_list']['comments']          = $post->PostComments;
         $array['comment_list']['comments_count']    = count($post->PostComments);
         return $array;

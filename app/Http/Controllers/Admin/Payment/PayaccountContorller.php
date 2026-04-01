@@ -63,7 +63,7 @@ use Log;
     public function store(PayaccountAddRequest $request)
     {
         //
-        if($request->paymentgateway_id=='bank')
+        if($request->paymentgateway_id==='bank')
         {
             $param1=$request->account_name;
             $param2=$request->account_number;
@@ -72,15 +72,15 @@ use Log;
             $param5=$request->ifsc_code;
             $param6=$request->branch_name;
         }
-        if($request->paymentgateway_id=='gpay')
+        if($request->paymentgateway_id==='gpay')
         {
           $param1=$request->gpay_number;
         }
-        if($request->paymentgateway_id=='upi')
+        if($request->paymentgateway_id==='upi')
         {
           $param1=$request->upi_id;
         }
-        if($request->paymentgateway_id=='cheque')
+        if($request->paymentgateway_id==='cheque')
         {
           $param1=$request->payee_name;
         }
@@ -101,7 +101,7 @@ use Log;
 
         $payaccount=Payaccount::create($data);
 
-        if($payaccount->status==1)
+        if($payaccount->status===1)
         {
             $this->changeStatus($payaccount);
         }
@@ -127,9 +127,9 @@ use Log;
     public function statusUpdate($id)
     {
         $payaccount=Payaccount::find($id);
-        $status=$payaccount->status==1 ? 0:1;
+        $status=$payaccount->status===1 ? 0:1;
         $payaccount->update(['status'=>$status]);
-        if($payaccount->status==1)
+        if($payaccount->status===1)
         {
             $this->changeStatus($payaccount);
         }
@@ -176,7 +176,7 @@ use Log;
     public function update(Request $request, $id)
     {
         //
-        if($request->paymentgateway_id=='bank')
+        if($request->paymentgateway_id==='bank')
         {
             $param1=$request->account_name;
             $param2=$request->account_number;
@@ -185,15 +185,15 @@ use Log;
             $param5=$request->ifsc_code;
             $param6=$request->branch_name;
         }
-        if($request->paymentgateway_id=='gpay')
+        if($request->paymentgateway_id==='gpay')
         {
           $param1=$request->gpay_number;
         }
-        if($request->paymentgateway_id=='upi')
+        if($request->paymentgateway_id==='upi')
         {
           $param1=$request->upi_id;
         }
-        if($request->paymentgateway_id=='cheque')
+        if($request->paymentgateway_id==='cheque')
         {
           $param1=$request->payee_name;
         }
@@ -215,7 +215,7 @@ use Log;
         $payaccount=Payaccount::find($id);
         $payaccount=$payaccount->update($data);
 
-        if($payaccount->status==1)
+        if($payaccount->status===1)
         {
             $this->changeStatus($payaccount);
         }

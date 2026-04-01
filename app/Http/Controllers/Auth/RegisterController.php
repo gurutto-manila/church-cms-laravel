@@ -200,7 +200,7 @@ class RegisterController extends Controller
 
                 $permissionuser->save();
             }
-            if(env('MAIL_STATUS') == 'on')
+            if(env('MAIL_STATUS') === 'on')
             {
                 Mail::to($user->email)->queue(new EmailVerification($user));
             }

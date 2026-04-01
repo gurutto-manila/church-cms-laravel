@@ -35,7 +35,7 @@ class FeedbackController extends Controller
                         'data'              => $categoryList,
                     ], 200);
 
-        //return $categoryList;
+
     }
 
     /**

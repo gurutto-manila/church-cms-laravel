@@ -86,7 +86,7 @@ class WidgetController extends Controller
     public function edit($id)
     {
         $editInfo = Widget::find($id);
-        if (!empty($editInfo) == 0) {
+        if (!empty($editInfo) === 0) {
             return redirect('admin/widgets')->with('error', __('common.no_records_found'));
         }
         $church = Church::where('status',1)->get();

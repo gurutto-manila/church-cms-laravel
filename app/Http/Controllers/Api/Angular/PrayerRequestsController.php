@@ -22,7 +22,7 @@ class PrayerRequestsController extends Controller
         $church = Church::where('slug','=',$slug)->first();
 
         $prayers = PrayerRequest::where('church_id',$church->id)->paginate(5);
-        
+
         $prayers = PrayerRequestsResource::collection($prayers);
 
         return $prayers;
@@ -65,7 +65,6 @@ class PrayerRequestsController extends Controller
 	    catch(Exception $e)
         {
             Log::info($e->getMessage());
-           // dd($e->getMessage());
-        }  
+        }
     }
 }

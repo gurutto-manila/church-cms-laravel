@@ -101,7 +101,7 @@ class UserprofileController extends Controller
         try
         {
 
-            //$user = User::where('id',Auth::user()->id)->get();
+
             $userprofile = Userprofile::where([['user_id',$id],['church_id',Auth::user()->church_id]])->first();
 
             if($request->hasFile('avatar'))

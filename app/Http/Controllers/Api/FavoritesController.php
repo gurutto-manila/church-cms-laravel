@@ -35,7 +35,7 @@ class FavoritesController extends Controller
             $church_id      = Auth::user()->church_id;
             $user_id        = Auth::id();
             $sermon = Sermon::where([['church_id',$church_id],['id',$request->entity_id]])->first();
-            if($church_id==$sermon->church_id)
+            if($church_id===$sermon->church_id)
             {
                 $entity_name=get_class($sermon);
                 $entity_id =$sermon->id;

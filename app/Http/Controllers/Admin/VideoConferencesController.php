@@ -122,12 +122,12 @@ class VideoConferencesController extends Controller
             }
 
             $saveTwilio = \Conference::storeData($request, $conference->id, $slug);
-            if(count($saveTwilio) > 0 && $saveTwilio['status']==false)
+            if(count($saveTwilio) > 0 && $saveTwilio['status']===false)
             {
                return redirect('admin/video-conference')->with('error', $saveTwilio['message']);
             }
 
-            //return redirect('admin/video-conference')->with('successmessage', 'Room has been created successfully.');
+
             $res['success'] = 'Room Created Successfully';
             return $res;
         }
@@ -155,7 +155,7 @@ class VideoConferencesController extends Controller
         if(Auth::id() != $conference->user_id)
         {
             $checkUser = VideoConferenceUser::where([['conference_id',$conference->id],['participant_id',Auth::id()]])->get();
-            if(count($checkUser)==0)
+            if(count($checkUser)===0)
             {
                 return redirect('admin/video-conference')->with('error', 'No records found.');
             }
@@ -163,7 +163,7 @@ class VideoConferencesController extends Controller
         $roomName=$conference->slug;
         $identity=Auth::user()->FullName;
 
-        if($identity==null || $identity=='' )
+        if($identity===null || $identity==='' )
         {
           $identity=Auth::user()->name;
         }
@@ -189,13 +189,13 @@ class VideoConferencesController extends Controller
     {
         $conference = VideoConference::with('participantInfo')->where('id',$id)->first();
 
-        if(Auth::id() == $conference->user_id)
+        if(Auth::id() === $conference->user_id)
         {
             $array = [];
             $array['name']           =   $conference->name;
             $array['description']    =   $conference->description;
             $array['duration']       =   $conference->duration;
-            $array['joining_date']=$conference->joining_date==null ? '':date('d-m-Y h:i:s a',strtotime($conference->joining_date));
+            $array['joining_date']=$conference->joining_date===null ? '':date('d-m-Y h:i:s a',strtotime($conference->joining_date));
             foreach ($conference->participantInfo as $key => $user)
             {
                 $array['members'][$key] = $user->id;
@@ -288,7 +288,7 @@ class VideoConferencesController extends Controller
                 }
             }
 
-            if (count($participant_data) == 0 && count($participant_count) > 0)
+            if (count($participant_data) === 0 && count($participant_count) > 0)
             {
                 VideoConferenceUser::where('conference_id', $conference->id)->delete();
             }
@@ -307,7 +307,7 @@ class VideoConferencesController extends Controller
                 }
             }
             $res['success'] = 'Room Updated Successfully';
-            //return redirect('admin/video-conference')->with('message', 'Room has been updated successfully.');
+
             return $res;
         }
         catch(Exception $e)
@@ -352,7 +352,7 @@ class VideoConferencesController extends Controller
     {
         $logged = Auth::user()->id;
         $conference = VideoConference::where('user_id',$logged)->pluck('id')->toArray();
-        if(count($conference)==0){
+        if(count($conference)===0){
             return redirect('admin/video-conference')->with('error', 'No records found.');
         }
         $getInfo = VideoConferenceUser::where('id',$id)->first();
@@ -376,7 +376,7 @@ class VideoConferencesController extends Controller
         $conference = VideoConference::where('user_id',$logged)->where('id',$id)->first();
         if(!empty($conference)){
             $closeTwilio = \Conference::closeConnection($conference, $id);
-            if(count($closeTwilio) > 0 && $closeTwilio['status']==false){
+            if(count($closeTwilio) > 0 && $closeTwilio['status']===false){
                return redirect('admin/video-conference')->with('error', $closeTwilio['message']);
             }
         }
@@ -387,7 +387,7 @@ class VideoConferencesController extends Controller
     {
         $event = $_REQUEST['StatusCallbackEvent'];
         $cid = $_REQUEST['CompositionSid'];
-        if($event=='composition-available'){
+        if($event==='composition-available'){
             VideoConference::where('compose_id',$cid)->update(array('compose_status'=>'available'));
             \Conference::saveVideo($cid);
         }
@@ -452,7 +452,7 @@ class VideoConferencesController extends Controller
             }
         }
 
-        if (count($participant_data) == 0 && count($participant_count) > 0) {
+        if (count($participant_data) === 0 && count($participant_count) > 0) {
             VideoConferenceUser::where('conference_id', $conference->id)->delete();
         }
 
@@ -467,7 +467,7 @@ class VideoConferencesController extends Controller
             }
         }
 
-        //return redirect('admin/video-conference/manage-invites/'.$id)->with('message', 'Invites has been updated successfully.');
+
         $res['success'] = 'Invites Updated Successfully';
         return $res;
     }

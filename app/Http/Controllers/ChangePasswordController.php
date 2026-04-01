@@ -35,7 +35,7 @@ class ChangePasswordController extends Controller
             $hashedPassword = $user->password;
             $user->password = Hash::make($request->newpassword);
             $user->save();
-            if( (env(MAIL_STATUS) == 'on') && ($user->email != null) )
+            if( (env(MAIL_STATUS) === 'on') && ($user->email != null) )
             {
                 Mail::to($user->email)->queue(new ChangePassword($user));
             }

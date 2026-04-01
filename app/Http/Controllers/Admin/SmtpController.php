@@ -59,7 +59,7 @@ class SmtpController extends Controller
             $smtp->username     = $request->username;
             $smtp->password     = $request->password;
             $smtp->encryption   = $request->encryption;
-            if($request->status == 'false')
+            if($request->status === 'false')
             {
                 $smtp->status   = 0;
             }
@@ -133,7 +133,7 @@ class SmtpController extends Controller
             $smtp->username     = $request->username;
             $smtp->password     = $request->password;
             $smtp->encryption   = $request->encryption;
-            if($request->status == 'false')
+            if($request->status === 'false')
             {
                 $smtp->status   = 0;
             }

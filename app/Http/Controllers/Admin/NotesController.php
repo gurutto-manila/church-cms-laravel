@@ -52,7 +52,7 @@ class NotesController extends Controller
         {
             $userid=Auth::id();
 
-            if ($request->id=='')
+            if ($request->id==='')
             {
                 $note = $this->createNotes($request->notes,$request->church_id,$request->entity_id,$request->entity_name,$userid,$userid);
             }

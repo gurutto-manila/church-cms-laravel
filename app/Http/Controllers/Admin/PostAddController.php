@@ -91,7 +91,7 @@ class PostAddController extends Controller
             $post->title            = $request->title;
             $post->description      = $request->description;
 
-            /*if($request->entity_name == 'App\Models\Page')
+            /*if($request->entity_name === 'App\Models\Page')
             {
                 $post->visibility = 'select_page';
             }
@@ -100,11 +100,11 @@ class PostAddController extends Controller
                 $post->visibility       = $request->visibility;
             }
 
-            if($request->visibility == 'select_class')
+            if($request->visibility === 'select_class')
             {
                 $post->visible_for      = $request->visible_for;
             }*/
-            if($request->post_later == 'true')
+            if($request->post_later === 'true')
             {
                 $post->post_created_at = date('Y-m-d H:i:s',strtotime($request->posted_at));
                 $post->is_posted = 0;

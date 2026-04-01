@@ -50,7 +50,7 @@ class HelpsController extends Controller
     {
         //
         $helps=$this->help->getHelps(Auth::user()->church_id)->where('status',$status);
-        //$helps = Help::where([['church_id',Auth::user()->church_id],['status',$status]]);
+
         if(\Request::getQueryString() != null)
         {
             if($request->search != null)
@@ -79,7 +79,7 @@ class HelpsController extends Controller
     public function index()
     {
         //
-        //$count = Help::where('church_id',Auth::user()->church_id)->count();
+
         $count = $this->help->getHelps(Auth::user()->church_id)->count();
 
         return view('/admin/helps/index',['count' => $count]);
@@ -94,7 +94,6 @@ class HelpsController extends Controller
     public function show($id)
     {
         //
-        //$help = Help::where('id',$id)->first();
         $help=$this->help->showHelp($id);
 
         if(Gate::allows('help',$help))
@@ -112,8 +111,7 @@ class HelpsController extends Controller
         //
         $array = [];
 
-        //$help = Help::where('id',$id)->first();
-         $help=$this->help->showHelp($id);
+        $help=$this->help->showHelp($id);
 
         if(Gate::allows('help',$help))
         {
@@ -142,7 +140,7 @@ class HelpsController extends Controller
     public function edit($id)
     {
         //
-       // $help = Help::where('id',$id)->first();
+
          $help=$this->help->showHelp($id);
 
         if(Gate::allows('help',$help))
@@ -170,7 +168,7 @@ class HelpsController extends Controller
             /*$help = Help::where('id',$id)->first();
 
             $help->status = $request->status;
-            if($request->status == 'approve')
+            if($request->status === 'approve')
             {
                 $help->expired_at = Carbon::now()->addDay($request->expired_at)->format('Y-m-d');
                 $help->closed_by  = Auth::id();

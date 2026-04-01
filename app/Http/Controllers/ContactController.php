@@ -52,7 +52,7 @@ class ContactController extends Controller
 
             $user=User::ByRole(3)->first();
 
-            if(env('MAIL_STATUS') == 'on')
+            if(env('MAIL_STATUS') === 'on')
             {
                 Mail::to($user->email)->send(new ContactMail($contact));
             }
