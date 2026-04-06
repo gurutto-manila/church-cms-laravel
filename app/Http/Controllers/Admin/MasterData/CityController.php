@@ -75,15 +75,16 @@ class CityController extends Controller
 
     public function bulk(Request $request)
     {
+        $selectAll = $request->input('select_all') === '1';
+
         $request->validate([
-            'action'     => 'required|in:activate,deactivate,delete',
-            'select_all' => 'nullable|in:1',
-            'ids'        => 'required_without:select_all|array',
-            'ids.*'      => 'integer|exists:cities,id',
+            'action' => 'required|in:activate,deactivate,delete',
+            'ids'    => ($selectAll ? 'nullable' : 'required') . '|array',
+            'ids.*'  => 'integer|exists:cities,id',
         ]);
 
         // Build base query respecting active filters
-        if ($request->select_all == '1') {
+        if ($selectAll) {
             $query = City::query();
             if ($request->filled('filter_country_id')) {
                 $query->where('country_id', $request->filter_country_id);

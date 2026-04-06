@@ -109,14 +109,11 @@
                                 class="inline-flex items-center gap-1 px-3 py-1 rounded text-xs font-medium bg-indigo-50 text-indigo-700 hover:bg-indigo-100">
                                 <img src="{{ url('uploads/icons/edit.svg') }}" class="w-3 h-3"> Edit
                             </a>
-                            <form method="POST" action="{{ url('/admin/city/delete/' . $city->id) }}"
-                                onsubmit="return confirm('Delete this city?')">
-                                @csrf @method('DELETE')
-                                <button type="submit"
-                                    class="inline-flex items-center gap-1 px-3 py-1 rounded text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100">
-                                    <img src="{{ url('uploads/icons/delete.svg') }}" class="w-3 h-3"> Delete
-                                </button>
-                            </form>
+                            <button type="button"
+                                onclick="deleteCity('{{ url('/admin/city/delete/' . $city->id) }}')"
+                                class="inline-flex items-center gap-1 px-3 py-1 rounded text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100">
+                                <img src="{{ url('uploads/icons/delete.svg') }}" class="w-3 h-3"> Delete
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -131,26 +128,39 @@
     </div>
 </form>
 
+{{-- Shared single-row delete form (outside bulk form to avoid nested form issues) --}}
+<form id="singleDeleteForm" method="POST" action="" style="display:none">
+    @csrf
+    @method('DELETE')
+</form>
+
+@endsection
+
+@push('scripts')
 <script>
-    const pageCount   = {{ $cities->count() }};
-    const totalCount  = {{ $cities->total() }};
-    const hasPages    = {{ $cities->hasPages() ? 'true' : 'false' }};
+document.addEventListener('DOMContentLoaded', function () {
+    const pageCount        = {{ $cities->count() }};
+    const totalCount       = {{ $cities->total() }};
+    const hasPages         = {{ $cities->hasPages() ? 'true' : 'false' }};
     let   allPagesSelected = false;
 
-    const selectAllCb      = document.getElementById('selectAll');
-    const selectAllInput   = document.getElementById('selectAllInput');
-    const banner           = document.getElementById('selectAllBanner');
-    const bannerText       = document.getElementById('bannerText');
+    const selectAllCb       = document.getElementById('selectAll');
+    const selectAllInput    = document.getElementById('selectAllInput');
+    const selectedCountEl   = document.getElementById('selectedCount');
+    const banner            = document.getElementById('selectAllBanner');
+    const bannerText        = document.getElementById('bannerText');
     const selectAllPagesBtn = document.getElementById('selectAllPagesBtn');
     const clearSelectAllBtn = document.getElementById('clearSelectAllBtn');
+
+    // Guard: nothing to do if the header checkbox isn't on the page
+    if (!selectAllCb) return;
 
     // Header checkbox: select/deselect this page
     selectAllCb.addEventListener('change', function () {
         allPagesSelected = false;
-        selectAllInput.value = '0';
+        if (selectAllInput) selectAllInput.value = '0';
         document.querySelectorAll('.row-check').forEach(cb => cb.checked = this.checked);
         updateCount();
-        // Show banner only when all page rows checked AND there are more pages
         if (hasPages && this.checked) {
             showBanner(false);
         } else {
@@ -158,14 +168,14 @@
         }
     });
 
-    document.querySelectorAll('.row-check').forEach(cb => {
+    document.querySelectorAll('.row-check').forEach(function (cb) {
         cb.addEventListener('change', function () {
             allPagesSelected = false;
-            selectAllInput.value = '0';
-            const all = document.querySelectorAll('.row-check');
+            if (selectAllInput) selectAllInput.value = '0';
+            const all     = document.querySelectorAll('.row-check');
             const checked = document.querySelectorAll('.row-check:checked');
             selectAllCb.indeterminate = checked.length > 0 && checked.length < all.length;
-            selectAllCb.checked = checked.length === all.length;
+            selectAllCb.checked       = checked.length > 0 && checked.length === all.length;
             updateCount();
             if (hasPages && checked.length === all.length) {
                 showBanner(false);
@@ -179,13 +189,11 @@
         if (!banner) return;
         allPagesSelected = allPages;
         if (allPages) {
-            bannerText.innerHTML = 'All <strong>' + totalCount + '</strong> cities matching current filters are selected.';
-            selectAllPagesBtn.classList.add('hidden');
-            clearSelectAllBtn.classList.remove('hidden');
+            if (bannerText) bannerText.innerHTML = 'All <strong>' + totalCount + '</strong> cities matching current filters are selected.';
+            if (selectAllPagesBtn) selectAllPagesBtn.classList.add('hidden');
         } else {
-            bannerText.innerHTML = 'All <strong>' + pageCount + '</strong> cities on this page are selected.';
-            selectAllPagesBtn.classList.remove('hidden');
-            clearSelectAllBtn.classList.remove('hidden');
+            if (bannerText) bannerText.innerHTML = 'All <strong>' + pageCount + '</strong> cities on this page are selected.';
+            if (selectAllPagesBtn) selectAllPagesBtn.classList.remove('hidden');
         }
         banner.classList.remove('hidden');
     }
@@ -194,12 +202,12 @@
         if (!banner) return;
         banner.classList.add('hidden');
         allPagesSelected = false;
-        selectAllInput.value = '0';
+        if (selectAllInput) selectAllInput.value = '0';
     }
 
     if (selectAllPagesBtn) {
         selectAllPagesBtn.addEventListener('click', function () {
-            selectAllInput.value = '1';
+            if (selectAllInput) selectAllInput.value = '1';
             showBanner(true);
             updateCount();
         });
@@ -207,7 +215,7 @@
 
     if (clearSelectAllBtn) {
         clearSelectAllBtn.addEventListener('click', function () {
-            selectAllCb.checked = false;
+            selectAllCb.checked       = false;
             selectAllCb.indeterminate = false;
             document.querySelectorAll('.row-check').forEach(cb => cb.checked = false);
             hideBanner();
@@ -216,39 +224,54 @@
     }
 
     function updateCount() {
+        if (!selectedCountEl) return;
         const n = allPagesSelected
             ? totalCount
             : document.querySelectorAll('.row-check:checked').length;
-        document.getElementById('selectedCount').textContent = n ? n + ' selected' : '';
+        selectedCountEl.textContent = n ? n + ' selected' : '';
     }
 
-    function applyBulk() {
-        const action = document.querySelector('[name="action"]').value;
-        if (!action) { alert('Please select a bulk action.'); return; }
+    // Bulk apply
+    window.applyBulk = function () {
+        const actionEl = document.querySelector('[name="action"]');
+        if (!actionEl || !actionEl.value) { alert('Please select a bulk action.'); return; }
         const n = allPagesSelected
             ? totalCount
             : document.querySelectorAll('.row-check:checked').length;
         if (!n) { alert('Please select at least one row.'); return; }
-        if (action === 'delete' && !confirm('Delete ' + n + ' cities?')) return;
+        if (actionEl.value === 'delete' && !confirm('Delete ' + n + ' cities?')) return;
         document.getElementById('bulkForm').submit();
-    }
+    };
 
-    // Dynamic state filter based on country selection
-    document.getElementById('filter_country').addEventListener('change', function () {
-        const countryId = this.value;
-        const stateSelect = document.getElementById('filter_state');
-        stateSelect.innerHTML = '<option value="">All States</option>';
-        if (!countryId) return;
-        fetch('{{ url("/admin/ajax/states") }}?country_id=' + countryId)
-            .then(r => r.json())
-            .then(data => {
-                data.forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name;
-                    stateSelect.appendChild(opt);
+    // Single row delete
+    window.deleteCity = function (url) {
+        if (!confirm('Delete this city?')) return;
+        const f = document.getElementById('singleDeleteForm');
+        f.action = url;
+        f.submit();
+    };
+
+    // Dynamic state filter
+    const filterCountry = document.getElementById('filter_country');
+    if (filterCountry) {
+        filterCountry.addEventListener('change', function () {
+            const countryId  = this.value;
+            const stateSelect = document.getElementById('filter_state');
+            if (!stateSelect) return;
+            stateSelect.innerHTML = '<option value="">All States</option>';
+            if (!countryId) return;
+            fetch('{{ url("/admin/ajax/states") }}?country_id=' + countryId)
+                .then(r => r.json())
+                .then(function (data) {
+                    data.forEach(function (s) {
+                        const opt = document.createElement('option');
+                        opt.value = s.id;
+                        opt.textContent = s.name;
+                        stateSelect.appendChild(opt);
+                    });
                 });
-            });
-    });
+        });
+    }
+});
 </script>
-@endsection
+@endpush

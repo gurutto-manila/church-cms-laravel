@@ -8,9 +8,15 @@ use App\Models\Country;
 
 class CountryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $countries = Country::orderBy('name')->paginate(20);
+        $query = Country::orderBy('name');
+
+        if ($request->filled('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        $countries = $query->paginate(20)->withQueryString();
         return view('admin.masterdata.country.index', compact('countries'));
     }
 
@@ -59,5 +65,29 @@ class CountryController extends Controller
     {
         Country::findOrFail($id)->delete();
         return redirect('/admin/countries')->with('success', 'Country deleted.');
+    }
+
+    public function bulk(Request $request)
+    {
+        $selectAll = $request->input('select_all') === '1';
+
+        $request->validate([
+            'action' => 'required|in:activate,deactivate',
+            'ids'    => ($selectAll ? 'nullable' : 'required') . '|array',
+            'ids.*'  => 'integer|exists:countries,id',
+        ]);
+
+        if ($selectAll) {
+            $query = Country::query();
+            if ($request->filled('filter_status') && $request->filter_status !== '') {
+                $query->where('status', $request->filter_status);
+            }
+        } else {
+            $query = Country::whereIn('id', $request->ids);
+        }
+
+        $query->update(['status' => $request->action === 'activate' ? 1 : 0]);
+
+        return redirect('/admin/countries')->with('success', 'Countries updated successfully.');
     }
 }

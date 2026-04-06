@@ -297,6 +297,7 @@ use Illuminate\Support\Facades\Route;
     //master data
     Route::group(['middleware' => ['adminonly'], 'namespace' => 'MasterData'], function () {
         Route::get('/countries',             'CountryController@index');
+        Route::post('/countries/bulk',        'CountryController@bulk');
         Route::get('/country/create',        'CountryController@create');
         Route::post('/country/create',       'CountryController@store');
         Route::get('/country/edit/{id}',     'CountryController@edit');
@@ -304,6 +305,7 @@ use Illuminate\Support\Facades\Route;
         Route::delete('/country/delete/{id}','CountryController@destroy');
 
         Route::get('/states',                'StateController@index');
+        Route::post('/states/bulk',          'StateController@bulk');
         Route::get('/state/create',          'StateController@create');
         Route::post('/state/create',         'StateController@store');
         Route::get('/state/edit/{id}',       'StateController@edit');

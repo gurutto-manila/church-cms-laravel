@@ -9,10 +9,21 @@ use App\Models\State;
 
 class StateController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $states = State::with('country')->orderBy('name')->paginate(20);
-        return view('admin.masterdata.state.index', compact('states'));
+        $query = State::with('country')->orderBy('name');
+
+        if ($request->filled('country_id')) {
+            $query->where('country_id', $request->country_id);
+        }
+        if ($request->filled('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        $states    = $query->paginate(20)->withQueryString();
+        $countries = Country::where('status', 1)->orderBy('name')->get();
+
+        return view('admin.masterdata.state.index', compact('states', 'countries'));
     }
 
     public function create()
@@ -58,6 +69,34 @@ class StateController extends Controller
     {
         State::findOrFail($id)->delete();
         return redirect('/admin/states')->with('success', 'State deleted.');
+    }
+
+    public function bulk(Request $request)
+    {
+        $selectAll = $request->input('select_all') === '1';
+
+        $request->validate([
+            'action' => 'required|in:activate,deactivate',
+            'ids'    => ($selectAll ? 'nullable' : 'required') . '|array',
+            'ids.*'  => 'integer|exists:states,id',
+        ]);
+
+        if ($selectAll) {
+            $query = State::query();
+            if ($request->filled('filter_country_id')) {
+                $query->where('country_id', $request->filter_country_id);
+            }
+            if ($request->filled('filter_status') && $request->filter_status !== '') {
+                $query->where('status', $request->filter_status);
+            }
+        } else {
+            $query = State::whereIn('id', $request->ids);
+        }
+
+        $value = $request->action === 'activate' ? 1 : 0;
+        $query->update(['status' => $value]);
+
+        return redirect('/admin/states')->with('success', 'States updated successfully.');
     }
 
     public function ajaxByCountry(Request $request)
