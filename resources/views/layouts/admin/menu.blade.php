@@ -57,7 +57,7 @@
     <!-- start -->
     @php
         $class = '';
-        $array = ['pages', 'page', 'posts', 'post', 'settings', 'setting', 'faq', 'widgets', 'seodetail', 'google-analytics'];
+        $array = ['pages', 'page', 'page-categories', 'pageCategory', 'posts', 'post', 'settings', 'setting', 'faq', 'widgets', 'seodetail', 'google-analytics'];
         if (in_array(\Request()->segment('2'), $array)) {
             $class = 'active';
         }
@@ -76,6 +76,14 @@
                     <img src="{{ url('uploads/icons/pages.svg') }}" class="w-4 h-4"
                         style="filter: brightness(0) invert(1);">
                     <span class="mx-3 whitespace-no-wrap">Pages</span>
+                </a>
+            </li>
+            <li
+                class="py-3 px-3 hover:font-semibold {{ Request::segment('2') == 'page-categories' ? 'active' : '' }}">
+                <a href="{{ url('/admin/page-categories') }}" class="flex items-center">
+                    <img src="{{ url('uploads/icons/pages.svg') }}" class="w-4 h-4"
+                        style="filter: brightness(0) invert(1);">
+                    <span class="mx-3 whitespace-no-wrap">Page Categories</span>
                 </a>
             </li>
             <li
