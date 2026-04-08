@@ -868,8 +868,14 @@ use Illuminate\Support\Facades\Route;
 
     //page (admin only)
     Route::group(['middleware' => ['adminonly']], function() {
+        // page categories
+        Route::get( '/page-categories', 'PageCategoryController@index' );
         Route::get( '/pageCategory/list', 'PageCategoryController@list' );
-    Route::post( '/pageCategory/add', 'PageCategoryController@store' );
+        Route::post( '/pageCategory/add', 'PageCategoryController@store' );
+        Route::get( '/pageCategory/editList/{id}', 'PageCategoryController@editList' );
+        Route::get( '/pageCategory/edit/{id}', 'PageCategoryController@edit' );
+        Route::post( '/pageCategory/edit/{id}', 'PageCategoryController@update' );
+        Route::delete( '/pageCategory/delete/{id}', 'PageCategoryController@destroy' );
 
     //page
     Route::get( '/page/list', 'PagesController@list' );

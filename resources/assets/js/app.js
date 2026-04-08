@@ -208,6 +208,10 @@ Vue.component('edit-fund', require('./components/fund/Edit.vue').default);
 //page
 Vue.component('newsletter-send', require('./components/newsletter/Send.vue').default);
 
+//page category
+Vue.component('page-category-list', require('./components/page_category/List.vue').default);
+Vue.component('edit-page-category', require('./components/page_category/Edit.vue').default);
+
 //page
 Vue.component('page-list', require('./components/page/List.vue').default);
 Vue.component('create-page', require('./components/page/Create.vue').default);
