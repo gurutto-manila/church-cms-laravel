@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laracasts\Presenter\PresentableTrait;
@@ -65,6 +65,7 @@ use Carbon\Carbon;
  */
 class User extends Authenticatable
 {
+    use HasFactory;
     use LaratrustUserTrait;
     use PresentableTrait;
     use HasApiTokens;

@@ -25,7 +25,6 @@ class ChurchFactory extends Factory
 
         return [
             'name'      => fake()->company(),
-            'quotes'    => fake()->sentence(),
             'address'   => fake()->address(),
             'city_id'   => $mycity['cityname'],
             'state_id'  => $mycity['state'],
