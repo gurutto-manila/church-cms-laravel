@@ -1,45 +1,22 @@
 <?php
 
 namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Models\Church;
 use App\Models\User;
+use App\Models\Userprofile;
+use App\Models\Bulletin;
+use App\Models\Group;
 
 class ChurchTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
-
         $churchnames = [
             "St. Mary's Cathedral Shrine"
         ];
-
-        //changed for demo
-        /*$churchnames = [
-            "Jesus blessing",
-        ];*/
-
-        /*$quotes =[
-            "Psalm 23:1-3 - The Lord is my shepherd; I shall not want.He makes me lie down in green pastures.",
-            "Psalm 27:1 - The Lord is my light and my salvation— whom shall I fear",
-            "Psalm 34:18 - The Lord is close to the brokenhearted and saves those who are crushed in spirit.",
-            "Psalm 18:2 - The Lord is my rock, my fortress and my savior.",
-            "Psalm 27:14 - Wait on the Lord: be of good courage, and he shall strengthen thine heart.",
-            "Psalm 34:5 - Those who look to him are radiant, and their faces shall never be ashamed.",
-            "Psalm 91:4 - He will cover you with his feathers. He will shelter you with his wings.",
-            "Psalm 51:10 - Create in me a pure heart, O God, and renew a steadfast spirit within me.",
-            "Psalm 46:5 - God is within her, she will not fall; God will help her at break of day.",
-            "Psalm 37:4 - Delight yourself in the Lord, and he will give you the desires of your heart.",
-            "Psalm 46:1 - God is our refuge and strength, an ever-present help in trouble.",
-            "Psalm 119:105 - Your word is a lamp for my feet, a light on my path.",
-            "Psalm 46:10 - Be still and know that I am God.",
-        ]; */
 
         $AdminPermissions = [
             "create-members","read-members","update-members",
@@ -53,7 +30,7 @@ class ChurchTableSeeder extends Seeder
             "create-quotes","read-quotes","update-quotes",
             "create-preachers","read-preachers","update-preachers",
             "read-reports","view-reports",
-            "read-payments",'create-payments'
+            "read-payments","create-payments"
         ];
 
         $PreacherPermissions = [
@@ -63,75 +40,94 @@ class ChurchTableSeeder extends Seeder
             "delete-sermons"
         ];
 
-        foreach($churchnames as $churchname)
-        {
-            $church = factory(App\Models\Church::class)->create(['name' => strtolower($churchname) , 'slug' => Str::slug($churchname,'-')]);
+        foreach ($churchnames as $churchname) {
 
-            // 1 Church Admin
-            factory(App\Models\User::class, 1)->create([
-                'email'        => 'admin'.$church->id.'@churchcms.app',
-                'church_id'    => $church->id ,
-                'usergroup_id' => 3
-            ])->each(function($user) use($AdminPermissions){
-                factory(App\Models\Userprofile::class, 1)->create(['user_id'=>$user->id , 'church_id'=>$user->church_id , 'membership_type'=>"member"]);
-
-                factory(App\Models\Bulletin::class, 1)->create(['church_id'=>$user->church_id ,'created_by'=>$user->id]);
-
-                factory(App\Models\Group::class, 1)->create(['church_id'=>$user->church_id ,'created_by'=>$user->id]);
-
-                $user->attachPermissions($AdminPermissions);
-            });
-
-            // 2 Sub-admins
-            factory(App\Models\User::class, 2)->create([
-                'church_id'     =>  $church->id,
-                'usergroup_id'  =>  4
-            ])->each(function($churchadmin){
-                factory(App\Models\Userprofile::class, 1)->create([
-                    'user_id'           =>  $churchadmin->id,
-                    'church_id'         =>  $churchadmin->church_id,
-                    'membership_type'   =>  'member',
-                ]);
-            });
-
-            // 6 Staff (ChurchSubadmin)
-            factory(App\Models\User::class, 6)->create([
-                'church_id'     =>  $church->id,
-                'usergroup_id'  =>  4
-            ])->each(function($staff){
-                factory(App\Models\Userprofile::class, 1)->create([
-                    'user_id'           =>  $staff->id,
-                    'church_id'         =>  $staff->church_id,
-                    'membership_type'   =>  'member',
-                ]);
-            });
-
-            // 100 Members
-            $members = factory(App\Models\User::class, 100)->create([
-                'church_id'     =>  $church->id ,
-                'usergroup_id'  =>  5
+            // Create Church
+            $church = Church::factory()->create([
+                'name' => strtolower($churchname),
+                'slug' => Str::slug($churchname, '-'),
             ]);
 
-            foreach ($members as $member)
-            {
-                factory(App\Models\Userprofile::class)->create([
-                    'user_id'   =>  $member->id,
-                    'church_id' =>  $member->church_id
+            // 1 Church Admin
+            $admin = User::factory()->create([
+                'email' => 'admin' . $church->id . '@churchcms.app',
+                'church_id' => $church->id,
+                'usergroup_id' => 3
+            ]);
+
+            Userprofile::factory()->create([
+                'user_id' => $admin->id,
+                'church_id' => $church->id,
+                'membership_type' => 'member'
+            ]);
+
+            Bulletin::factory()->create([
+                'church_id' => $church->id,
+                'created_by' => $admin->id
+            ]);
+
+            Group::factory()->create([
+                'church_id' => $church->id,
+                'created_by' => $admin->id
+            ]);
+
+            $admin->attachPermissions($AdminPermissions);
+
+            // 2 Sub-admins
+            $subAdmins = User::factory(2)->create([
+                'church_id' => $church->id,
+                'usergroup_id' => 4
+            ]);
+
+            foreach ($subAdmins as $subAdmin) {
+                Userprofile::factory()->create([
+                    'user_id' => $subAdmin->id,
+                    'church_id' => $church->id,
+                    'membership_type' => 'member'
+                ]);
+            }
+
+            // 6 Staff
+            $staffs = User::factory(6)->create([
+                'church_id' => $church->id,
+                'usergroup_id' => 4
+            ]);
+
+            foreach ($staffs as $staff) {
+                Userprofile::factory()->create([
+                    'user_id' => $staff->id,
+                    'church_id' => $church->id,
+                    'membership_type' => 'member'
+                ]);
+            }
+
+            // 100 Members
+            $members = User::factory(100)->create([
+                'church_id' => $church->id,
+                'usergroup_id' => 5
+            ]);
+
+            foreach ($members as $member) {
+                Userprofile::factory()->create([
+                    'user_id' => $member->id,
+                    'church_id' => $church->id
                 ]);
             }
 
             // 3 Preachers
-            factory(App\Models\User::class, 3)->create([
-                'church_id'     =>  $church->id ,
-                'usergroup_id'  =>  6
-            ])->each(function($preacher) use($PreacherPermissions){
-                factory(App\Models\Userprofile::class, 1)->create([
-                    'user_id'   =>  $preacher->id ,
-                    'church_id' =>  $preacher->church_id
+            $preachers = User::factory(3)->create([
+                'church_id' => $church->id,
+                'usergroup_id' => 6
+            ]);
+
+            foreach ($preachers as $preacher) {
+                Userprofile::factory()->create([
+                    'user_id' => $preacher->id,
+                    'church_id' => $church->id
                 ]);
 
                 $preacher->attachPermissions($PreacherPermissions);
-            });
+            }
         }
     }
 }
