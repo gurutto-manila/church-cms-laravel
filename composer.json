@@ -34,7 +34,9 @@
         "spatie/laravel-sitemap": "^6.0",
         "tijsverkoyen/css-to-inline-styles": "^2.2",
         "titasgailius/search-relations": "^1.0",
-        "twilio/sdk": "^6.9"
+        "twilio/sdk": "^6.9",
+        "symfony/css-selector": "^6.4",
+        "symfony/filesystem": "^6.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.9",
@@ -48,7 +50,6 @@
     },
     "autoload": {
         "classmap": [
-            "database/seeds",
             "database/seeders",
             "database/factories"
         ],
