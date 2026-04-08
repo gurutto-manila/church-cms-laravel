@@ -45,9 +45,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection $faq Frequently asked questions
  */
 class Church extends Model
-{    //
-    use SoftDeletes;
-
+{    
+    use HasFactory, SoftDeletes;
     /**
      * The table associated with the model.
      *
