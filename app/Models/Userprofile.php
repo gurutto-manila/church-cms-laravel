@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laracasts\Presenter\PresentableTrait;
 use Illuminate\Database\Eloquent\Model;
@@ -72,6 +72,7 @@ use App\Traits\Common;
  */
 class Userprofile extends Model
 {
+    use HasFactory;
     use PresentableTrait;
     use SoftDeletes;
     use Common;
