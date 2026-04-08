@@ -1,34 +1,39 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-$factory->define(App\Models\Bulletin::class, function (Faker $faker) {
-	$i = \App\Models\Church::count();
-	$name = 'Bulletin'.$i;
-	$cover_image = $faker->imageUrl($width = 640, $height = 480);
-	$type = $faker->randomElement(['month', 'week']);
-	$year = $faker->randomElement(['2016','2017','2018', '2019']);
-	$path = "uploads/bulletin.pdf";
+use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Bulletin;
+use App\Models\Church;
 
-	if($type == 'week')
-	{
-		$week = $faker->numberBetween($min = 01, $max = 52);
-		$month = null;
-	}
-	else
-	{
-		$week = null;
-		$month = $faker->numberBetween($min = 01, $max = 12);  
-	}
+class BulletinFactory extends Factory
+{
+    protected $model = Bulletin::class;
 
-    return [
-        //
-    'name' 			=> $name,
-    'cover_image' 	=> $cover_image,
-    'type'			=> $type,
-    'week' 			=> $week,
-    'month' 		=> $month,
-    'year' 			=> $year,
-    'path' 			=> $path,
-    ];
-});
+    public function definition(): array
+    {
+        $i = Church::count();
+        $name = 'Bulletin' . $i;
+
+        $type = fake()->randomElement(['month', 'week']);
+        $year = fake()->randomElement(['2016','2017','2018','2019']);
+
+        if ($type == 'week') {
+            $week = fake()->numberBetween(1, 52);
+            $month = null;
+        } else {
+            $week = null;
+            $month = fake()->numberBetween(1, 12);
+        }
+
+        return [
+            'name'        => $name,
+            'cover_image' => fake()->imageUrl(640, 480),
+            'type'        => $type,
+            'week'        => $week,
+            'month'       => $month,
+            'year'        => $year,
+            'path'        => 'uploads/bulletin.pdf',
+        ];
+    }
+}
