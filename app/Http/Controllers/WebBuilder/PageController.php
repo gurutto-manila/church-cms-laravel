@@ -12,9 +12,12 @@ class PageController extends Controller
     private function navData(): array
     {
         $allPages = Page::with('pageCategory')
-                        ->where('status', 1)
-                        ->orderBy('menu_order')
-                        ->orderBy('page_name')
+                        ->where('pages.status', 1)
+                        ->join('page_categories', 'pages.category_id', '=', 'page_categories.id')
+                        ->orderBy('page_categories.sort_order')
+                        ->orderBy('pages.menu_order')
+                        ->orderBy('pages.page_name')
+                        ->select('pages.*')
                         ->get();
 
         $grouped = $allPages->groupBy(fn($p) => optional($p->pageCategory)->name ?? 'General');
